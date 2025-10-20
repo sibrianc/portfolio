@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }} – Carlos Sibrián{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-4 text-light">{{ project.title }}</h1>
+  {% if project.cover_image %}
+    <img src="{{ project.cover_image }}" alt="{{ project.title }} screenshot" class="img-fluid mb-4">
+  {% endif %}
+  {% if project.summary %}
+    <p class="text-light-75"><em>{{ project.summary }}</em></p>
+  {% endif %}
+  {% if project.description %}
+    <p class="text-light-75">{{ project.description }}</p>
+  {% endif %}
+  {% if project.tech_stack %}
+    <p class="text-light"><strong>Tech Stack:</strong>
+      {% for tech in project.tech_stack.split(',') %}
+        <span class="badge bg-secondary me-1">{{ tech.strip() }}</span>
+      {% endfor %}
+    </p>
+  {% endif %}
+  <!-- Project action links -->
+  <div class="mt-4">
+    {% if project.live_url %}
+      <a href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-cta me-2">View Live</a>
+    {% endif %}
+    {% if project.repo_url %}
+      <a href="{{ project.repo_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-cyber">View Code</a>
+    {% endif %}
+  </div>
+  <!-- Back to projects link -->
+  <p class="mt-5">
+    <a href="{{ url_for('projects_list') }}" class="text-light-75 text-decoration-none">&larr; Back to all projects</a>
+  </p>
+</div>
+{% endblock %}

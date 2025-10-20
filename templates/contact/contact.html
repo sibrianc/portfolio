@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ t('contact') }} – Carlos Sibrian{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-4 text-light text-center">{{ t('contact') }}</h1>
+
+  {% if success %}
+    <div class="alert alert-success text-center">
+      {{ t('contact_success') }}
+    </div>
+  {% endif %}
+
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+          <label class="form-label text-light">{{ t(form.name.label.text) }}</label>
+          {{ form.name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-light">{{ t(form.email.label.text) }}</label>
+          {{ form.email(class="form-control") }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-light">{{ t(form.message.label.text) }}</label>
+          {{ form.message(class="form-control", rows="4") }}
+        </div>
+        <button type="submit" class="btn btn-cta w-100">{{ t(form.submit.label.text) }}</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
