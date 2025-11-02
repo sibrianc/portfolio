@@ -12,7 +12,7 @@
   <!-- Main site CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
-<body class="bg-cyber">
+<body class="bg-cyber d-flex flex-column min-vh-100">
   <!-- Flickering stars background -->
   <div class="cy-stars" aria-hidden="true"></div>
   <img class="corner corner-tr" src="{{ url_for('static', filename='img/decor/corner-tr.svg') }}" alt="" aria-hidden="true">
@@ -24,10 +24,6 @@
       <!-- Brand / Logo -->
       <a class="navbar-brand fw-bold tracking-wide" href="{{ url_for('index') }}">
         CARLOS<span class="brand-accent">_SIBRIAN</span>
-      </a>
-      <!-- Language toggle pill -->
-      <a class="cy-lang-toggle ms-lg-3" href="{{ url_for('switch_lang', code='en' if current_lang()=='es' else 'es') }}">
-        <span class="cy-pill">{{ current_lang()|upper }}</span>
       </a>
       <!-- Mobile toggle button -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" 
@@ -43,10 +39,14 @@
           <li class="nav-item"><a class="btn btn-cyber" href="{{ url_for('contact') }}">{{ t('contact') }}</a></li>
         </ul>
       </div>
+      <!-- Language toggle pill -->
+      <a class="cy-lang-toggle ms-lg-3" href="{{ url_for('switch_lang', code='en' if current_lang()=='es' else 'es') }}">
+        <span class="cy-pill">{{ current_lang()|upper }}</span>
+      </a>
     </div>
   </nav>
 
-  <main class="container py-5 position-relative">
+  <main class="container py-5 flex-fill">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for cat, msg in messages %}
@@ -57,7 +57,7 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="container py-5 text-muted small text-center">
+  <footer class="navbar-brand small text-center">
     © {{ 2025 }} Carlos Sibrian
   </footer>
 
