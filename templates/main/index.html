@@ -16,11 +16,19 @@
         <a class="btn btn-lg btn-cta mt-3" href="{{ url_for('contact') }}">{{ t('cta') }}</a>
       </div>
       <!-- Hero image / avatar -->
-      <div class="col-lg-6 text-center">
-        <img src="{{ url_for('static', filename='img/brranding.png') }}" alt="Avatar" 
-             style="max-width: 240px;">
-      </div>
-    </div>
+       <!-- Hero image / avatar with framed card -->
+<div class="col-lg-6 text-center">
+  <div class="card bg-dark bg-opacity-75 border-light shadow-lg d-inline-block p-3" 
+       style="border-radius: 12px; max-width: 280px;">
+    <img src="{{ url_for('static', filename='img/branding.png') }}" 
+         alt="Avatar Branding" 
+         class="img-fluid rounded mb-3"
+         style="max-width: 240px; border-radius: 8px;">
+    <p class="text-light-75 fst-italic mb-0">
+      “Transforming ideas into digital realities.”
+    </p>
+  </div>
+</div>
   </div>
 </section>
 
