@@ -1,9 +1,16 @@
-__pycache__/
+# Environment / sensitive files
+.env
 *.pyc
-*.pyo
-*.db
+__pycache__/
+instance/
+portfolio.db
 *.sqlite3
-*.log
+
+# Virtual environments
 .venv/
-.env.local
-.env.*.local
+env/
+venv/
+
+# System / editor
+.DS_Store
+Thumbs.db

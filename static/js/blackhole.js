@@ -1,6 +1,36 @@
 (function(){
   const body = document.body;
   let animating = false;
+  // Cancela SOLO animaciones WAAPI (no las CSS de cy-flicker)
+  function cancelOnlyWAAPI(el) {
+    try {
+      const list = el.getAnimations({ subtree: false });
+      list.forEach(a => {
+        // Si el navegador expone CSSAnimation / CSSTransition, respActalas
+        if (window.CSSAnimation && a instanceof CSSAnimation) return;
+        if (window.CSSTransition && a instanceof CSSTransition) return;
+        // El resto (KeyframeEffect creado vA-a WAAPI) se cancela
+        a.cancel();
+      });
+    } catch(_) {}
+  }
+
+  // Limpia estilos inline peligrosos, sin matar animaciones CSS
+  function resetInlineStyles(el) {
+    cancelOnlyWAAPI(el);
+    el.style.removeProperty('transform');
+    el.style.removeProperty('opacity');
+    el.style.removeProperty('transition');
+  }
+
+  // Reanuda parpadeo de estrellas sin cancelar su @keyframes CSS
+  function resumeStarsFlicker(starElems) {
+    starElems.forEach(s => {
+      // NO cancelamos CSS; solo limpiamos posibles restos WAAPI e inline
+      resetInlineStyles(s);
+      s.style.animationPlayState = 'running';
+    });
+  }
 
   // Utility: get center coordinates of an element
   function getElementCenter(elem) {
@@ -32,7 +62,7 @@
           const linkTarget = this.href;
           const clickX = event.clientX;
           const clickY = event.clientY;
-          
+
           // Create black hole at click position
           const bh = document.createElement('div');
           bh.classList.add('black-hole');
@@ -87,9 +117,9 @@
             const center = getElementCenter(elem);
             const dx = bhPos.x - center.x;
             const dy = bhPos.y - center.y;
-            return { 
-              elem, dx, dy, 
-              distance: Math.hypot(dx, dy) 
+            return {
+              elem, dx, dy,
+              distance: Math.hypot(dx, dy)
             };
           });
           elementsWithDist.sort((a, b) => a.distance - b.distance);
@@ -110,16 +140,16 @@
             // Keyframe animation: move 80% of the way visible, then vanish at end
             const keyframes = [
               { offset: 0, transform: 'none', opacity: 1 },
-              { 
-                offset: 0.8, 
-                transform: `translate(${dx * 0.8}px, ${dy * 0.8}px) rotate(${angle}deg) scale(0.2)`, 
-                opacity: 1, 
+              {
+                offset: 0.8,
+                transform: `translate(${dx * 0.8}px, ${dy * 0.8}px) rotate(${angle}deg) scale(0.2)`,
+                opacity: 1,
                 easing: 'ease-in'  // accelerate into BH
               },
-              { 
-                offset: 1, 
-                transform: `translate(${dx}px, ${dy}px) rotate(${angle}deg) scale(0)`, 
-                opacity: 0 
+              {
+                offset: 1,
+                transform: `translate(${dx}px, ${dy}px) rotate(${angle}deg) scale(0)`,
+                opacity: 0
               }
             ];
             elem.animate(keyframes, {
@@ -141,8 +171,6 @@
               { duration: lastAnimationTime - 400, easing: 'ease-out', fill: 'forwards' }
             );
           }, 400);
-
-          // Navigate to next page after all animations complete
           setTimeout(() => {
             window.location.href = linkTarget;
           }, lastAnimationTime);
@@ -221,9 +249,9 @@
         const center = getElementCenter(elem);
         const dx = bhPos.x - center.x;
         const dy = bhPos.y - center.y;
-        return { 
-          elem, dx, dy, 
-          distance: Math.hypot(dx, dy) 
+        return {
+          elem, dx, dy,
+          distance: Math.hypot(dx, dy)
         };
       });
       elementsWithDist.sort((a, b) => b.distance - a.distance);
@@ -267,20 +295,19 @@
       const lastAnimationTime = maxDelay + duration;
       setTimeout(() => {
         bh.animate(
-            [
-                { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
-                { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 0 }
-            ],
-            { duration: 400, easing: 'ease-out' }
+          [
+            { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+            { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 0 }
+          ],
+          { duration: 400, easing: 'ease-out' }
         );
         setTimeout(() => {
-            bh.remove();
-            document.body.style.overflow = '';
-            starElems.forEach(star => {
-                star.style.animationPlayState = 'running';
-            });
+          bh.remove();
+          document.body.style.overflow = '';
+
+          resumeStarsFlicker(starElems);
         }, 400);
-    }, lastAnimationTime);
+      }, lastAnimationTime);
     }
   });
 })();
