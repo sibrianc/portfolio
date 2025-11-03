@@ -176,3 +176,33 @@ body.bg-cyber {
   border-color: var(--purple);
   box-shadow: 0 0 0 0.2rem rgba(122, 86, 255, 0.25);
 }
+
+html, body {
+  overflow-x: hidden;
+}
+.container, .row, .col {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Black hole effect styles */
+.black-hole {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  background: #000;
+  border-radius: 50%;
+  z-index: 999;
+  box-shadow: 0 0 20px 5px var(--purple);  /* halo púrpura alrededor */
+  animation: bh-grow 0.4s ease-out forwards;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+}
+@keyframes bh-grow {
+  from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+
+
+

@@ -9,7 +9,6 @@ blinker==1.8.2
 Bootstrap-Flask==2.3.3
 click==8.1.7
 colorama==0.4.6
-Flask==2.3.2
 Flask-CKEditor==0.5.1
 Flask-Gravatar==0.5.0
 Flask-Login==0.6.3
@@ -28,3 +27,4 @@ SQLAlchemy==2.0.25
 typing_extensions==4.12.2
 Werkzeug==3.0.6
 WTForms==3.0.1
+Flask-Mail==0.9.1

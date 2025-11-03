@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if project %}
+  Edit Project – Carlos Sibrian
+{% else %}
+  New Project – Carlos Sibrian
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  
+  <h1 class="mb-4 text-light">
+    {% if project %}
+      Edit Project "{{ project.title }}"
+    {% else %}
+      New Project
+    {% endif %}
+  </h1>
+  
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+          <label class="form-label text-light">{{ form.title.label.text }}</label>
+          {{ form.title(class="form-control") }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-light">{{ form.slug.label.text }}</label>
+          {{ form.slug(class="form-control") }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-light">{{ form.summary.label.text }}</label>
+          {{ form.summary(class="form-control") }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-light">{{ form.description.label.text }}</label>
+          {{ form.description(class="form-control", rows="6") }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-light">{{ form.tech_stack.label.text }}</label>
+          {{ form.tech_stack(class="form-control") }}
+          <small class="text-light-75">* Separate technologies with commas</small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-light">{{ form.repo_url.label.text }}</label>
+          {{ form.repo_url(class="form-control") }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-light">{{ form.live_url.label.text }}</label>
+          {{ form.live_url(class="form-control") }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-light">{{ form.cover_image.label.text }}</label>
+          {{ form.cover_image(class="form-control") }}
+        </div>
+        <div class="form-check form-switch mb-4">
+          {{ form.is_featured(class="form-check-input", id="is_featured") }}
+          <label class="form-check-label text-light" for="is_featured">{{ form.is_featured.label.text }}</label>
+        </div>
+        <button type="submit" class="btn btn-cta">
+          {% if project %}Update{% else %}Create{% endif %} Project
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

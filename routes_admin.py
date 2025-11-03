@@ -1,6 +1,6 @@
 # routes_admin.py
 import os
-from flask import render_template, redirect, url_for, request, abort, flash
+from flask import render_template, redirect, url_for, request, abort, flash, current_app
 from flask_login import login_user, current_user, login_required, logout_user
 from functools import wraps
 from models import db, User, Project, ContactMessage
@@ -21,6 +21,10 @@ def register(app):
 
     @app.route(login_path, methods=["GET", "POST"])
     def admin_login():
+        # --- attach rate limit to admin_login dynamically (5 intentos / 10 minutos por IP) ---
+        limiter = app.extensions.get('limiter')
+        if limiter:
+            app.view_functions['admin_login'] = limiter.limit("5 per 10 minutes")(app.view_functions['admin_login'])
         # NOTE: Minimal admin-only login
         form = AdminLoginForm()
         if form.validate_on_submit():
