@@ -13,7 +13,17 @@ body.bg-cyber {
   color: var(--txt);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+  position: relative;      /* create a stacking context for children */
 }
+
+/* Always keep main content above stars and space sprites */
+.nav-cyber,
+main,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
 
 /* Flickering stars background */
 .cy-stars {
@@ -35,6 +45,8 @@ body.bg-cyber {
   10%, 20%, 50%, 70% { opacity: 1; transform: scale(1); }
   30%, 60%, 80% { opacity: 0.4; transform: scale(0.95); }
 }
+
+
 
 /* Decorative corner images */
 .corner {
@@ -203,6 +215,35 @@ html, body {
   to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
 
+/* === Space sprites layer (nebula, later astronaut & comets) ====== */
 
+.cy-space {
+  position: fixed;
+  inset: 0;
+  z-index: 0;          /* same level as stars, but appears above them in DOM */
+  pointer-events: none;
+}
 
+/* Animated nebula sprite using 8 frames from 1024x1024 sheet */
+.cy-nebula-sprite {
+  position: absolute;
 
+  /* logical frame size (one frame from the sheet) */
+  width: 128px;
+  height: 128px;
+
+  background-image: url("../img/nebula_spritesheet.png");
+  background-repeat: no-repeat;
+
+  /* draw the sheet at its real size so pixel offsets match */
+  background-size: 1024px 1024px;
+
+  image-rendering: pixelated;      /* keep the pixel-art crisp */
+
+  /* optional: scale a bit so it feels bigger on screen */
+  transform: scale(0.75);
+  transform-origin: center center;
+
+  /* soft glow to blend with the starfield */
+  filter: drop-shadow(0 0 10px rgba(140, 190, 255, 0.95));
+}
