@@ -224,26 +224,28 @@ html, body {
   pointer-events: none;
 }
 
-/* Animated nebula sprite using 8 frames from 1024x1024 sheet */
-.cy-nebula-sprite {
-  position: absolute;
 
-  /* logical frame size (one frame from the sheet) */
-  width: 128px;
-  height: 128px;
+/* === Comet sprite (3-frame 1024x1024 sheet) ==================== */
+.cy-comet-sprite {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0; /* misma capa que .cy-space */
 
-  background-image: url("../img/nebula_spritesheet.png");
+  /* Ventana visible para UN frame del cometa */
+  width: 380px;   /* antes 300 */
+  height: 380px;  /* antes 300 */
+
+  background-image: url("../img/comet.png");
   background-repeat: no-repeat;
+  background-size: 1024px 1024px; /* tamaño real del sheet */
 
-  /* draw the sheet at its real size so pixel offsets match */
-  background-size: 1024px 1024px;
+  image-rendering: pixelated;
 
-  image-rendering: pixelated;      /* keep the pixel-art crisp */
-
-  /* optional: scale a bit so it feels bigger on screen */
-  transform: scale(0.75);
+  /* Lo hacemos un poco más pequeño para que quepa toda la cola */
+  transform: scale(0.6);   /* antes 0.75 */
   transform-origin: center center;
 
-  /* soft glow to blend with the starfield */
-  filter: drop-shadow(0 0 10px rgba(140, 190, 255, 0.95));
+  /* Glow bonito */
+  filter: drop-shadow(0 0 20px rgba(150, 210, 255, 0.95));
 }
+
