@@ -12,11 +12,11 @@ def register(app):
     def index():
         # NOTE: Show featured projects on homepage
         featured = Project.query.filter_by(is_featured=True).order_by(Project.created_at.desc()).limit(3).all()
-        return render_template("main/index.html", featured=featured)
+        return render_template("public/home.html", featured=featured)
 
     @app.get("/about")
     def about():
-        return render_template("main/about.html")
+        return render_template("public/about.html")
 
     @app.get("/projects")
     def projects_list():
@@ -26,14 +26,14 @@ def register(app):
         if tech:
             q = q.filter(Project.tech_stack.ilike(f"%{tech}%"))
         projects = q.order_by(Project.created_at.desc()).all()
-        return render_template("projects/list.html", projects=projects, tech=tech)
+        return render_template("public/projects/list.html", projects=projects, tech=tech)
 
     @app.get("/projects/<string:slug>")
     def project_detail(slug: str):
         project = Project.query.filter_by(slug=slug).first()
         if not project:
             abort(404)
-        return render_template("projects/detail.html", project=project)
+        return render_template("public/projects/detail.html", project=project)
 
     @app.route("/contact", methods=["GET", "POST"])
     def contact():
@@ -67,10 +67,10 @@ def register(app):
                 flash("Tu mensaje fue recibido, pero hubo un problema al enviar el correo de notificación.", "warning")
 
             # 3) Volver a renderizar la página actual con mensaje de éxito
-            return render_template("contact/contact.html", form=ContactForm(), success=True)
+            return render_template("public/contact.html", form=ContactForm(), success=True)
 
         # GET o validación fallida
-        return render_template("contact/contact.html", form=form)
+        return render_template("public/contact.html", form=form)
     
     @app.route("/switch_lang/<string:code>")
     def switch_lang(code):
