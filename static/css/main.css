@@ -224,28 +224,3 @@ html, body {
   pointer-events: none;
 }
 
-
-/* === Comet sprite (3-frame 1024x1024 sheet) ==================== */
-.cy-comet-sprite {
-  position: fixed;
-  pointer-events: none;
-  z-index: 0; /* misma capa que .cy-space */
-
-  /* Ventana visible para UN frame del cometa */
-  width: 380px;   /* antes 300 */
-  height: 380px;  /* antes 300 */
-
-  background-image: url("../img/comet.png");
-  background-repeat: no-repeat;
-  background-size: 1024px 1024px; /* tamaño real del sheet */
-
-  image-rendering: pixelated;
-
-  /* Lo hacemos un poco más pequeño para que quepa toda la cola */
-  transform: scale(0.6);   /* antes 0.75 */
-  transform-origin: center center;
-
-  /* Glow bonito */
-  filter: drop-shadow(0 0 20px rgba(150, 210, 255, 0.95));
-}
-
