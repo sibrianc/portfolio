@@ -1,16 +1,31 @@
-# Environment / sensitive files
+# Secrets / environment
 .env
-*.pyc
-__pycache__/
+.env.*
+*.key
+*.pem
+*.crt
+*.p12
+.secrets/
+
+# Databases locales
 instance/
-portfolio.db
+*.db
+*.sqlite
 *.sqlite3
 
-# Virtual environments
-.venv/
-env/
-venv/
+# Python cache
+__pycache__/
+*.py[cod]
 
-# System / editor
+# Virtualenv
+.venv/
+venv/
+env/
+
+# Testing cache
+.pytest_cache/
+
+# Editor / sistema
+.vscode/
 .DS_Store
 Thumbs.db
