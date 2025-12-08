@@ -908,6 +908,67 @@ footer {
   z-index: 1;
 }
 
+.contact-form-section {
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.contact-form-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #00ffa2;
+  text-shadow: 0 0 5px #00ffa2;
+}
+
+.form-field {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #00ffa2;
+  color: #fff;
+  border-radius: 4px;
+  font: inherit;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  box-shadow: 0 0 8px #00ffa2;
+  border-color: #00ffa2;
+}
+
+.send-button {
+  background: #00ffa2;
+  color: #000;
+  border: 2px solid #00ffa2;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.send-button:hover {
+  background: #000;
+  color: #00ffa2;
+  box-shadow: 0 0 10px #00ffa2;
+}
+
 .projects_list-page,
 .project_detail-page,
 .page-page {
