@@ -1,12 +1,18 @@
 {% extends "layout/base.html" %}
 {% block title %}{{ t('about') }} – Carlos Sibrian{% endblock %}
 {% block content %}
-<div class="container py-5">
-  <h1 class="mb-4 text-light">{{ t('about') }}</h1>
-  <p class="text-light-75">
-    <!-- About page content placeholder; replace with your own information -->
-    Hello! I'm Carlos Sibrian, a full-stack developer with a passion for creating dynamic and engaging web applications. 
-    In this section I will include a minigame.
-  </p>
-</div>
+<section class="about-section">
+  <div class="about-bg" aria-hidden="true">
+    <div class="sun"></div>
+  </div>
+
+  <div class="about-content container py-5">
+    <h1 class="mb-4 text-light">{{ t('about') }}</h1>
+    <p class="text-light-75">
+      <!-- About page content placeholder; replace with your own information -->
+      Hello! I'm Carlos Sibrian, a full-stack developer with a passion for creating dynamic and engaging web applications.
+      In this section I will include a minigame.
+    </p>
+  </div>
+</section>
 {% endblock %}
