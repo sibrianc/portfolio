@@ -778,6 +778,45 @@ footer {
   z-index: 0;
 }
 
+.sun-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, #fff 0%, #ff0 30%, #ffa500 60%, #000 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 30px 15px #00ffa2;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.orbit1 {
+  width: 250px;
+  height: 250px;
+}
+
+.orbit2 {
+  width: 350px;
+  height: 350px;
+}
+
+.orbit3 {
+  width: 450px;
+  height: 450px;
+}
+
 .contact-bg::before {
   content: "";
   position: absolute;
