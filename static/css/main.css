@@ -150,6 +150,7 @@ footer {
   left: 12%;
   width: 13vw;
   height: 4.2vh;
+  animation: float 6.5s ease-in-out infinite;
 }
 
 .island2 {
@@ -158,6 +159,7 @@ footer {
   width: 18vw;
   height: 5.5vh;
   transform: translateX(-50%);
+  animation: float-centered 8s ease-in-out infinite;
 }
 
 .island3 {
@@ -165,6 +167,7 @@ footer {
   right: 10%;
   width: 10vw;
   height: 3.8vh;
+  animation: float 5.4s ease-in-out infinite;
 }
 
 .island-building {
@@ -237,6 +240,7 @@ footer {
   background: #00eaff;
   border-radius: 50%;
   box-shadow: 0 0 10px #00eaff;
+  animation: monument-pulse 4s ease-in-out infinite;
 }
 
 @keyframes home-twinkle {
@@ -248,6 +252,30 @@ footer {
   50% {
     opacity: 0.5;
     transform: scale(0.8);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-centered {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
   }
 }
 
@@ -266,6 +294,27 @@ footer {
   inset: 0;
   background: radial-gradient(circle at 50% 0%, rgba(122, 86, 255, 0.3) 0%, rgba(75, 0, 130, 0) 75%);
   pointer-events: none;
+  animation: horizon-glow 12s ease-in-out infinite;
+}
+
+@keyframes horizon-glow {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+@keyframes monument-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 10px #00eaff;
+  }
+  50% {
+    box-shadow: 0 0 18px #00eaff;
+  }
 }
 
 .building {
