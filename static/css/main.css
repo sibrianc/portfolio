@@ -800,21 +800,35 @@ footer {
   border: 1px dashed rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   pointer-events: none;
+  transform-origin: 50% 50%;
 }
 
 .orbit1 {
   width: 250px;
   height: 250px;
+  animation: orbit-spin 10s linear infinite;
 }
 
 .orbit2 {
   width: 350px;
   height: 350px;
+  animation: orbit-spin 14s linear infinite;
 }
 
 .orbit3 {
   width: 450px;
   height: 450px;
+  animation: orbit-spin 20s linear infinite reverse;
+}
+
+@keyframes orbit-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .planet {
@@ -834,6 +848,14 @@ footer {
   font-size: 1.2rem;
   text-decoration: none;
   transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.orbit1 .planet,
+.orbit2 .planet,
+.orbit3 .planet {
+  top: 50%;
+  left: 100%;
+  transform: translate(-50%, -50%);
 }
 
 .planet:hover {
