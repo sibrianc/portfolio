@@ -67,6 +67,24 @@ const shouldHandleInternalNavigation = link => {
 window.addEventListener('DOMContentLoaded', () => {
   document.body.classList.remove('preload');
 
+  const introOverlay = document.getElementById('intro-overlay');
+  const enterButton = document.getElementById('enter-button');
+
+  if (introOverlay) {
+    const hideOverlay = () => {
+      introOverlay.classList.add('hidden');
+      localStorage.setItem('introDismissed', 'true');
+    };
+
+    if (localStorage.getItem('introDismissed') === 'true') {
+      hideOverlay();
+    }
+
+    if (enterButton) {
+      enterButton.addEventListener('click', hideOverlay);
+    }
+  }
+
   document.querySelectorAll('a[href]').forEach(link => {
     if (!shouldHandleInternalNavigation(link)) {
       return;
