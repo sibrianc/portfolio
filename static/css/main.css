@@ -65,6 +65,73 @@ footer {
   pointer-events: none;
 }
 
+.home-content {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: 18vh 1.5rem 8vh;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  position: relative;
+  z-index: 1;
+  font-size: 3.4rem;
+  color: #00eaff;
+  text-shadow: 0 0 8px #00eaff;
+  margin: 0.5em 0 0.2em;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: #d8d8d8;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 6px rgba(0, 234, 255, 0.35);
+}
+
+.projects-preview {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  max-width: 86%;
+}
+
+.project-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--neon);
+  padding: 1.2rem;
+  width: 260px;
+  border-radius: 10px;
+  color: #fff;
+  text-align: left;
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+  backdrop-filter: blur(4px);
+}
+
+.project-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+  color: var(--neon);
+  font-family: 'Orbitron', sans-serif;
+}
+
+.project-card p {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 15px var(--neon);
+}
+
 .home-bg::before {
   content: "";
   position: absolute;
