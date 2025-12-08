@@ -1,7 +1,9 @@
 {% extends "layout/base.html" %}
 {% block title %}{{ t('contact') }} – Carlos Sibrian{% endblock %}
 {% block content %}
-<div class="container py-5">
+<div class="contact-bg" aria-hidden="true"></div>
+
+<div class="container py-5 contact-content">
   <h1 class="mb-4 text-light text-center">{{ t('contact') }}</h1>
 
   {% if success %}
