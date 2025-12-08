@@ -84,6 +84,34 @@ footer {
   width: 220px;
 }
 
+#floating-scene {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.rock {
+  position: absolute;
+  bottom: 6vh;
+  width: 120px;
+  height: 90px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background: linear-gradient(180deg, rgba(160, 120, 255, 0.2), rgba(26, 10, 40, 0.9));
+  border: 2px solid rgba(45, 221, 92, 0.8);
+  box-shadow:
+    0 0 12px rgba(45, 221, 92, 0.65),
+    0 0 26px rgba(122, 86, 255, 0.35),
+    inset 0 0 18px rgba(122, 86, 255, 0.35);
+  transform-origin: 50% 100%;
+  animation: floatRock 12s ease-in-out infinite alternate;
+  opacity: 0.75;
+}
+
+.rock:nth-child(odd) {
+  animation-direction: alternate-reverse;
+}
+
 .mountain {
   position: absolute;
   bottom: 0;
@@ -201,6 +229,11 @@ footer {
 @keyframes floatMountain {
   from { transform: translateY(0); }
   to { transform: translateY(-12px); }
+}
+
+@keyframes floatRock {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-18px) scale(1.04); }
 }
 
 /* Navbar styles */

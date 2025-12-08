@@ -40,6 +40,13 @@
     </div>
   </div>
 
+  <section id="floating-scene" aria-hidden="true">
+    <div class="rock" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="rock" style="left: 30%; animation-delay: 4s;"></div>
+    <div class="rock" style="left: 60%; animation-delay: 2s;"></div>
+    <div class="rock" style="left: 80%; animation-delay: 6s;"></div>
+  </section>
+
   <main class="container py-5 flex-fill">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
