@@ -43,10 +43,35 @@ if (menuBtn && navOverlay) {
 
 const TRANSITION_DURATION = 500;
 
+const shouldHandleInternalNavigation = link => {
+  const href = link.getAttribute('href');
+
+  if (!href || href.startsWith('#')) {
+    return false;
+  }
+
+  let url;
+
+  try {
+    url = new URL(href, window.location.origin);
+  } catch (error) {
+    return false;
+  }
+
+  const isInternal = url.origin === window.location.origin;
+  const isSamePageAnchor = url.pathname === window.location.pathname && Boolean(url.hash);
+
+  return isInternal && !isSamePageAnchor;
+};
+
 window.addEventListener('DOMContentLoaded', () => {
   document.body.classList.remove('preload');
 
-  document.querySelectorAll('.nav-menu a').forEach(link => {
+  document.querySelectorAll('a[href]').forEach(link => {
+    if (!shouldHandleInternalNavigation(link)) {
+      return;
+    }
+
     link.addEventListener('click', event => {
       if (
         event.ctrlKey ||
@@ -58,17 +83,12 @@ window.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const href = link.getAttribute('href');
-
-      if (!href || href.startsWith('#')) {
-        return;
-      }
-
       event.preventDefault();
       document.body.classList.add('fade-out');
+      const targetUrl = new URL(link.getAttribute('href'), window.location.origin);
 
       setTimeout(() => {
-        window.location.href = link.href;
+        window.location.href = targetUrl.href;
       }, TRANSITION_DURATION);
     });
   });
