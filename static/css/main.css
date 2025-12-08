@@ -76,11 +76,14 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.menu-btn:hover {
+.menu-btn:hover,
+.menu-btn:focus-visible {
   background: rgba(255, 255, 255, 0.2);
+  transform: rotate(12deg);
+  box-shadow: 0 0 16px rgba(0, 255, 162, 0.6);
 }
 
 .menu-icon {
@@ -207,8 +210,14 @@ footer {
   transition: transform 0.3s;
 }
 
-.nav-menu a:hover::before {
+.nav-menu a:hover::before,
+.nav-menu a.active::before {
   transform: scaleX(1);
+}
+
+.nav-menu a.active {
+  color: #7af7d1;
+  text-shadow: 0 0 10px rgba(0, 255, 162, 0.6);
 }
 
 .home-page {
@@ -259,6 +268,7 @@ footer {
   flex-wrap: wrap;
   margin: 0 auto;
   max-width: 86%;
+  perspective: 1200px;
 }
 
 .project-card {
@@ -287,8 +297,9 @@ footer {
   color: rgba(255, 255, 255, 0.88);
 }
 
-.project-card:hover {
-  transform: translateY(-6px);
+.project-card:hover,
+.project-card:focus-within {
+  transform: translateY(-6px) rotate3d(0, 1, 0, 10deg);
   box-shadow: 0 0 15px var(--neon);
 }
 
@@ -1020,7 +1031,8 @@ footer {
   transform: translate(-50%, -50%);
 }
 
-.planet:hover {
+.planet:hover,
+.planet:focus-visible {
   transform: translate(-50%, -50%) scale(1.2);
   box-shadow: 0 0 10px #00ffa2;
 }
