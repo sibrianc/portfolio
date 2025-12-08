@@ -11,12 +11,18 @@
   </div>
 
   <div class="about-content container py-5">
-    <h1 class="mb-4 text-light">{{ t('about') }}</h1>
-    <p class="text-light-75">
-      <!-- About page content placeholder; replace with your own information -->
-      Hello! I'm Carlos Sibrian, a full-stack developer with a passion for creating dynamic and engaging web applications.
-      In this section I will include a minigame.
+    <h2>About Me</h2>
+    <p>
+      Hello! I’m Carlos Sibrián, a software engineer from El Salvador. I’ve spent the last several years building web
+      applications, internal tools, and playful digital experiences that bring ideas to life.
     </p>
+    <p>
+      I specialize in crafting modern interfaces and full-stack solutions, blending clean code with engaging visuals. I
+      love experimenting with interactions, storytelling, and a bit of neon flair to make every project memorable.
+    </p>
+    <div class="profile-pic-container" aria-hidden="true">
+      <img src="{{ url_for('static', filename='img/branding.png') }}" alt="Carlos Sibrián" class="profile-pic">
+    </div>
   </div>
 </section>
 {% endblock %}
