@@ -633,7 +633,46 @@ footer {
 .about-content {
   position: relative;
   z-index: 1;
-  max-width: 880px;
+  max-width: 780px;
+  margin: 18vh auto 0 auto;
+  color: #fff;
+  text-align: center;
+  padding: 1.5rem 2.25rem;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 12px;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.35), 0 0 14px rgba(0, 255, 162, 0.25);
+}
+
+.about-content h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #ffd700;
+  text-shadow: 0 0 6px #ffd700;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.about-content p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.profile-pic-container {
+  margin: 2rem auto 0 auto;
+  width: 150px;
+  height: 150px;
+  border: 3px solid #00ffa2;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 10px #00ffa2;
+}
+
+.profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.15);
 }
 
 .contact-page {
