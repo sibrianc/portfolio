@@ -513,6 +513,15 @@ footer {
   z-index: 0;
 }
 
+@keyframes sun-pulse {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .about-bg::before {
   content: "";
   position: absolute;
@@ -543,6 +552,7 @@ footer {
   border-radius: 50%;
   opacity: 0.8;
   box-shadow: 0 0 24px rgba(255, 140, 0, 0.6);
+  animation: sun-pulse 5s alternate infinite ease-in-out;
 }
 
 .horizon-line {
@@ -588,6 +598,18 @@ footer {
   border-radius: 50%;
 }
 
+@keyframes sway {
+  0% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+  100% {
+    transform: rotate(-5deg);
+  }
+}
+
 .palm {
   position: absolute;
   bottom: 0;
@@ -622,12 +644,25 @@ footer {
 
 .palm1 {
   left: 20%;
-  transform: rotate(-10deg);
+  transform: rotate(-6deg);
+  animation: sway 4s ease-in-out infinite;
 }
 
 .palm2 {
   right: 15%;
-  transform: rotate(5deg);
+  transform: rotate(6deg);
+  animation: sway 6s ease-in-out infinite reverse;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .about-content {
@@ -641,6 +676,12 @@ footer {
   background: rgba(0, 0, 0, 0.45);
   border-radius: 12px;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.35), 0 0 14px rgba(0, 255, 162, 0.25);
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.about-page .about-content {
+  animation: fadeInUp 0.8s ease forwards;
 }
 
 .about-content h2 {
