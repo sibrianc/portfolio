@@ -33,33 +33,12 @@
   <img class="corner corner-tr" src="{{ url_for('static', filename='img/decor/corner-tr.svg') }}" alt="" aria-hidden="true">
   <img class="corner corner-bl" src="{{ url_for('static', filename='img/decor/corner-bl.svg') }}" alt="" aria-hidden="true">
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg nav-cyber">
-    <div class="container">
-      <!-- Brand / Logo -->
-      <a class="navbar-brand fw-bold tracking-wide" href="{{ url_for('index') }}">
-        CARLOS<span class="brand-accent">_SIBRIAN</span>
-      </a>
-      <!-- Mobile toggle button -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" 
-              aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <!-- Nav links -->
-      <div id="nav" class="collapse navbar-collapse justify-content-center">
-        <ul class="navbar-nav text-center">
-          <li class="nav-item"><a class="btn btn-cyber" href="{{ url_for('index') }}">{{ t('home') }}</a></li>
-          <li class="nav-item"><a class="btn btn-cyber" href="{{ url_for('about') }}">{{ t('about') }}</a></li>
-          <li class="nav-item"><a class="btn btn-cyber" href="{{ url_for('projects_list') }}">{{ t('projects') }}</a></li>
-          <li class="nav-item"><a class="btn btn-cyber" href="{{ url_for('contact') }}">{{ t('contact') }}</a></li>
-        </ul>
-      </div>
-      <!-- Language toggle pill -->
-      <a class="cy-lang-toggle ms-lg-3" href="{{ url_for('switch_lang', code='en' if current_lang()=='es' else 'es') }}">
-        <span class="cy-pill">{{ current_lang()|upper }}</span>
-      </a>
+  <div id="intro-overlay">
+    <div id="central-orb">
+      <div id="orb-rings"></div>
+      <button id="enter-button">ENTER</button>
     </div>
-  </nav>
+  </div>
 
   <main class="container py-5 flex-fill">
     {% with messages = get_flashed_messages(with_categories=true) %}
