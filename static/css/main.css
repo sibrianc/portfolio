@@ -225,7 +225,7 @@ footer {
 #orb-rings::before {
   inset: 36px;
   border-color: rgba(122, 86, 255, 0.35);
-  animation: orb-ring-spin 14s linear infinite reverse;
+  animation: orb-ring-spin-inner 14s linear infinite reverse;
 }
 
 #enter-button {
@@ -258,8 +258,13 @@ footer {
 }
 
 @keyframes orb-ring-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { transform: rotateX(24deg) rotateY(-14deg) rotate(0deg); }
+  to { transform: rotateX(24deg) rotateY(-14deg) rotate(360deg); }
+}
+
+@keyframes orb-ring-spin-inner {
+  from { transform: rotateX(12deg) rotateY(-12deg) rotate(0deg); }
+  to { transform: rotateX(12deg) rotateY(-12deg) rotate(360deg); }
 }
 
 @keyframes floatMountain {
