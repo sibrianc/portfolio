@@ -1,6 +1,9 @@
 # app.py
 import os
 from flask import Flask, session, request, redirect, url_for, g  # add session, request, redirect, url_for
+from dotenv import load_dotenv
+load_dotenv()
+
 
 from flask_bootstrap import Bootstrap5  # FIX: use Bootstrap5 class
 from flask_login import LoginManager
@@ -8,61 +11,28 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from models import db, User
 import routes_public, routes_admin
-from flask_mail import Mail, Message # Import Flask-Mail
-
-# Rate limiting (optional)
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-
-
 
 def create_app() -> Flask:
-    # --- Load environment variables ---
-    from dotenv import load_dotenv
-    load_dotenv()  # Read .env file
-
-    # --- Create base app ---
+    # --- Base config ---
+    # NOTE: instance_relative_config lets you store the DB under ./instance/
     app = Flask(__name__, instance_relative_config=True)
     os.makedirs(app.instance_path, exist_ok=True)
-    
-    
 
-    # --- Basic configuration ---
     app.config["SECRET_KEY"] = os.getenv("FLASK_KEY", "change-me")
-    
-    # --- Rate limiting (anti-bruteforce) ---
-    limiter = Limiter(
-        key_func=get_remote_address,
-        app=app,
-        default_limits=[]
-    )
-    # optional: store a reference accessible from routes_admin.py
-    app.extensions['limiter'] = limiter
 
-    # --- Database ---
+    # NOTE: Force a stable absolute path for your sqlite DB under instance/
     db_path = os.path.join(app.instance_path, "portfolio.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URI", f"sqlite:///{db_path}")
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # suprime warning de SQLAlchemy
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # --- Email (Flask-Mail) ---
-    app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER", "smtp.gmail.com")
-    app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", "587"))
-    app.config["MAIL_USE_TLS"] = bool(int(os.getenv("MAIL_USE_TLS", "1")))
-    app.config["MAIL_USE_SSL"] = bool(int(os.getenv("MAIL_USE_SSL", "0")))
-    app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
-    app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
-    app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
-    app.config["CONTACT_RECIPIENT"] = os.getenv("CONTACT_RECIPIENT")
-
-    # --- Debugging ---
+    # Debug print to confirm which DB you're using
     print("DB URI ->", app.config["SQLALCHEMY_DATABASE_URI"])
 
-    # -- Extensions ---
-    Bootstrap5(app)
+    # --- Extensions ---
+    Bootstrap5(app)  # Use Bootstrap5 instead of Bootstrap for Bootstrap v5 support
     CSRFProtect(app)
     db.init_app(app)
     Migrate(app, db)
-    mail = Mail(app)    # Initialize Flask-Mail
 
     # --- Login manager ---
     login_manager = LoginManager()
@@ -71,13 +41,14 @@ def create_app() -> Flask:
 
     @login_manager.user_loader
     def load_user(user_id):
+        # NOTE: SQLAlchemy 2.x style get
         return db.session.get(User, int(user_id))
 
     # --- Register routes ---
     routes_public.register(app)
     routes_admin.register(app)
-
-    # --- Language switcher ---
+    
+    # --- Internationalization support ---
     translations = {
         'en': {
             'brand_left': 'CARLOS',
@@ -92,8 +63,8 @@ def create_app() -> Flask:
             'form_email': 'Email',
             'form_message': 'Message',
             'form_send': 'Send',
-            'contact_success': 'Thank you! Your message was sent successfully.',
-        },
+            },
+        
         'es': {
             'brand_left': 'CARLOS',
             'brand_right': '_SIBRIAN',
@@ -107,7 +78,6 @@ def create_app() -> Flask:
             'form_email': 'Correo',
             'form_message': 'Mensaje',
             'form_send': 'Enviar',
-            'contact_success': '¡Gracias! Tu mensaje fue enviado correctamente.'
         }
     }
 
@@ -120,9 +90,11 @@ def create_app() -> Flask:
             return translations.get(lang, {}).get(key, key)
         return {'current_lang': current_lang, 't': t}
 
-    # --- CLI commands ---
+    # --- CLI: create admin from env vars ---
     @app.cli.command("create-admin")
     def create_admin():
+        """Create or update an admin user from ENV variables."""
+        from werkzeug.security import generate_password_hash
         email = os.getenv("ADMIN_EMAIL")
         password = os.getenv("ADMIN_PASSWORD")
         name = os.getenv("ADMIN_NAME", "Admin")
@@ -141,7 +113,6 @@ def create_app() -> Flask:
         print(f"Admin ready: {email}")
 
     return app
-
 
 # Development entrypoint
 if __name__ == "__main__":
