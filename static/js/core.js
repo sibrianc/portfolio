@@ -2,6 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('intro-overlay');
   const enterButton = document.getElementById('enter-button');
 
+  function spawnComet() {
+    const comet = document.createElement('div');
+    comet.className = 'comet';
+    document.body.appendChild(comet);
+    comet.style.left = Math.random() * window.innerWidth + 'px';
+    setTimeout(() => comet.remove(), 4000);
+  }
+
   if (!overlay || !enterButton) return;
 
   const requestFullscreen = () => {
@@ -29,4 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.classList.add('fade-out');
     triggerFullscreen();
   });
+
+  setInterval(spawnComet, 30000);
 });
