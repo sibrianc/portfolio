@@ -1,12 +1,38 @@
 {% extends "layout/base.html" %}
 {% block title %}{{ t('about') }} – Carlos Sibrian{% endblock %}
+{% block body_class %}page-dusk{% endblock %}
 {% block content %}
-<div class="container py-5">
-  <h1 class="mb-4 text-light">{{ t('about') }}</h1>
-  <p class="text-light-75">
-    <!-- About page content placeholder; replace with your own information -->
-    Hello! I'm Carlos Sibrian, a full-stack developer with a passion for creating dynamic and engaging web applications. 
-    In this section I will include a minigame.
-  </p>
-</div>
+<section class="scene scene-dusk" id="aboutScene">
+  <div class="scene-bg" aria-hidden="true"></div>
+  <div class="scene-grid" aria-hidden="true"></div>
+  <div class="scene-content container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="home-kicker">{{ t('about') }}</div>
+      <a class="link-glow" href="{{ url_for('projects_list') }}">{{ t('projects') }} →</a>
+    </div>
+    <div class="about-shell">
+      <div class="panel" data-depth="0.05">
+        <div class="panel-body holo-avatar">
+          <div class="tag">El Tunco · Calm sunset</div>
+          <img src="{{ url_for('static', filename='img/branding.png') }}" alt="Holographic avatar" class="img-fluid">
+          <p class="text-light-75">Blend of product engineering, motion, and polished UI inspired by Mario Iliev's restrained neon gradients.</p>
+        </div>
+      </div>
+      <div class="panel" data-depth="0.03">
+        <div class="panel-body">
+          <h1 class="text-light mb-2">{{ t('about') }}</h1>
+          <p class="text-light-75">I'm Carlos Sibrian, a full-stack developer focusing on thoughtful experiences over spectacle. I enjoy shaping products with Flask backends, React frontends, and deliberate, minimal visuals. Outside work I sketch coastal sunsets and experiment with subtle animation curves.</p>
+          <div class="skills-grid mt-2">
+            <div class="skill-chip">Product engineering</div>
+            <div class="skill-chip">Flask & APIs</div>
+            <div class="skill-chip">React & motion</div>
+            <div class="skill-chip">Design systems</div>
+            <div class="skill-chip">CSS artistry</div>
+            <div class="skill-chip">Remote teamwork</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
