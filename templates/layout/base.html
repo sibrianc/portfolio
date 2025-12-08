@@ -18,7 +18,7 @@
 </head>
 
 {% set page_class = (request.endpoint.split('.')[-1] if request.endpoint else 'page') + '-page' %}
-<body class="{{ page_class }}">
+<body class="{{ page_class }} preload">
   <script>
     // Si venimos de una navegación con agujero negro, ocultar contenido inicial
     if (localStorage.getItem('blackhole')) {
