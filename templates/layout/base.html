@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 
-<body class="bg-cyber d-flex flex-column min-vh-100">
+<body class="bg-cyber d-flex flex-column min-vh-100 {% block body_class %}{% endblock %}">
   <script>
     // Si venimos de una navegación con agujero negro, ocultar contenido inicial
     if (localStorage.getItem('blackhole')) {
