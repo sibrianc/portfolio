@@ -1,30 +1,73 @@
+
+/* Global palette and layout tokens */
 :root {
-  --bg: #0f0f12;
-  --txt: #e8e8ee;
+  --color-home-start: #0a0f2c;
+  --color-home-end: #4B0082;
+  --color-about-start: #FF8C00;
+  --color-about-end: #240B36;
+  --color-contact-start: #00FFA2;
+  --color-contact-end: #00110f;
+  --txt: #f0f0f0;
   --purple: #7A56FF;
-  --purple-2: #A18BFF;
-  --neon: #2ddd5c;
+  --neon: #00ffa2;
   --border: #2a2a35;
-  --bg-gradient-home: radial-gradient(circle at bottom, #0a0114, #1a043b, #3d0747);
-  --bg-gradient-about: radial-gradient(circle at center, #1e002e, #601d63, #a8488b);
-  --bg-gradient-contact: radial-gradient(circle at top, #001300, #004300, #146d46);
 }
 
-/* Base styles */
-body.bg-cyber {
-  background-color: var(--bg);
-  color: var(--txt);
-  font-family: 'Inter', sans-serif;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  color: #f0f0f0;
+  background-color: #000;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow-x: hidden;
-  position: relative;      /* create a stacking context for children */
 }
 
-/* Always keep main content above stars and space sprites */
-.nav-cyber,
+main {
+  flex: 1;
+}
+
+a {
+  color: #00ffa2;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover,
+a:focus-visible {
+  color: #7af7d1;
+}
+
+nav,
 main,
 footer {
   position: relative;
   z-index: 1;
+}
+
+.home-page {
+  background: linear-gradient(180deg, var(--color-home-start), var(--color-home-end));
+}
+
+.about-page {
+  background: linear-gradient(180deg, var(--color-about-start), var(--color-about-end));
+}
+
+.contact-page {
+  background: linear-gradient(180deg, var(--color-contact-start), var(--color-contact-end));
+}
+
+.projects_list-page,
+.project_detail-page,
+.page-page {
+  background: #000;
 }
 
 
@@ -70,7 +113,7 @@ footer {
 
 /* Landing overlay */
 #intro-overlay {
-  background: var(--bg-gradient-home);
+  background: radial-gradient(circle at bottom, var(--color-home-start), var(--color-home-end));
   width: 100vw;
   height: 100vh;
   display: flex;
