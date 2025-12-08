@@ -1,12 +1,41 @@
 {% extends "layout/base.html" %}
 {% block title %}{{ t('about') }} – Carlos Sibrian{% endblock %}
+{% block body_class %}page-dusk{% endblock %}
 {% block content %}
-<div class="container py-5">
-  <h1 class="mb-4 text-light">{{ t('about') }}</h1>
-  <p class="text-light-75">
-    <!-- About page content placeholder; replace with your own information -->
-    Hello! I'm Carlos Sibrian, a full-stack developer with a passion for creating dynamic and engaging web applications. 
-    In this section I will include a minigame.
-  </p>
-</div>
+<section class="scene scene-dusk" id="aboutScene">
+  <div class="layer dusk-gradient" aria-hidden="true"></div>
+  <div class="layer dusk-sun" aria-hidden="true"></div>
+  <div class="layer dusk-ocean" aria-hidden="true">
+    <div class="horizon-line"></div>
+    <div class="tunco-rock"></div>
+  </div>
+  <div class="layer dusk-palms" aria-hidden="true">
+    <div class="palm palm-left"></div>
+    <div class="palm palm-right"></div>
+  </div>
+
+  <div class="scene-content container">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <div class="holo-avatar" data-depth="0.08">
+          <div class="holo-glow"></div>
+          <img src="{{ url_for('static', filename='img/branding.png') }}" alt="Holographic avatar" class="img-fluid">
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <p class="eyebrow">El Tunco · Sunset flow</p>
+        <h1 class="mb-3 text-light">{{ t('about') }}</h1>
+        <p class="text-light-75">Hello! I'm Carlos Sibrian, a full-stack developer blending product thinking with playful visuals. I love crafting immersive experiences with Python, Flask, modern JavaScript, and bright neon aesthetics inspired by my hometown.</p>
+        <div class="skills-grid mt-4">
+          <div class="skill-chip">Flask · APIs</div>
+          <div class="skill-chip">React · SPA</div>
+          <div class="skill-chip">PostgreSQL</div>
+          <div class="skill-chip">GSAP motion</div>
+          <div class="skill-chip">UI Systems</div>
+          <div class="skill-chip">3D CSS toys</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

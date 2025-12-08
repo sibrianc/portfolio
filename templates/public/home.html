@@ -1,73 +1,87 @@
 {% extends "layout/base.html" %}
 {% block title %}{{ t('home') }} – Carlos Sibrian{% endblock %}
+{% block body_class %}page-night{% endblock %}
 {% block content %}
+<section class="scene scene-night" id="homeScene">
+  <div class="layer night-sky" aria-hidden="true"></div>
+  <div class="layer night-gradient" aria-hidden="true"></div>
+  <div class="layer night-horizon" aria-hidden="true">
+    <div class="cityline"></div>
+    <div class="volcano"></div>
+  </div>
+  <div class="layer floating-islands" aria-hidden="true">
+    <div class="island" data-depth="0.05">
+      <div class="island-body"></div>
+      <div class="island-buildings">
+        <span class="tower"></span>
+        <span class="tower tall"></span>
+        <span class="tower small"></span>
+      </div>
+      <div class="monument">
+        <div class="base"></div>
+        <div class="column"></div>
+        <div class="orb"></div>
+      </div>
+    </div>
+    <div class="island island-secondary" data-depth="0.12">
+      <div class="island-body"></div>
+      <div class="island-buildings compact">
+        <span class="tower"></span>
+        <span class="tower small"></span>
+      </div>
+    </div>
+  </div>
+  <div class="layer rockets" aria-hidden="true">
+    <div class="rocket"></div>
+    <div class="rocket alt"></div>
+  </div>
 
-<!-- Hero Section -->
-<section class="hero-cyber text-center text-lg-start py-5">
-  <div class="container">
-    <div class="row align-items-center">
-      <!-- Hero text content -->
+  <div class="scene-content container">
+    <div class="row align-items-center g-4">
       <div class="col-lg-6">
         <div class="badge-name mb-3">
           <div class="line-1">{{ t('brand_left') }}</div>
           <div class="line-2 text-purple">{{ t('brand_right') }}</div>
         </div>
         <p class="lead text-light-75">{{ t('hero_tagline') }}</p>
-        <a class="btn btn-lg btn-cta mt-3" href="{{ url_for('contact') }}">{{ t('cta') }}</a>
+        <div class="d-flex flex-wrap gap-3 align-items-center">
+          <a class="btn btn-lg btn-cta" href="{{ url_for('contact') }}">{{ t('cta') }}</a>
+          <a class="link-glow" href="{{ url_for('projects_list') }}">{{ t('projects') }} →</a>
+        </div>
       </div>
-      <!-- Hero image / avatar -->
-       <!-- Hero image / avatar with framed card -->
-<div class="col-lg-6 text-center">
-  <div class="card bg-dark bg-opacity-75 border-light shadow-lg d-inline-block p-3" 
-       style="border-radius: 12px; max-width: 280px;">
-    <img src="{{ url_for('static', filename='img/branding.png') }}" 
-         alt="Avatar Branding" 
-         class="img-fluid rounded mb-3"
-         style="max-width: 240px; border-radius: 8px;">
-    <p class="text-light-75 fst-italic mb-0">
-      “Transforming ideas into digital realities.”
-    </p>
-  </div>
-</div>
-  </div>
-</section>
+      <div class="col-lg-6 text-center">
+        <div class="avatar-card" data-depth="0.08">
+          <img src="{{ url_for('static', filename='img/branding.png') }}" alt="Avatar Branding" class="img-fluid">
+          <p class="text-light-75 fst-italic mb-0">“Transforming ideas into digital realities.”</p>
+        </div>
+      </div>
+    </div>
 
-<!-- Featured Projects Carousel -->
-<section class="featured-projects py-5">
-  <div class="container text-center">
-    <h2 class="text-light mb-4">Featured Projects</h2>
-    <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
+    <div class="project-deck mt-5">
+      {% if featured %}
         {% for project in featured %}
-          <div class="carousel-item {% if loop.first %}active{% endif %}">
-            <div class="row justify-content-center">
-              <div class="col-md-6 col-lg-4">
-                <div class="card bg-dark h-100 border-light">
-                  {% if project.cover_image %}
-                    <img src="{{ project.cover_image }}" class="card-img-top" alt="{{ project.title }}">
-                  {% endif %}
-                  <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-light">{{ project.title }}</h5>
-                    <p class="card-text text-light-75">{{ project.summary }}</p>
-                    <a href="{{ url_for('project_detail', slug=project.slug) }}" class="mt-auto btn btn-sm btn-cta">View Details</a>
-                  </div>
-                </div>
-              </div>
+          <article class="project-card floating-card" data-depth="0.03">
+            <div class="card-glow"></div>
+            <div class="project-card__body">
+              <div class="project-meta">Featured Project</div>
+              <h3>{{ project.title }}</h3>
+              <p class="text-light-75">{{ project.summary }}</p>
+              <a href="{{ url_for('project_detail', slug=project.slug) }}" class="btn btn-ghost">View details</a>
             </div>
-          </div>
+          </article>
         {% endfor %}
-      </div>
-      <!-- Carousel controls -->
-      <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
+      {% else %}
+        <article class="project-card floating-card" data-depth="0.03">
+          <div class="card-glow"></div>
+          <div class="project-card__body">
+            <div class="project-meta">Upcoming</div>
+            <h3>New cosmic builds on the way</h3>
+            <p class="text-light-75">Featured projects will orbit here as soon as they are published.</p>
+            <a href="{{ url_for('projects_list') }}" class="btn btn-ghost">Browse projects</a>
+          </div>
+        </article>
+      {% endif %}
     </div>
   </div>
 </section>
-
 {% endblock %}
