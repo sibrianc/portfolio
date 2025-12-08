@@ -10,8 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => comet.remove(), 4000);
   }
 
-  if (!overlay || !enterButton) return;
-
   const requestFullscreen = () => {
     const docEl = document.documentElement;
 
@@ -33,9 +31,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  enterButton.addEventListener('click', () => {
-    overlay.classList.add('fade-out');
-    triggerFullscreen();
+  if (overlay && enterButton) {
+    enterButton.addEventListener('click', () => {
+      overlay.classList.add('fade-out');
+      triggerFullscreen();
+    });
+  }
+
+  const currentURL = window.location.pathname;
+  const links = document.querySelectorAll('.orbit-menu a');
+  links.forEach((link) => {
+    if (link.getAttribute('href') === currentURL) {
+      link.style.boxShadow = '0 0 20px #ffffff';
+    }
   });
 
   setInterval(spawnComet, 30000);
