@@ -11,6 +11,11 @@ const menuBtn = document.getElementById('menu-btn');
 const navOverlay = document.getElementById('nav-overlay');
 
 if (menuBtn && navOverlay) {
+  const closeMenu = () => {
+    menuBtn.classList.remove('open');
+    navOverlay.classList.remove('active');
+  };
+
   menuBtn.addEventListener('click', () => {
     menuBtn.classList.toggle('open');
     navOverlay.classList.toggle('active');
@@ -19,8 +24,19 @@ if (menuBtn && navOverlay) {
   // Close menu when a link is clicked (for single-page experience or just to hide after navigation)
   document.querySelectorAll('.nav-menu a').forEach(link => {
     link.addEventListener('click', () => {
-      menuBtn.classList.remove('open');
-      navOverlay.classList.remove('active');
+      closeMenu();
     });
+  });
+
+  navOverlay.addEventListener('click', event => {
+    if (event.target === navOverlay) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closeMenu();
+    }
   });
 }
