@@ -40,3 +40,36 @@ if (menuBtn && navOverlay) {
     }
   });
 }
+
+const TRANSITION_DURATION = 500;
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.body.classList.remove('preload');
+
+  document.querySelectorAll('.nav-menu a').forEach(link => {
+    link.addEventListener('click', event => {
+      if (
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        event.altKey ||
+        link.target === '_blank'
+      ) {
+        return;
+      }
+
+      const href = link.getAttribute('href');
+
+      if (!href || href.startsWith('#')) {
+        return;
+      }
+
+      event.preventDefault();
+      document.body.classList.add('fade-out');
+
+      setTimeout(() => {
+        window.location.href = link.href;
+      }, TRANSITION_DURATION);
+    });
+  });
+});

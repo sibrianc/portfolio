@@ -28,6 +28,16 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+body.fade-out {
+  opacity: 0;
+}
+
+body.preload {
+  opacity: 0;
 }
 
 main {
