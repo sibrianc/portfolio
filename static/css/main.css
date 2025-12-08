@@ -222,6 +222,7 @@ footer {
   overflow: hidden;
   z-index: 0;
   pointer-events: none;
+  transition: transform 0.1s ease-out;
 }
 
 .home-content {
@@ -670,6 +671,7 @@ footer {
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
+  transition: transform 0.1s ease-out;
 }
 
 @keyframes sun-pulse {
@@ -935,6 +937,7 @@ footer {
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
+  transition: transform 0.1s ease-out;
 }
 
 .sun-center {

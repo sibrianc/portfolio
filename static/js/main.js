@@ -93,3 +93,30 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// Parallax effect for background elements
+document.addEventListener('mousemove', event => {
+  const { innerWidth: w, innerHeight: h } = window;
+  const x = event.clientX / w - 0.5;
+  const y = event.clientY / h - 0.5;
+
+  const homeBg = document.querySelector('.home-bg');
+  const aboutBg = document.querySelector('.about-bg');
+  const contactBg = document.querySelector('.contact-bg');
+
+  const maxTranslate = 20;
+  const translateX = -x * maxTranslate;
+  const translateY = -y * maxTranslate;
+
+  if (homeBg) {
+    homeBg.style.transform = `translate(${translateX}px, ${translateY}px)`;
+  }
+
+  if (aboutBg) {
+    aboutBg.style.transform = `translate(${translateX}px, ${translateY}px)`;
+  }
+
+  if (contactBg) {
+    contactBg.style.transform = `translate(${translateX}px, ${translateY}px)`;
+  }
+});
