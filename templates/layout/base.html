@@ -33,6 +33,15 @@
   <img class="corner corner-tr" src="{{ url_for('static', filename='img/decor/corner-tr.svg') }}" alt="" aria-hidden="true">
   <img class="corner corner-bl" src="{{ url_for('static', filename='img/decor/corner-bl.svg') }}" alt="" aria-hidden="true">
 
+  <nav id="orbital-nav" aria-label="Planetary navigation">
+    <ul class="orbit-menu">
+      <li class="planet" style="--i:0;"><a href="{{ url_for('public.home') }}" aria-label="Home"></a></li>
+      <li class="planet" style="--i:1;"><a href="{{ url_for('public.about') }}" aria-label="About"></a></li>
+      <li class="planet" style="--i:2;"><a href="{{ url_for('public.project_list') }}" aria-label="Projects"></a></li>
+      <li class="planet" style="--i:3;"><a href="{{ url_for('public.contact') }}" aria-label="Contact"></a></li>
+    </ul>
+  </nav>
+
   <div id="intro-overlay">
     <div id="central-orb">
       <div id="orb-rings"></div>
