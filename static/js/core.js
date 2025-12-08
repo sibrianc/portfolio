@@ -22,7 +22,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const triggerFullscreen = () => {
     if (document.fullscreenElement) return;
 
+    // Check if user has already been prompted
+    const fullscreenPref = localStorage.getItem('fullscreen-prompted');
+    if (fullscreenPref === 'declined') return;
+    if (fullscreenPref === 'accepted') {
+      const result = requestFullscreen();
+      if (result && typeof result.catch === 'function') {
+        result.catch(() => {});
+      }
+      return;
+    }
+
     const wantsFullscreen = window.confirm('View the experience in fullscreen?');
+    localStorage.setItem('fullscreen-prompted', wantsFullscreen ? 'accepted' : 'declined');
     if (!wantsFullscreen) return;
 
     const result = requestFullscreen();
