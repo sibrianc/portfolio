@@ -5,80 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Carlos Sibrian – Portfolio{% endblock %}</title>
 
-  <!-- Fonts and Bootstrap CSS -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Main site CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 
-<body class="bg-cyber d-flex flex-column min-vh-100">
-  <script>
-    // Si venimos de una navegación con agujero negro, ocultar contenido inicial
-    if (localStorage.getItem('blackhole')) {
-        document.body.style.opacity = '0';
-        document.body.style.transform = 'scale(0)';
-        document.body.style.transformOrigin = localStorage.getItem('bhX') + 'px ' + localStorage.getItem('bhY') + 'px';
-
-    }
-    </script>
-  <!-- Flickering stars background -->
-  <div class="cy-stars" aria-hidden="true"></div>
-  <div class="cy-space" aria-hidden="true"></div>
-
+<body>
   
+  <!-- Canvas Background (Fijo para todas las páginas o solo home, controlado por CSS/JS) -->
+  <div id="canvas-container">
+    <canvas id="canvas"></canvas>
+  </div>
 
-  
-  <img class="corner corner-tr" src="{{ url_for('static', filename='img/decor/corner-tr.svg') }}" alt="" aria-hidden="true">
-  <img class="corner corner-bl" src="{{ url_for('static', filename='img/decor/corner-bl.svg') }}" alt="" aria-hidden="true">
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg nav-cyber">
+  <!-- Navbar Block (Sobreescribible por home.html) -->
+  {% block navbar %}
+  <nav class="navbar navbar-expand-lg navbar-dark bg-transparent border-bottom border-secondary" style="background: rgba(0,0,0,0.8) !important; backdrop-filter: blur(10px);">
     <div class="container">
-      <!-- Brand / Logo -->
-      <a class="navbar-brand fw-bold tracking-wide" href="{{ url_for('index') }}">
-        CARLOS<span class="brand-accent">_SIBRIAN</span>
+      <a class="navbar-brand fw-bold" href="{{ url_for('index') }}" style="color: #bd4b00; letter-spacing: 2px;">
+        CARLOS_SIBRIAN
       </a>
-      <!-- Mobile toggle button -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" 
               aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <!-- Nav links -->
       <div id="nav" class="collapse navbar-collapse justify-content-center">
         <ul class="navbar-nav text-center">
-          <li class="nav-item"><a class="btn btn-cyber" href="{{ url_for('index') }}">{{ t('home') }}</a></li>
-          <li class="nav-item"><a class="btn btn-cyber" href="{{ url_for('about') }}">{{ t('about') }}</a></li>
-          <li class="nav-item"><a class="btn btn-cyber" href="{{ url_for('projects_list') }}">{{ t('projects') }}</a></li>
-          <li class="nav-item"><a class="btn btn-cyber" href="{{ url_for('contact') }}">{{ t('contact') }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">{{ t('home') }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">{{ t('about') }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('projects_list') }}">{{ t('projects') }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}">{{ t('contact') }}</a></li>
         </ul>
       </div>
-      <!-- Language toggle pill -->
-      <a class="cy-lang-toggle ms-lg-3" href="{{ url_for('switch_lang', code='en' if current_lang()=='es' else 'es') }}">
-        <span class="cy-pill">{{ current_lang()|upper }}</span>
+      <a class="btn btn-sm btn-outline-light ms-lg-3 rounded-pill px-3" href="{{ url_for('switch_lang', code='en' if current_lang()=='es' else 'es') }}">
+        {{ current_lang()|upper }}
       </a>
     </div>
   </nav>
+  {% endblock %}
 
-  <main class="container py-5 flex-fill">
+  <!-- Main Content -->
+  <main>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
+        <div class="container mt-4 position-relative" style="z-index: 20;">
         {% for cat, msg in messages %}
           <div class="alert alert-{{ cat }}">{{ msg }}</div>
         {% endfor %}
+        </div>
       {% endif %}
     {% endwith %}
+    
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="navbar-brand small text-center">
-    © {{ 2025 }} Carlos Sibrian
+  <!-- Footer -->
+  {% block footer %}
+  <footer class="text-center py-4 position-relative" style="z-index: 10; color: #555; font-size: 0.8rem;">
+    © 2025 Carlos Sibrian
   </footer>
+  {% endblock %}
 
-  <!-- Bootstrap JS bundle and custom stars script -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="{{ url_for('static', filename='js/stars.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/blackhole.js') }}"></script>
+  <!-- Lógica Principal (Geometric Horizon) -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

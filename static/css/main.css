@@ -1,226 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+
 :root {
-  --bg: #0f0f12;
-  --txt: #e8e8ee;
-  --purple: #7A56FF;
-  --purple-2: #A18BFF;
-  --neon: #2ddd5c;
-  --border: #2a2a35;
+  --bg-dark: #050505;
+  --accent: #bd4b00; 
+  --accent-hover: #ff5500;
+  --text-main: #ffffff;
 }
 
-/* Base styles */
-body.bg-cyber {
-  background-color: var(--bg);
-  color: var(--txt);
-  font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
-  position: relative;      /* create a stacking context for children */
-}
-
-/* Always keep main content above stars and space sprites */
-.nav-cyber,
-main,
-footer {
-  position: relative;
-  z-index: 1;
-}
-
-
-/* Flickering stars background */
-.cy-stars {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.cy-star {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
-  opacity: 0.8;
-  animation-name: cy-flicker;
-  animation-iteration-count: infinite;
-}
-@keyframes cy-flicker {
-  0%, 100% { opacity: 0.2; transform: scale(0.9); }
-  10%, 20%, 50%, 70% { opacity: 1; transform: scale(1); }
-  30%, 60%, 80% { opacity: 0.4; transform: scale(0.95); }
-}
-
-
-
-/* Decorative corner images */
-.corner {
-  position: fixed;
-  z-index: 1;
-  pointer-events: none;
-}
-.corner-tr {
-  top: 0;
-  right: 0;
-  width: 280px;
-}
-.corner-bl {
-  bottom: 0;
-  left: 0;
-  width: 220px;
-}
-
-/* Navbar styles */
-.nav-cyber {
-  background: rgba(15, 15, 18, 0.9);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border);
-}
-.navbar-brand {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  /* Add white text color */
-  color: #fff;
-}
-.navbar-toggler {
-  border: none;
-  filter: invert(1);
-}
-.navbar-collapse {
-  background: rgba(15, 15, 18, 0.97);
-}
-.navbar-nav .btn-cyber {
-  display: block;
+body, html {
+  margin: 0;
+  padding: 0;
   width: 100%;
-  margin: 0.25rem 0;
-  border: none; /* Remove border for nav links */
-}
-@media (min-width: 992px) {
-  .navbar-collapse { background: transparent; }
-  .navbar-nav .btn-cyber {
-    display: inline-block;
-    width: auto;
-    margin: 0 0.5rem;
-  }
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  /* CAMBIO IMPORTANTE: Fondo transparente para ver el canvas que está en z-index -1 */
+  background-color: transparent; 
+  color: var(--text-main);
+  overflow-x: hidden;
 }
 
-/* Language toggle pill */
-.cy-lang-toggle .cy-pill {
-  display: inline-block;
-  min-width: 56px;
+/* --- CANVAS BACKGROUND --- */
+#canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Se queda detrás de todo */
+  background-color: #050505; /* El color base negro va aquí, por si el JS falla */
+}
+canvas {
+  display: block;
+}
+
+/* --- UI OVERLAY (Títulos SIVAR) --- */
+#ui-layer {
+  position: absolute;
+  bottom: 30px;
+  left: 40px; 
+  text-align: left;
+  pointer-events: none;
+  z-index: 10;
+}
+.title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--accent); 
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.subtitle {
+  font-size: 0.7rem;
+  color: #5e1919;
+  letter-spacing: 2px;
+  margin-top: 2px;
+  font-weight: bold;
+}
+
+/* --- MENU CUBO --- */
+#menu-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
   text-align: center;
-  color: #111;
-  background: #fff;
-  border-radius: 999px;
-  padding: 0.25rem 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 0 0 2px rgba(122, 86, 255, 0.25), 0 8px 18px rgba(122, 86, 255, 0.2);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none; 
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 30px;
+  border: 1px solid rgba(255, 100, 0, 0.2);
+  clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
 }
-.cy-lang-toggle:hover .cy-pill {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 3px rgba(122, 86, 255, 0.35), 0 12px 24px rgba(122, 86, 255, 0.28);
+.menu-item {
+  display: block;
+  margin: 12px 0;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+}
+.menu-item::before {
+  content: '>';
+  position: absolute;
+  left: -15px;
+  opacity: 0;
+  color: #ff5500;
+  transition: opacity 0.2s, left 0.2s;
+}
+.menu-item:hover { color: #ff5500; }
+.menu-item:hover::before { opacity: 1; left: -20px; }
+.menu-active {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+  pointer-events: auto !important;
 }
 
-/* Hero section */
-.hero-cyber {
-  min-height: 75vh;
+/* Estilos para Featured Projects y otros contenedores */
+.carousel-container-custom {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  padding: 30px 10px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.carousel-container-custom::-webkit-scrollbar { display: none; }
+
+.project-card-custom {
+  flex: 0 0 350px;
+  background: rgba(20, 10, 10, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(189, 75, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.project-card-custom:hover {
+  transform: translateY(-10px);
+  border-color: var(--accent);
+  box-shadow: 0 10px 40px rgba(189, 75, 0, 0.3);
+}
+.card-img-custom {
+  width: 100%;
+  height: 200px;
+  background-color: #0f0505;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--border);
+  justify-content: center;
+  font-size: 4rem;
+  color: #333;
 }
-.badge-name {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  text-transform: uppercase;
+.card-content-custom {
+  padding: 25px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
-.badge-name .line-1,
-.badge-name .line-2 {
-  display: block;
+.card-title-custom { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; color: #fff; }
+.card-desc-custom { font-size: 0.95rem; color: #aaaaaa; margin-bottom: 25px; line-height: 1.5; flex-grow: 1; }
+.btn-details-custom {
+  display: block; text-align: center; padding: 12px; background: transparent;
+  border: 1px solid var(--accent); color: var(--accent); text-transform: uppercase;
+  font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; text-decoration: none;
+  border-radius: 4px; transition: all 0.3s;
 }
-.text-purple {
-  color: var(--purple);
-}
-.text-light-75 {
-  color: rgba(232, 232, 238, 0.75);
-}
-.tracking-wide {
-  letter-spacing: 0.05em;
-}
-
-/* Buttons */
-.btn-cyber {
-  color: var(--txt);
-  background: transparent;
-  border: 1px solid var(--purple);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-.btn-cyber:hover {
-  background: rgba(122, 86, 255, 0.2);
-  transform: translateY(-1px);
-  box-shadow: 0 0 8px rgba(122, 86, 255, 0.5);
-}
-.btn-cta {
-  color: #111;
-  background: var(--neon);
-  border: none;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  box-shadow: 0 0 9px var(--neon), 0 0 12px var(--neon);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.btn-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 12px var(--neon), 0 0 30px var(--neon);
-}
-
-/* Brand accent in logo */
-.brand-accent {
-  color: var(--neon);
-}
-
-/* Form elements (dark theme form controls) */
-.form-control, .form-select {
-  background-color: #111;
-  color: var(--txt);
-  border: 1px solid var(--border);
-}
-.form-control:focus, .form-select:focus {
-  border-color: var(--purple);
-  box-shadow: 0 0 0 0.2rem rgba(122, 86, 255, 0.25);
-}
-
-html, body {
-  overflow-x: hidden;
-}
-.container, .row, .col {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* Black hole effect styles */
-.black-hole {
-  position: fixed;
-  width: 50px;
-  height: 50px;
-  background: #000;
-  border-radius: 50%;
-  z-index: 999;
-  box-shadow: 0 0 20px 5px var(--purple);  /* halo púrpura alrededor */
-  animation: bh-grow 0.4s ease-out forwards;
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-}
-@keyframes bh-grow {
-  from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-  to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-/* === Space sprites layer (nebula, later astronaut & comets) ====== */
-
-.cy-space {
-  position: fixed;
-  inset: 0;
-  z-index: 0;          /* same level as stars, but appears above them in DOM */
-  pointer-events: none;
-}
-
+.btn-details-custom:hover { background: var(--accent); color: #000; }
+.btn-link-custom { color: #fff; text-decoration: none; font-size: 1.1rem; border-bottom: 1px solid transparent; transition: border-color 0.3s; }
+.btn-link-custom:hover { border-color: var(--accent); color: var(--accent); }

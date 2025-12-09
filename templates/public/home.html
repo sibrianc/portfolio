@@ -1,73 +1,71 @@
 {% extends "layout/base.html" %}
 {% block title %}{{ t('home') }} – Carlos Sibrian{% endblock %}
+
+{# Ocultamos la navbar estándar en el Home #}
+{% block navbar %}{% endblock %}
+
 {% block content %}
 
-<!-- Hero Section -->
-<section class="hero-cyber text-center text-lg-start py-5">
-  <div class="container">
-    <div class="row align-items-center">
-      <!-- Hero text content -->
-      <div class="col-lg-6">
-        <div class="badge-name mb-3">
-          <div class="line-1">{{ t('brand_left') }}</div>
-          <div class="line-2 text-purple">{{ t('brand_right') }}</div>
-        </div>
-        <p class="lead text-light-75">{{ t('hero_tagline') }}</p>
-        <a class="btn btn-lg btn-cta mt-3" href="{{ url_for('contact') }}">{{ t('cta') }}</a>
-      </div>
-      <!-- Hero image / avatar -->
-       <!-- Hero image / avatar with framed card -->
-<div class="col-lg-6 text-center">
-  <div class="card bg-dark bg-opacity-75 border-light shadow-lg d-inline-block p-3" 
-       style="border-radius: 12px; max-width: 280px;">
-    <img src="{{ url_for('static', filename='img/branding.png') }}" 
-         alt="Avatar Branding" 
-         class="img-fluid rounded mb-3"
-         style="max-width: 240px; border-radius: 8px;">
-    <p class="text-light-75 fst-italic mb-0">
-      “Transforming ideas into digital realities.”
-    </p>
-  </div>
+<div id="ui-layer">
+    <div class="title">2077</div>
+    <div class="subtitle">SIVAR_HORIZON</div>
 </div>
-  </div>
-</section>
 
-<!-- Featured Projects Carousel -->
-<section class="featured-projects py-5">
-  <div class="container text-center">
-    <h2 class="text-light mb-4">Featured Projects</h2>
-    <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        {% for project in featured %}
-          <div class="carousel-item {% if loop.first %}active{% endif %}">
-            <div class="row justify-content-center">
-              <div class="col-md-6 col-lg-4">
-                <div class="card bg-dark h-100 border-light">
-                  {% if project.cover_image %}
-                    <img src="{{ project.cover_image }}" class="card-img-top" alt="{{ project.title }}">
-                  {% endif %}
-                  <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-light">{{ project.title }}</h5>
-                    <p class="card-text text-light-75">{{ project.summary }}</p>
-                    <a href="{{ url_for('project_detail', slug=project.slug) }}" class="mt-auto btn btn-sm btn-cta">View Details</a>
-                  </div>
-                </div>
-              </div>
-            </div>
+<div id="menu-container">
+    <a href="{{ url_for('about') }}" class="menu-item">{{ t('about') }}</a>
+    <a href="{{ url_for('projects_list') }}" class="menu-item">{{ t('projects') }}</a>
+    <a href="{{ url_for('contact') }}" class="menu-item">{{ t('contact') }}</a>
+</div>
+<!-- ESPACIADOR HERO (100vh para ver el arte limpio) -->
+<div style="height: 100vh; width: 100%;"></div>
+
+<!-- SECCIÓN DE PROYECTOS DESTACADOS -->
+<div id="featured-section" class="container-fluid py-5 position-relative" style="z-index: 10; background: linear-gradient(to bottom, transparent, #050505 15%, #050505 100%); min-height: 100vh;">
+  
+  <div class="container mt-5">
+    <div class="text-center mb-5">
+      <h2 class="text-light fw-bold display-5 text-uppercase" style="letter-spacing: 3px; text-shadow: 0 0 20px rgba(189, 75, 0, 0.5);">Featured Projects</h2>
+      <p class="text-secondary">Selected works from the archive</p>
+    </div>
+
+    <!-- Carrusel Horizontal -->
+    <div class="carousel-container-custom">
+      {% for project in featured %}
+        <div class="project-card-custom">
+          <!-- Imagen de portada o Placeholder -->
+          <div class="card-img-custom">
+            {% if project.cover_image %}
+               <img src="{{ project.cover_image }}" alt="{{ project.title }}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+            {% else %}
+               <span>🚀</span>
+            {% endif %}
           </div>
-        {% endfor %}
-      </div>
-      <!-- Carousel controls -->
-      <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
+          
+          <div class="card-content-custom">
+            <h3 class="card-title-custom">{{ project.title }}</h3>
+            <p class="card-desc-custom">{{ project.summary | truncate(120) }}</p>
+            <a href="{{ url_for('project_detail', slug=project.slug) }}" class="btn-details-custom">View Details</a>
+          </div>
+        </div>
+      {% else %}
+        <div class="text-center w-100 py-5 text-muted">
+          <h4>No featured projects found.</h4>
+          <p>Add some projects in the admin panel.</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-5 pt-4">
+      <a href="{{ url_for('projects_list') }}" class="btn-link-custom">Back to All Projects &rarr;</a>
     </div>
   </div>
-</section>
+
+  <footer class="text-center text-secondary mt-5 pt-5 pb-3">
+    <small>© 2025 Carlos Sibrian</small>
+  </footer>
+</div>
 
 {% endblock %}
+
+{# Ocultar footer por defecto del base.html en home #}
+{% block footer %}{% endblock %}
