@@ -16,8 +16,16 @@ def admin_only(f):
     return wrapper
 
 def register(app):
-    # Por ahora, ruta fija para evitar problemas con Windows/Git
-    login_path = "/admin/login"
+    # Leemos la variable de entorno, con default seguro
+    raw_login_path = os.getenv("ADMIN_LOGIN_PATH", "/admin/login") or "/admin/login"
+
+    # Normalizamos: cambiamos backslashes por slashes y quitamos espacios
+    login_path = raw_login_path.replace("\\", "/").strip()
+
+    # Si parece ruta de Windows (tiene ":" tipo C:/...) o no empieza con "/",
+    # la forzamos a un valor seguro
+    if ":" in login_path or not login_path.startswith("/"):
+        login_path = "/admin/login"
 
 
     @app.route(login_path, methods=["GET", "POST"])
