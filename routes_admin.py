@@ -16,8 +16,9 @@ def admin_only(f):
     return wrapper
 
 def register(app):
-    # NOTE: Obfuscate login path via ENV (security by obscurity is not enough, but helps)
-    login_path = os.getenv("ADMIN_LOGIN_PATH", "/admin/login").strip() or "/admin/login"
+    # Por ahora, ruta fija para evitar problemas con Windows/Git
+    login_path = "/admin/login"
+
 
     @app.route(login_path, methods=["GET", "POST"])
     def admin_login():
