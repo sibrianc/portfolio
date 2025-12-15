@@ -9,7 +9,6 @@
 
     const ctx = canvas.getContext('2d');
     
-    // 2. DETECCIÓN INTELIGENTE: ¿Estamos en el Home?
     const menuContainer = document.getElementById('menu-container');
     const isHome = !!menuContainer; 
 
@@ -17,6 +16,7 @@
     let time = 0;
     let mouseX = 0;
     let mouseY = 0;
+    let scrollPercent = 0; // 0.0 (arriba) a 1.0 (abajo)
     
     // Estado del cubo
     let isMenuOpen = false;
@@ -29,12 +29,34 @@
     const sunParticles = [];
     const buildings = [];
     const cubes = [];
+    const clouds = []; // Array para las nubes
 
     // --- CONFIGURACIÓN DE ELEMENTOS ---
-    for(let i=0; i<120; i++) {
-        stars.push({x: Math.random(), y: Math.random() * 0.6, size: Math.random() * 1.3, alpha: Math.random()});
+    
+    // ESTRELLAS: 60 estrellas
+    for(let i=0; i<60; i++) {
+        stars.push({
+            x: Math.random(), 
+            y: Math.random() * 0.75, 
+            size: Math.random() * 2.0, 
+            baseAlpha: Math.random(), 
+            blinkSpeed: 0.02 + Math.random() * 0.04, 
+            blinkOffset: Math.random() * Math.PI * 2
+        });
     }
 
+    // NUBES: Generamos 5 nubes esponjosas
+    for(let i=0; i<5; i++) {
+        clouds.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * (window.innerHeight * 0.4), // Solo en la parte superior
+            speed: 0.2 + Math.random() * 0.3, // Velocidad de movimiento
+            scale: 0.5 + Math.random() * 0.5, // Tamaño variado
+            puffOffset: Math.random() * 100 // Variación en la forma
+        });
+    }
+
+    // Edificios
     for(let i=0; i<15; i++) { 
         let b = {xRel: Math.random() * 0.6, yBase: Math.random() * 0.08, width: 8 + Math.random() * 10, height: 15 + Math.random() * 25, floors: [], antenna: Math.random() > 0.6};
         let numFloors = Math.floor(b.height / 5);
@@ -44,7 +66,7 @@
         buildings.push(b);
     }
 
-    // Generamos los cubos
+    // Cubos
     for(let x=-1; x<=1; x++) {
         for(let y=-1; y<=1; y++) {
             for(let z=-1; z<=1; z++) {
@@ -52,6 +74,23 @@
                 cubes.push({ ox: x, oy: y, oz: z, x: x, y: y, z: z });
             }
         }
+    }
+
+    // --- UTILS: Interpolación de color ---
+    function lerpColor(hex1, hex2, factor) {
+        const r1 = parseInt(hex1.substring(1,3), 16);
+        const g1 = parseInt(hex1.substring(3,5), 16);
+        const b1 = parseInt(hex1.substring(5,7), 16);
+
+        const r2 = parseInt(hex2.substring(1,3), 16);
+        const g2 = parseInt(hex2.substring(3,5), 16);
+        const b2 = parseInt(hex2.substring(5,7), 16);
+
+        const r = Math.round(r1 + (r2 - r1) * factor);
+        const g = Math.round(g1 + (g2 - g1) * factor);
+        const b = Math.round(b1 + (b2 - b1) * factor);
+
+        return `rgb(${r}, ${g}, ${b})`;
     }
 
     function generateSharpGeometricVolcano(startX, startY, peakStartX, peakEndX, peakY, endX, endY) {
@@ -89,19 +128,35 @@
     
     window.addEventListener('resize', resize);
     
+    // --- SCROLL UPDATE ---
+    function updateScrollState() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        
+        const docHeight = Math.max(
+            document.body.scrollHeight, 
+            document.documentElement.scrollHeight,
+            document.body.offsetHeight, 
+            document.documentElement.offsetHeight,
+            document.body.clientHeight, 
+            document.documentElement.clientHeight
+        ) - window.innerHeight;
+
+        if (docHeight <= 0) {
+            scrollPercent = 0;
+        } else {
+            scrollPercent = Math.max(0, Math.min(1, scrollTop / docHeight));
+        }
+    }
+
     window.addEventListener('mousemove', e => {
         mouseX = (e.clientX - w/2) / (w/2);
         mouseY = (e.clientY - h/2) / (h/2);
 
-        // --- MANITA EN EL CUBO ---
         if (isHome) {
             let dx = e.clientX - w/2; 
             let dy = e.clientY - h/2;
             let dist = Math.sqrt(dx*dx + dy*dy);
-            
-            // Radio dinámico: Si está abierto, detectamos clics mucho más lejos
             let hitRadius = isMenuOpen ? 450 : 150;
-
             if (dist < hitRadius) {
                 document.body.style.cursor = 'pointer'; 
             } else {
@@ -110,23 +165,16 @@
         }
     });
 
-    // Click listener
     if (isHome) {
         window.addEventListener('click', (e) => {
             if(e.target.classList.contains('menu-item')) return;
-            
             let dx = e.clientX - w/2; 
             let dy = e.clientY - h/2;
             let dist = Math.sqrt(dx*dx + dy*dy);
-
-            // CORRECCIÓN: Usamos el mismo radio dinámico para el clic
-            // Así puedes hacer clic en las piezas flotantes para cerrar
             let hitRadius = isMenuOpen ? 450 : 150;
-
             if (dist < hitRadius) {
                 isMenuOpen = !isMenuOpen;
                 targetExpansion = isMenuOpen ? 3.0 : 0; 
-                
                 if(isMenuOpen && menuContainer) {
                     menuContainer.classList.add('menu-active');
                 } else if (menuContainer) {
@@ -148,17 +196,38 @@
 
     function drawBackground() {
         let grad = ctx.createLinearGradient(0, 0, 0, h);
-        grad.addColorStop(0, '#020005');
-        grad.addColorStop(0.5, '#2e0a0a');
-        grad.addColorStop(0.75, '#7a1515');
-        grad.addColorStop(1, '#ff6600');
+        
+        const nightStop0 = '#020005';
+        const nightStop1 = '#2e0a0a';
+        const nightStop2 = '#7a1515';
+        const nightStop3 = '#ff6600';
+
+        const dayStop0 = '#004e92'; 
+        const dayStop1 = '#603f83'; 
+        const dayStop2 = '#fd5e53'; 
+        const dayStop3 = '#ffe066'; 
+
+        const c0 = lerpColor(nightStop0, dayStop0, scrollPercent);
+        const c1 = lerpColor(nightStop1, dayStop1, scrollPercent);
+        const c2 = lerpColor(nightStop2, dayStop2, scrollPercent);
+        const c3 = lerpColor(nightStop3, dayStop3, scrollPercent);
+
+        grad.addColorStop(0, c0);
+        grad.addColorStop(0.5, c1);
+        grad.addColorStop(0.75, c2);
+        grad.addColorStop(1, c3);
         
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, w, h);
 
+        // Estrellas
+        const dayFade = Math.max(0, 1 - scrollPercent * 1.5); 
+
         ctx.fillStyle = '#ffffff';
         stars.forEach(s => {
-            ctx.globalAlpha = s.alpha * 0.6;
+            const flicker = (Math.sin(time * s.blinkSpeed + s.blinkOffset) + 1) / 2;
+            ctx.globalAlpha = s.baseAlpha * flicker * dayFade; 
+            
             ctx.beginPath();
             ctx.arc(s.x * w, s.y * h, s.size, 0, Math.PI*2);
             ctx.fill();
@@ -168,7 +237,11 @@
 
     function drawSun() {
         let sunX = w * 0.9;
-        let sunY = h * 0.85; 
+        let sunYBase = h * 0.85;
+        let sunYTarget = h * 0.25; 
+        
+        // Posición dinámica del sol
+        let sunY = sunYBase - (scrollPercent * (sunYBase - sunYTarget));
         let sunSize = h * 0.28;
         
         let sunGrad = ctx.createLinearGradient(sunX, sunY-sunSize, sunX, sunY+sunSize);
@@ -178,16 +251,16 @@
         
         ctx.save();
         ctx.fillStyle = sunGrad;
-        ctx.beginPath(); ctx.arc(sunX, sunY, sunSize, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); 
+        ctx.arc(sunX, sunY, sunSize, 0, Math.PI*2); 
+        ctx.fill();
         
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-        for(let i=0; i<10; i++) {
-            let yPos = sunY + i * (h*0.02);
-            if (yPos > sunY + sunSize) break;
-            ctx.fillRect(sunX - sunSize, yPos, sunSize*2, h*0.005);
-        }
+        // --- ELIMINADO EL BUCLE DE LÍNEAS HORIZONTALES ---
+        // El sol ahora es un gradiente sólido y limpio.
+        
         ctx.restore();
 
+        // Partículas del sol (Brillo alrededor)
         if(Math.random() > 0.8) {
             sunParticles.push({x: sunX + (Math.random()-0.5)*sunSize, y: sunY + (Math.random()-0.5)*sunSize*0.5, vx: 0, vy: -0.5 - Math.random(), life: 1, color: '#ffcc00'});
         }
@@ -201,6 +274,40 @@
             ctx.fillRect(p.x, p.y, 2, 2);
         });
         ctx.globalAlpha = 1;
+    }
+
+    // --- NUEVA FUNCIÓN: NUBES ---
+    function drawClouds() {
+        // Cálculo de visibilidad de las nubes (Solo visibles de día)
+        // scrollPercent 0.0 -> cloudAlpha 0
+        // scrollPercent 1.0 -> cloudAlpha 0.7
+        let cloudAlpha = (scrollPercent - 0.2) * 1.2;
+        cloudAlpha = Math.max(0, Math.min(0.7, cloudAlpha));
+
+        if (cloudAlpha <= 0) return; // Si es de noche, no dibujar nada
+
+        ctx.fillStyle = '#ffffff';
+        ctx.globalAlpha = cloudAlpha;
+
+        clouds.forEach(c => {
+            // Movimiento
+            c.x += c.speed;
+            if (c.x > w + 200) c.x = -200; // Loop cuando salen de pantalla
+
+            // Dibujar forma de nube (compuesta de 3 círculos para que se vea "esponjosa")
+            const size = c.scale * 40;
+            
+            ctx.beginPath();
+            // Círculo central
+            ctx.arc(c.x, c.y, size, 0, Math.PI * 2);
+            // Círculo izquierdo
+            ctx.arc(c.x - size * 0.8, c.y + size * 0.3, size * 0.7, 0, Math.PI * 2);
+            // Círculo derecho
+            ctx.arc(c.x + size * 0.8, c.y + size * 0.3, size * 0.7, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        ctx.globalAlpha = 1; // Resetear opacidad
     }
 
     function drawStaticLandscape() {
@@ -243,7 +350,6 @@
             });
         });
 
-        // Monumento
         let mx = w * 0.9;
         let my = horizonY;
         let ms = h * 0.00035; 
@@ -266,6 +372,8 @@
     function drawCube() {
         cubeRotationBase += 0.005;
         expansion += (targetExpansion - expansion) * 0.1;
+
+        if (scrollPercent > 0.5) return;
 
         let cx = w/2;
         let cy = h/2;
@@ -339,11 +447,16 @@
     }
 
     function animate() {
+        updateScrollState(); 
+        
         time++;
         ctx.clearRect(0, 0, w, h);
+        
         drawBackground();
         drawSun(); 
+        drawClouds(); // <--- Aquí dibujamos las nubes, encima del sol pero detrás de los edificios
         drawStaticLandscape(); 
+        
         if (isHome) {
             drawCube();
         }
