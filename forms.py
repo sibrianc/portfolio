@@ -14,8 +14,16 @@ class ContactForm(FlaskForm):
 # Admin login form
 class AdminLoginForm(FlaskForm):
     # NOTE: Admin-only login form
-    email = StringField("Email", validators=[DataRequired(), Email()])
-    password = PasswordField("Password", validators=[DataRequired()])
+    email = StringField("Email", 
+                        validators=[DataRequired(), Email()],
+                        # Le decimos al navegador que no autocomplete este campo
+                        render_kw={"autocomplete": "off"})
+    
+    password = PasswordField("Password", 
+                             validators=[DataRequired()],
+                             # "new-password" es el truco para que no sugiera claves viejas
+                             render_kw={"autocomplete": "new-password"})
+    
     submit = SubmitField("Log In")
 
 # Admin project form for creating/editing projects

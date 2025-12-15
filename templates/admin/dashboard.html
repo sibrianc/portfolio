@@ -5,12 +5,13 @@
 {% block content %}
 <div class="container py-5">
 
-  <!-- Header with title and action buttons -->
-  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
     <h1 class="text-light mb-3">Admin Dashboard</h1>
     <div>
       <a href="{{ url_for('admin_messages') }}" class="btn btn-sm btn-cyber me-2 mb-2">View Messages</a>
       <a href="{{ url_for('admin_project_new') }}" class="btn btn-sm btn-cta mb-2">New Project</a>
+      
+      <a href="{{ url_for('admin_logout') }}" class="btn btn-sm btn-outline-danger mb-2 ms-2">Logout</a>
     </div>
   </div>
 

@@ -1,10 +1,9 @@
 # routes_public.py
-# routes_public.py (adding language switch route)
-from flask import render_template, request, abort, Blueprint, redirect, url_for, session, flash, current_app
+from flask import render_template, request, abort, redirect, url_for, session, flash, current_app
 from models import db, Project, ContactMessage
 from forms import ContactForm
 from flask_mail import Message
-
+from urllib.parse import urlparse # Import necesario para el parche de seguridad
 
 # NOTE: Lightweight module registration
 def register(app):
@@ -72,12 +71,17 @@ def register(app):
         # GET o validación fallida
         return render_template("public/contact.html", form=form)
     
+    # --- RUTA SWITCH LANG (Solo una vez y segura) ---
     @app.route("/switch_lang/<string:code>")
     def switch_lang(code):
-        """Switch site language and redirect back."""
         if code in ("en", "es"):
             session["lang"] = code
-        # Redirect to the page the user came from, or home if not available
-        return redirect(request.referrer or url_for('index'))
-    
-    
+        
+        # --- FIX DE SEGURIDAD: Evitar Open Redirect ---
+        target = request.referrer
+        # Verificamos que el referer exista y pertenezca al mismo dominio
+        if not target or urlparse(target).netloc != urlparse(request.host_url).netloc:
+            target = url_for('index')
+        # ----------------------------------------------
+        
+        return redirect(target)

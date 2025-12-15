@@ -1,7 +1,7 @@
 {% extends "layout/base.html" %}
 {% block title %}{{ t('home') }} – Carlos Sibrian{% endblock %}
 
-{# Ocultamos la navbar estándar en el Home #}
+{# Ocultamos la navbar estándar en el Home (Para que se vea el cubo) #}
 {% block navbar %}{% endblock %}
 
 {% block content %}
@@ -27,28 +27,47 @@
       <p class="text-secondary">Selected works from the archive</p>
     </div>
 
-    <div class="carousel-container-custom">
-      {% for project in featured %}
-        <div class="project-card-custom">
-          <div class="card-img-custom">
-            {% if project.cover_image %}
-               <img src="{{ project.cover_image }}" alt="{{ project.title }}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
-            {% else %}
-               <span>🚀</span>
-            {% endif %}
-          </div>
-          <div class="card-content-custom">
-            <h3 class="card-title-custom">{{ project.title }}</h3>
-            <p class="card-desc-custom">{{ project.summary | truncate(120) }}</p>
-            <a href="{{ url_for('project_detail', slug=project.slug) }}" class="btn-details-custom">View Details</a>
-          </div>
+    {% if featured %}
+      <div id="projectsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+        
+        <div class="carousel-inner pb-5"> 
+          {% for project in featured %}
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
+              
+              <div class="project-card-custom mx-auto">
+                <div class="card-img-custom">
+                  {% if project.cover_image %}
+                     <img src="{{ project.cover_image }}" alt="{{ project.title }}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                  {% else %}
+                     <span>🚀</span>
+                  {% endif %}
+                </div>
+                <div class="card-content-custom">
+                  <h3 class="card-title-custom">{{ project.title }}</h3>
+                  <p class="card-desc-custom">{{ project.summary | truncate(120) }}</p>
+                  <a href="{{ url_for('project_detail', slug=project.slug) }}" class="btn-details-custom">View Details</a>
+                </div>
+              </div>
+
+            </div>
+          {% endfor %}
         </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#projectsCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: drop-shadow(0 0 5px #000);"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#projectsCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true" style="filter: drop-shadow(0 0 5px #000);"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+
+      </div>
       {% else %}
-        <div class="text-center w-100 py-5 text-muted">
-          <h4>No featured projects found.</h4>
-        </div>
-      {% endfor %}
-    </div>
+      <div class="text-center w-100 py-5 text-muted">
+        <h4>No featured projects found.</h4>
+      </div>
+    {% endif %}
 
     </div>
 
@@ -59,4 +78,5 @@
 
 {% endblock %}
 
+{# Dejamos el footer vacío aquí porque ya lo incluimos manualmente arriba #}
 {% block footer %}{% endblock %}

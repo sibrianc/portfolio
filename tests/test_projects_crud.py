@@ -1,5 +1,7 @@
 # tests/test_projects_crud.py
 from conftest import login_as_admin_session
+# En tests/test_projects_crud.py
+from models import Project, db
 
 # Ajusta estas rutas a las reales en tu app:
 ADMIN_NEW_PROJECT = "/admin/projects/new"
@@ -26,3 +28,12 @@ def test_create_project_minimal(client):
     # Opcional: luego pedimos el listado para confirmar que la página carga
     follow = client.get(ADMIN_LIST)
     assert follow.status_code == 200
+    
+def test_create_project_data(client, app):
+    # ... login y post request ...
+    
+    # Verificar en BD
+    with app.app_context():
+        project = db.session.execute(db.select(Project).filter_by(slug="test-project")).scalar()
+        assert project is not None
+        assert project.title == "Test Project"

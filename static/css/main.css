@@ -114,8 +114,15 @@ canvas {
 }
 .carousel-container-custom::-webkit-scrollbar { display: none; }
 
+/* ... código anterior ... */
+
+/* Actualizado para funcionar bien solo o en carrusel */
 .project-card-custom {
-  flex: 0 0 350px;
+  /* Quitamos el flex: 0 0 350px antiguo */
+  width: 100%;
+  max-width: 450px; /* Tamaño máximo elegante */
+  margin: 0 auto;   /* Centrado horizontal automático */
+  
   background: rgba(20, 10, 10, 0.6);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(189, 75, 0, 0.2);
@@ -125,6 +132,8 @@ canvas {
   display: flex;
   flex-direction: column;
 }
+
+/* ... resto del código (card-img-custom, etc) ... */
 .project-card-custom:hover {
   transform: translateY(-10px);
   border-color: var(--accent);

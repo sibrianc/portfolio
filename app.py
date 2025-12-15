@@ -1,38 +1,57 @@
 # app.py
 import os
-from flask import Flask, session, request, redirect, url_for, g  # add session, request, redirect, url_for
+from datetime import timedelta
+from flask import Flask, session, request, g
 from dotenv import load_dotenv
+
 load_dotenv()
 
-
-from flask_bootstrap import Bootstrap5  # FIX: use Bootstrap5 class
+from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from models import db, User
 import routes_public, routes_admin
 
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 def create_app() -> Flask:
     # --- Base config ---
-    # NOTE: instance_relative_config lets you store the DB under ./instance/
     app = Flask(__name__, instance_relative_config=True)
     os.makedirs(app.instance_path, exist_ok=True)
 
     app.config["SECRET_KEY"] = os.getenv("FLASK_KEY", "change-me")
 
-    # NOTE: Force a stable absolute path for your sqlite DB under instance/
+    # DB Config
     db_path = os.path.join(app.instance_path, "portfolio.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URI", f"sqlite:///{db_path}")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # Debug print to confirm which DB you're using
+    # --- SEGURIDAD DE SESIÓN ---
+    # 1. La sesión muere al cerrar el navegador
+    app.config["SESSION_PERMANENT"] = False 
+    # 2. La sesión expira tras 30 minutos de inactividad
+    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=30)
+    # 3. Cookie segura (solo se envía si es HTTPS, desactívalo si pruebas en local sin SSL)
+    app.config["SESSION_COOKIE_SECURE"] = False # Pon True en producción con HTTPS
+    app.config["SESSION_COOKIE_HTTPONLY"] = True # Evita robo por JavaScript
+
     print("DB URI ->", app.config["SQLALCHEMY_DATABASE_URI"])
 
     # --- Extensions ---
-    Bootstrap5(app)  # Use Bootstrap5 instead of Bootstrap for Bootstrap v5 support
+    Bootstrap5(app)
     CSRFProtect(app)
     db.init_app(app)
     Migrate(app, db)
+    
+    # Rate Limiter
+    limiter = Limiter(
+        key_func=get_remote_address,
+        app=app,
+        storage_uri="memory://",
+        default_limits=["200 per day", "50 per hour"]
+    )
 
     # --- Login manager ---
     login_manager = LoginManager()
@@ -41,14 +60,13 @@ def create_app() -> Flask:
 
     @login_manager.user_loader
     def load_user(user_id):
-        # NOTE: SQLAlchemy 2.x style get
         return db.session.get(User, int(user_id))
 
     # --- Register routes ---
     routes_public.register(app)
     routes_admin.register(app)
     
-    # --- Internationalization support ---
+    # --- Internationalization ---
     translations = {
         'en': {
             'brand_left': 'CARLOS',
@@ -64,7 +82,6 @@ def create_app() -> Flask:
             'form_message': 'Message',
             'form_send': 'Send',
             },
-        
         'es': {
             'brand_left': 'CARLOS',
             'brand_right': '_SIBRIAN',
@@ -90,11 +107,10 @@ def create_app() -> Flask:
             return translations.get(lang, {}).get(key, key)
         return {'current_lang': current_lang, 't': t}
 
-    # --- CLI: create admin from env vars ---
+    # --- CLI: create admin ---
     @app.cli.command("create-admin")
     def create_admin():
         """Create or update an admin user from ENV variables."""
-        from werkzeug.security import generate_password_hash
         email = os.getenv("ADMIN_EMAIL")
         password = os.getenv("ADMIN_PASSWORD")
         name = os.getenv("ADMIN_NAME", "Admin")
@@ -112,9 +128,27 @@ def create_app() -> Flask:
         db.session.commit()
         print(f"Admin ready: {email}")
 
+    # --- ANTI-CACHÉ PARA ADMIN (La solución a tu problema visual) ---
+    @app.after_request
+    def add_security_headers(response):
+        # 1. Protección Anti-Caché para Admin (Ya la tenías)
+        if request.path.startswith("/admin"):
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+        
+        # 2. Protección Global (NUEVO)
+        # X-Content-Type-Options: Evita que el navegador adivine el tipo MIME (seguridad básica)
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        # X-Frame-Options: Evita que tu web sea incrustada en iframes (anti-clickjacking)
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        # Strict-Transport-Security: Fuerza HTTPS (Solo activar si usas HTTPS/SSL)
+        # response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        
+        return response
+
     return app
 
-# Development entrypoint
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True, port=5002)
