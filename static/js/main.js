@@ -75,7 +75,8 @@ if (canvas) {
         // Renderizar por capas (Fondo -> Ciudad -> Cubo)
         // Pasamos scrollPercent explícitamente al cielo para que cambie de color y mueva el sol
         sky.render(ctx, w, h, time, scrollPercent);
-        city.render(ctx, w, h, time);
+        // Añade scrollPercent al final
+        city.render(ctx, w, h, time, scrollPercent);
         
         if (isHome && cube) {
             cube.render(ctx, w, h, time, mouseX, mouseY, scrollPercent);

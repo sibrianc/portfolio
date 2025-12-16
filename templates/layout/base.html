@@ -56,13 +56,24 @@
     {% block content %}{% endblock %}
   </main>
 
-  {% block footer %}
-  <footer class="text-center py-4 position-relative" style="z-index: 10; color: #555; font-size: 0.8rem;">
-    © 2025 Carlos Sibrian
+{% block footer %}
+  <footer class="text-center py-3 position-fixed bottom-0 start-0 w-100" 
+          style="z-index: 10; color: #555; font-size: 0.8rem; pointer-events: none;">
+    
+    <span style="pointer-events: auto;">
+       © 2025 Carlos Sibrian
+    </span>
   </footer>
   {% endblock %}
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+</script>
 </body>
 </html>

@@ -1,45 +1,31 @@
 // static/js/modules/CubeSystem.js
-import { rotateIso } from './Utils.js';
 
 export class CubeSystem {
     constructor(menuContainer) {
         this.menuContainer = menuContainer;
-        this.cubes = [];
         this.isMenuOpen = false;
         this.expansion = 0;
         this.targetExpansion = 0;
-        this.cubeRotationBase = 0;
+        this.time = 0;
+        this.scrollPercent = 0;
         this.init();
     }
 
-    init() {
-        for(let x=-1; x<=1; x++) {
-            for(let y=-1; y<=1; y++) {
-                for(let z=-1; z<=1; z++) {
-                    if(x===0 && y===0 && z===0) continue;
-                    this.cubes.push({ ox: x, oy: y, oz: z, x: x, y: y, z: z });
-                }
-            }
-        }
-        this.setupEvents();
-    }
+    init() { this.setupEvents(); }
 
     setupEvents() {
         window.addEventListener('click', (e) => {
-            // Solo actuar si no se hizo clic en un link del menú
-            if(e.target.classList.contains('menu-item')) return;
-            
-            // Verificamos si estamos cerca del centro (el cubo)
+            if (this.scrollPercent > 0.5) return;
+            if (e.target.classList.contains('menu-item')) return;
             const w = window.innerWidth;
             const h = window.innerHeight;
             let dx = e.clientX - w/2; 
             let dy = e.clientY - h/2;
             let dist = Math.sqrt(dx*dx + dy*dy);
-            let hitRadius = this.isMenuOpen ? 450 : 150;
-            
+            let hitRadius = 150; 
             if (dist < hitRadius) {
                 this.isMenuOpen = !this.isMenuOpen;
-                this.targetExpansion = this.isMenuOpen ? 3.0 : 0; 
+                this.targetExpansion = this.isMenuOpen ? 1.0 : 0; 
                 if(this.isMenuOpen && this.menuContainer) {
                     this.menuContainer.classList.add('menu-active');
                 } else if (this.menuContainer) {
@@ -49,80 +35,141 @@ export class CubeSystem {
         });
     }
 
-    render(ctx, w, h, time, mouseX, mouseY, scrollPercent) {
-        if (scrollPercent > 0.5) return;
+    drawOrbit(ctx, cx, cy, radiusX, radiusY, angle, color, lineWidth, dash) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = color;
+        if (dash) ctx.setLineDash(dash);
+        ctx.stroke();
+        ctx.restore();
+    }
 
-        this.cubeRotationBase += 0.005;
+    drawElectron(ctx, cx, cy, radiusX, radiusY, angle, orbitProgress, color) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle);
+        let x = radiusX * Math.cos(orbitProgress);
+        let y = radiusY * Math.sin(orbitProgress);
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = color;
+        ctx.fill();
+        ctx.restore();
+    }
+
+    render(ctx, w, h, time, mouseX, mouseY, scrollPercent) {
+        this.scrollPercent = scrollPercent;
+        if (scrollPercent > 0.5) return;
+        
+        let globalAlpha = 1 - (scrollPercent * 2);
+        ctx.globalAlpha = Math.max(0, globalAlpha);
+
+        this.time += 0.02; 
         this.expansion += (this.targetExpansion - this.expansion) * 0.1;
 
-        let cx = w/2;
-        let cy = h/2;
-        let blockSize = Math.min(w, h) * 0.055; 
-        let gap = blockSize * 2.0;
-        let rx = -mouseY * 0.3 + Math.sin(time * 0.01) * 0.05;
-        let ry = mouseX * 0.3 + this.cubeRotationBase;
+        let cx = w / 2;
+        let cy = h / 2;
+        let baseSize = Math.min(w, h) * 0.14; 
 
-        let projectedCubes = this.cubes.map(cube => {
-            let dist = gap + (this.expansion * (blockSize * 0.5));
-            let tx = cube.ox * dist;
-            let ty = cube.oy * dist;
-            let tz = cube.oz * dist;
-            let p = rotateIso(tx, ty, tz, rx, ry);
-            return { ...cube, px: p.x, py: p.y, pz: p.z };
-        });
-        projectedCubes.sort((a, b) => b.pz - a.pz);
+        let expansionOffset = this.expansion * 40;
 
-        projectedCubes.forEach(cube => {
-            let vertices = [
-                {x:-1,y:-1,z:-1}, {x:1,y:-1,z:-1}, {x:1,y:1,z:-1}, {x:-1,y:1,z:-1},
-                {x:-1,y:-1,z:1}, {x:1,y:-1,z:1}, {x:1,y:1,z:1}, {x:-1,y:1,z:1}
-            ];
+        // --- PALETA DE COLOR "ICE WHITE" (Minimalista / Premium) ---
+        // Usamos blanco con un tinte cyan muy leve para que parezca cristal iluminado.
+        const mainColor = '#e0ffff'; // Blanco Hielo (Ice White)
+        const accentColor = '#ffffff'; // Blanco Puro para brillos fuertes
+        const activeColor = '#ff3366'; // Un rojo/rosa sutil solo si se activa (opcional)
 
-            let projVerts = vertices.map(v => {
-                let vx = v.x * (blockSize * 0.96) + cube.px;
-                let vy = v.y * (blockSize * 0.96) + cube.py;
-                let vz = v.z * (blockSize * 0.96) + cube.pz;
-                let depth = 800;
-                let scale = depth / (depth - vz); 
-                return { x: cx + vx * scale, y: cy + vy * scale };
-            });
+        // --- 1. NÚCLEO CENTRAL ---
+        ctx.beginPath();
+        ctx.arc(cx, cy, baseSize * 0.15, 0, Math.PI * 2);
+        ctx.fillStyle = '#000000'; // Fondo negro
+        ctx.fill();
+        
+        // Botón brillante (Ahora es blanco/plata)
+        ctx.beginPath();
+        ctx.arc(cx, cy, baseSize * 0.12, 0, Math.PI * 2);
+        // Si está abierto, se pone blanco puro brillante, si no, blanco hielo suave
+        ctx.fillStyle = this.isMenuOpen ? accentColor : mainColor;
+        
+        // El glow (resplandor) ahora es blanco, lo que se ve muy elegante sobre fondo rojo
+        ctx.shadowBlur = 20; 
+        ctx.shadowColor = this.isMenuOpen ? accentColor : mainColor;
+        ctx.fill();
+        ctx.shadowBlur = 0; 
 
-            ctx.lineWidth = 1;
-            ctx.lineJoin = 'miter';
-            ctx.strokeStyle = '#00aaff'; 
-            ctx.fillStyle = 'rgba(5, 15, 25, 0.9)';
+        // Icono (Hamburguesa) - Negro para máximo contraste sobre el botón blanco
+        ctx.strokeStyle = '#050f19'; 
+        ctx.lineWidth = 2.5; // Un poco más grueso para legibilidad
+        let iconSize = baseSize * 0.05; 
+        let lineGap = 6; 
 
-            const faces = [[0,1,2,3], [4,5,6,7], [0,1,5,4], [2,3,7,6], [0,3,7,4], [1,2,6,5]];
-            faces.forEach(face => {
-                ctx.beginPath();
-                ctx.moveTo(projVerts[face[0]].x, projVerts[face[0]].y);
-                ctx.lineTo(projVerts[face[1]].x, projVerts[face[1]].y);
-                ctx.lineTo(projVerts[face[2]].x, projVerts[face[2]].y);
-                ctx.lineTo(projVerts[face[3]].x, projVerts[face[3]].y);
-                ctx.closePath();
-                ctx.fill();
-                ctx.stroke();
-            });
-        });
-
-        if (this.expansion < 0.2) {
-            ctx.shadowBlur = 50;
-            ctx.shadowColor = '#00aaff';
-            ctx.globalCompositeOperation = 'lighter';
-            ctx.beginPath();
-            ctx.arc(cx, cy, blockSize * 3.5, 0, Math.PI*2);
-            ctx.strokeStyle = 'rgba(0, 200, 255, 0.3)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.shadowBlur = 0;
-            ctx.strokeStyle = '#00ffff';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(cx - 10, cy - 6); ctx.lineTo(cx + 10, cy - 6);
-            ctx.moveTo(cx - 10, cy);     ctx.lineTo(cx + 10, cy);
-            ctx.moveTo(cx - 10, cy + 6); ctx.lineTo(cx + 10, cy + 6);
-            ctx.stroke();
+        ctx.beginPath();
+        if(this.isMenuOpen) {
+            ctx.moveTo(cx - iconSize, cy - iconSize); ctx.lineTo(cx + iconSize, cy + iconSize);
+            ctx.moveTo(cx + iconSize, cy - iconSize); ctx.lineTo(cx - iconSize, cy + iconSize);
+        } else {
+            ctx.moveTo(cx - iconSize, cy - lineGap); ctx.lineTo(cx + iconSize, cy - lineGap);
+            ctx.moveTo(cx - iconSize, cy);           ctx.lineTo(cx + iconSize, cy);
+            ctx.moveTo(cx - iconSize, cy + lineGap); ctx.lineTo(cx + iconSize, cy + lineGap);
         }
+        ctx.stroke();
+
+
+        // --- 2. ORBITALES (GIROSCOPIO) ---
+        // Ahora las líneas son blancas/plata. Se ve mucho menos "saturado".
+        
+        let angle1 = this.time * 0.5; 
+        let thickness1 = baseSize * 0.4 + (Math.abs(mouseX) * 20);
+        // mainColor es el blanco hielo
+        this.drawOrbit(ctx, cx, cy, baseSize + expansionOffset, thickness1, angle1, mainColor, 1.5, []);
+        this.drawElectron(ctx, cx, cy, baseSize + expansionOffset, thickness1, angle1, this.time * 2, accentColor);
+
+        let angle2 = (Math.PI / 3) + (this.time * 0.3);
+        let thickness2 = baseSize * 0.4 + (Math.abs(mouseY) * 20);
+        // Bajamos un poco la opacidad de los anillos secundarios para dar profundidad
+        ctx.globalAlpha = Math.max(0, globalAlpha * 0.7); 
+        this.drawOrbit(ctx, cx, cy, baseSize * 0.9 + expansionOffset, thickness2, angle2, mainColor, 1, [5, 10]); 
+        
+        ctx.globalAlpha = Math.max(0, globalAlpha); // Restaurar alpha
+        
+        let angle3 = -(Math.PI / 3) - (this.time * 0.4);
+        this.drawOrbit(ctx, cx, cy, baseSize * 0.8 + expansionOffset, thickness1, angle3, mainColor, 1, []);
+        this.drawElectron(ctx, cx, cy, baseSize * 0.8 + expansionOffset, thickness1, angle3, -this.time * 3, accentColor);
+
+
+        // --- 3. ANILLOS EXTERNOS HUD ---
+        let hudAlpha = 0.3 + (this.expansion * 0.7); 
+        ctx.globalAlpha = Math.min(1, globalAlpha * hudAlpha);
+        let baseRadius = baseSize * 1.5 + expansionOffset;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, baseRadius, -this.time * 0.5, -this.time * 0.5 + Math.PI * 1.5); 
+        ctx.strokeStyle = mainColor;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 5]);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, baseRadius + 15, this.time * 0.3, this.time * 0.3 + Math.PI); 
+        ctx.strokeStyle = mainColor;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([10, 10, 2, 10]); 
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, baseRadius + 35, -this.time * 0.1, -this.time * 0.1 + Math.PI * 1.8); 
+        ctx.strokeStyle = mainColor;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([40, 20]);
+        ctx.stroke();
+        
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
     }
 }
