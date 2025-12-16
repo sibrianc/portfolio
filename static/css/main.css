@@ -615,3 +615,46 @@ a.cyber-card:hover {
     color: inherit;
     text-decoration: none;
 }
+
+/* --- PROYECTOS: GRILLA VERICAL (PARA RUTA /PROJECTS) --- */
+
+.cyber-grid-wrapper {
+    /* Mismo efecto de cristal que el carrusel */
+    background: rgba(5, 10, 15, 0.65);
+    backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(0, 170, 255, 0.4);
+    
+    /* Ajustes para llenar la pantalla hacia abajo */
+    width: 100%;
+    min-height: 100vh; /* Fuerza que llegue al fondo al menos */
+    
+    padding: 60px 40px; /* Espacio interno */
+    margin-top: 30px;
+    margin-bottom: -150px; /* Margen negativo para cubrir footer */
+    
+    /* Centrar el contenido */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.cyber-grid-layout {
+    display: grid;
+    /* ESTO HACE LA MAGIA: 
+       Crea columnas automáticas. Con 350px de ancho mínimo, 
+       en una pantalla normal caben exactamente 3. */
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    
+    gap: 60px; /* Espacio entre tarjetas vertical y horizontal */
+    
+    width: 100%;
+    max-width: 1400px; /* Ancho máximo para que no se estiren demasiado */
+}
+
+/* Asegurar que las tarjetas se comporten bien en la grilla */
+.cyber-grid-layout .cyber-card {
+    width: 100%;
+    max-width: 380px; /* Tamaño máximo igual al home */
+    min-height: 450px;
+    margin: 0 auto;   /* Centrado en su celda */
+}

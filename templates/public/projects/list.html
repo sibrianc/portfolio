@@ -16,7 +16,7 @@
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="cyber-search-container">
-          <span class="me-2 text-info">     </span>
+          <span class="me-2 text-info">🔍</span>
           <form method="get" class="w-100 d-flex">
             <input type="text" name="tech" class="cyber-input" placeholder="Search technology..." value="{{ tech or '' }}" autocomplete="off" style="font-family: 'Segoe UI', sans-serif;">
           </form>
@@ -25,8 +25,8 @@
     </div>
   </div>
 
-  <div class="cyber-carousel-wrapper">
-    <div class="cyber-carousel-track" style="gap: 90px; padding: 30px 80px;">
+  <div class="cyber-grid-wrapper">
+    <div class="cyber-grid-layout">
       
       {% for project in projects %}
         <a href="{{ url_for('project_detail', slug=project.slug) }}" class="cyber-card">
@@ -71,17 +71,14 @@
         </a>
       {% endfor %}
 
-      {% if not projects %}
-        <div class="text-center w-100 py-5 text-light">
-          <h3 class="text-muted">No projects found.</h3>
-          <a href="{{ url_for('projects_list') }}" class="btn btn-sm btn-outline-light mt-3">Clear Search</a>
-        </div>
-      {% endif %}
     </div>
-
-    <div class="text-center mt-4" style="opacity: 0.7;">
-      <small class="text-muted" style="letter-spacing: 2px;">&larr; SCROLL TO EXPLORE &rarr;</small>
-    </div>
+    
+    {% if not projects %}
+      <div class="text-center w-100 py-5 text-light">
+        <h3 class="text-muted">No projects found.</h3>
+        <a href="{{ url_for('projects_list') }}" class="btn btn-sm btn-outline-light mt-3">Clear Search</a>
+      </div>
+    {% endif %}
 
   </div>
 
