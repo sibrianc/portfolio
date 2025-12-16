@@ -5,6 +5,8 @@ from flask_login import login_user, current_user, login_required, logout_user
 from functools import wraps
 from models import db, User, Project, ContactMessage
 from forms import AdminLoginForm, ProjectForm
+# 1. IMPORTACIÓN NUEVA PARA MANEJAR EL ERROR
+from sqlalchemy.exc import IntegrityError
 
 def admin_only(f):
     # NOTE: Guard decorator to ensure admin-only access
@@ -81,9 +83,16 @@ def register(app):
             p = Project()
             form.populate_obj(p)
             db.session.add(p)
-            db.session.commit()
-            flash("Project created.", "success")
-            return redirect(url_for("admin_dashboard"))
+            
+            # 2. BLOQUE DE SEGURIDAD (TRY/EXCEPT)
+            try:
+                db.session.commit()
+                flash("Project created.", "success")
+                return redirect(url_for("admin_dashboard"))
+            except IntegrityError:
+                db.session.rollback() # Revertir cambios si falla
+                flash("Error: The slug is already in use. Please choose a different one.", "danger")
+                
         return render_template("admin/project_form.html", form=form, project=None)
 
     @app.route("/admin/projects/<int:pid>/edit", methods=["GET", "POST"])
@@ -93,9 +102,16 @@ def register(app):
         form = ProjectForm(obj=p)
         if form.validate_on_submit():
             form.populate_obj(p)
-            db.session.commit()
-            flash("Project updated.", "success")
-            return redirect(url_for("admin_dashboard"))
+            
+            # 3. BLOQUE DE SEGURIDAD TAMBIÉN AQUÍ
+            try:
+                db.session.commit()
+                flash("Project updated.", "success")
+                return redirect(url_for("admin_dashboard"))
+            except IntegrityError:
+                db.session.rollback()
+                flash("Error: The slug is already in use by another project.", "danger")
+                
         return render_template("admin/project_form.html", form=form, project=p)
 
     @app.post("/admin/projects/<int:pid>/delete")

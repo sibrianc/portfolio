@@ -42,7 +42,7 @@
   </nav>
   {% endblock %}
 
-  <main>
+  <main style="padding-bottom: 80px;">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div class="container mt-4 position-relative" style="z-index: 20;">
@@ -56,11 +56,14 @@
     {% block content %}{% endblock %}
   </main>
 
-{% block footer %}
+  {% block footer %}
   <footer class="text-center py-3 position-fixed bottom-0 start-0 w-100" 
-          style="z-index: 10; color: #555; font-size: 0.8rem; pointer-events: none;">
+          style="z-index: 100; color: #888; font-size: 0.85rem; 
+                 background: rgba(5, 5, 10, 0.95); 
+                 backdrop-filter: blur(8px);
+                 border-top: 1px solid rgba(255, 255, 255, 0.1);">
     
-    <span style="pointer-events: auto;">
+    <span>
        © 2025 Carlos Sibrian
     </span>
   </footer>

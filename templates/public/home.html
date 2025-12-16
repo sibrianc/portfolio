@@ -1,11 +1,9 @@
 {% extends "layout/base.html" %}
 {% block title %}{{ t('home') }} – Carlos Sibrian{% endblock %}
 
-{# Ocultamos la navbar estándar en el Home (Para que se vea el cubo) #}
 {% block navbar %}{% endblock %}
 
 {% block content %}
-
 
 <div id="menu-container">
     <a href="{{ url_for('about') }}" class="menu-item">{{ t('about') }}</a>
@@ -15,64 +13,79 @@
 
 <div style="height: 100vh; width: 100%;"></div>
 
-<div id="featured-section" class="container-fluid py-5 position-relative" style="z-index: 10; background: transparent; min-height: 100vh;">
+<div id="featured-section" class="container-fluid pt-5 position-relative" style="z-index: 10; background: transparent; min-height: 100vh; padding-left: 0; padding-right: 0; padding-bottom: 0 !important;">
   
   <div class="container mt-5">
     <div class="text-center mb-5">
       <h2 class="text-light fw-bold display-5 text-uppercase" style="letter-spacing: 3px; text-shadow: 0 0 20px rgba(189, 75, 0, 0.5);">Featured Projects</h2>
       <p class="text-secondary">Selected works from the archive</p>
     </div>
+  </div>
 
-    {% if featured %}
-      <div id="projectsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+  {% if featured %}
+    
+    <div class="cyber-carousel-wrapper">
+      
+      <div id="projectsCarousel" class="carousel slide mx-auto" data-bs-ride="carousel" data-bs-interval="5000" style="width: 100%; max-width: 1000px;"> 
         
-        <div class="carousel-inner pb-5"> 
+        <div class="carousel-inner" style="overflow: visible;"> 
           {% for project in featured %}
             <div class="carousel-item {% if loop.first %}active{% endif %}">
               
-              <div class="project-card-custom mx-auto">
-                <div class="card-img-custom">
+              <a href="{{ url_for('project_detail', slug=project.slug) }}" class="cyber-card mx-auto" style="max-width: 380px; min-height: 450px;">
+                
+                <div class="cyber-img-container" style="height: 200px;">
                   {% if project.cover_image %}
-                     <img src="{{ project.cover_image }}" alt="{{ project.title }}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                     <img src="{{ project.cover_image }}" class="cyber-img" alt="{{ project.title }}">
                   {% else %}
-                     <span>🚀</span>
+                     <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-black text-secondary">
+                        <span style="font-size: 3rem;">NO_SIGNAL</span>
+                     </div>
                   {% endif %}
                 </div>
-                <div class="card-content-custom">
-                  <h3 class="card-title-custom">{{ project.title }}</h3>
-                  <p class="card-desc-custom">{{ project.summary | truncate(120) }}</p>
-                  <a href="{{ url_for('project_detail', slug=project.slug) }}" class="btn-details-custom">View Details</a>
-                </div>
-              </div>
 
-            </div>
+                <div class="cyber-body">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <h3 class="cyber-title" style="border:none; font-size: 1.3rem;">{{ project.title }}</h3>
+                    <span class="text-warning" style="font-size:1.1rem;" title="Featured">★</span>
+                  </div>
+                  
+                  <p class="cyber-summary" style="font-size: 0.85rem;">
+                    {{ project.summary | truncate(110) }}
+                  </p>
+
+                  {% if project.tech_stack %}
+                  <div class="tech-cloud mb-3">
+                    {% for tech in project.tech_stack.split(',')[:3] %}
+                      <span class="tech-tag">{{ tech.strip() }}</span>
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+
+                  <div class="cyber-footer mt-auto">
+                    <span class="btn-cyber-link" style="font-size: 0.9rem; cursor: pointer;">
+                      View Details <span style="font-size:1.2em;">&rsaquo;</span>
+                    </span>
+                  </div>
+                </div>
+
+              </a> </div>
           {% endfor %}
         </div>
 
-        <button class="carousel-control-prev" type="button" data-bs-target="#projectsCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: drop-shadow(0 0 5px #000);"></span>
-          <span class="visually-hidden">Previous</span>
+        <button class="carousel-control-prev" type="button" data-bs-target="#projectsCarousel" data-bs-slide="prev" style="width: 5%; left: -30px;">
+          <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: drop-shadow(0 0 5px #00aaff); transform: scale(1.5);"></span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#projectsCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true" style="filter: drop-shadow(0 0 5px #000);"></span>
-          <span class="visually-hidden">Next</span>
+        <button class="carousel-control-next" type="button" data-bs-target="#projectsCarousel" data-bs-slide="next" style="width: 5%; right: -30px;">
+          <span class="carousel-control-next-icon" aria-hidden="true" style="filter: drop-shadow(0 0 5px #00aaff); transform: scale(1.5);"></span>
         </button>
 
       </div>
-      {% else %}
-      <div class="text-center w-100 py-5 text-muted">
-        <h4>No featured projects found.</h4>
-      </div>
-    {% endif %}
-
     </div>
 
-  <footer class="text-center text-secondary mt-5 pt-5 pb-3">
-    <small>© 2025 Carlos Sibrian</small>
-  </footer>
+  {% else %}
+    <div class="text-center w-100 py-5 text-muted"><h4>No featured projects found.</h4></div>
+  {% endif %}
+
 </div>
-
 {% endblock %}
-
-{# Dejamos el footer vacío aquí porque ya lo incluimos manualmente arriba #}
-{% block footer %}{% endblock %}

@@ -4,28 +4,37 @@ export class CubeSystem {
     constructor(menuContainer) {
         this.menuContainer = menuContainer;
         this.isMenuOpen = false;
+        
+        // Variables de animación
         this.expansion = 0;
         this.targetExpansion = 0;
         this.time = 0;
+        
         this.scrollPercent = 0;
         this.init();
     }
 
-    init() { this.setupEvents(); }
+    init() {
+        this.setupEvents();
+    }
 
     setupEvents() {
         window.addEventListener('click', (e) => {
             if (this.scrollPercent > 0.5) return;
             if (e.target.classList.contains('menu-item')) return;
+
             const w = window.innerWidth;
             const h = window.innerHeight;
             let dx = e.clientX - w/2; 
             let dy = e.clientY - h/2;
             let dist = Math.sqrt(dx*dx + dy*dy);
+            
             let hitRadius = 150; 
+
             if (dist < hitRadius) {
                 this.isMenuOpen = !this.isMenuOpen;
                 this.targetExpansion = this.isMenuOpen ? 1.0 : 0; 
+                
                 if(this.isMenuOpen && this.menuContainer) {
                     this.menuContainer.classList.add('menu-active');
                 } else if (this.menuContainer) {
@@ -39,12 +48,15 @@ export class CubeSystem {
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(angle);
+        
         ctx.beginPath();
         ctx.ellipse(0, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+        
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = color;
         if (dash) ctx.setLineDash(dash);
         ctx.stroke();
+        
         ctx.restore();
     }
 
@@ -52,19 +64,34 @@ export class CubeSystem {
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(angle);
+        
         let x = radiusX * Math.cos(orbitProgress);
         let y = radiusY * Math.sin(orbitProgress);
+        
         ctx.beginPath();
         ctx.arc(x, y, 3, 0, Math.PI * 2);
         ctx.fillStyle = color;
+        
         ctx.shadowBlur = 10;
         ctx.shadowColor = color;
         ctx.fill();
+        
         ctx.restore();
     }
 
     render(ctx, w, h, time, mouseX, mouseY, scrollPercent) {
         this.scrollPercent = scrollPercent;
+
+        // --- AUTO-CIERRE AL HACER SCROLL ---
+        // Si el menú está abierto y el usuario baja un poco (más del 1%), lo cerramos a la fuerza.
+        if (this.isMenuOpen && scrollPercent > 0.01) {
+            this.isMenuOpen = false;
+            this.targetExpansion = 0; // Regresar animación
+            if(this.menuContainer) {
+                this.menuContainer.classList.remove('menu-active'); // Ocultar HTML
+            }
+        }
+
         if (scrollPercent > 0.5) return;
         
         let globalAlpha = 1 - (scrollPercent * 2);
@@ -79,33 +106,28 @@ export class CubeSystem {
 
         let expansionOffset = this.expansion * 40;
 
-        // --- PALETA DE COLOR "ICE WHITE" (Minimalista / Premium) ---
-        // Usamos blanco con un tinte cyan muy leve para que parezca cristal iluminado.
-        const mainColor = '#e0ffff'; // Blanco Hielo (Ice White)
-        const accentColor = '#ffffff'; // Blanco Puro para brillos fuertes
-        const activeColor = '#ff3366'; // Un rojo/rosa sutil solo si se activa (opcional)
-
+        // --- PALETA DE COLOR "ICE WHITE" ---
+        const mainColor = '#e0ffff'; // Blanco Hielo
+        const accentColor = '#ffffff'; // Blanco Puro
+        
         // --- 1. NÚCLEO CENTRAL ---
         ctx.beginPath();
         ctx.arc(cx, cy, baseSize * 0.15, 0, Math.PI * 2);
         ctx.fillStyle = '#000000'; // Fondo negro
         ctx.fill();
         
-        // Botón brillante (Ahora es blanco/plata)
+        // Botón brillante
         ctx.beginPath();
         ctx.arc(cx, cy, baseSize * 0.12, 0, Math.PI * 2);
-        // Si está abierto, se pone blanco puro brillante, si no, blanco hielo suave
         ctx.fillStyle = this.isMenuOpen ? accentColor : mainColor;
-        
-        // El glow (resplandor) ahora es blanco, lo que se ve muy elegante sobre fondo rojo
         ctx.shadowBlur = 20; 
         ctx.shadowColor = this.isMenuOpen ? accentColor : mainColor;
         ctx.fill();
         ctx.shadowBlur = 0; 
 
-        // Icono (Hamburguesa) - Negro para máximo contraste sobre el botón blanco
+        // Icono (Hamburguesa)
         ctx.strokeStyle = '#050f19'; 
-        ctx.lineWidth = 2.5; // Un poco más grueso para legibilidad
+        ctx.lineWidth = 2.5; 
         let iconSize = baseSize * 0.05; 
         let lineGap = 6; 
 
@@ -121,25 +143,23 @@ export class CubeSystem {
         ctx.stroke();
 
 
-        // --- 2. ORBITALES (GIROSCOPIO) ---
-        // Ahora las líneas son blancas/plata. Se ve mucho menos "saturado".
+        // --- 2. ORBITALES (3 ELECTRONES) ---
         
+        // Orbital 1: Vertical (Lento)
         let angle1 = this.time * 0.5; 
         let thickness1 = baseSize * 0.4 + (Math.abs(mouseX) * 20);
-        // mainColor es el blanco hielo
         this.drawOrbit(ctx, cx, cy, baseSize + expansionOffset, thickness1, angle1, mainColor, 1.5, []);
         this.drawElectron(ctx, cx, cy, baseSize + expansionOffset, thickness1, angle1, this.time * 2, accentColor);
 
+        // Orbital 2: Diagonal 1
         let angle2 = (Math.PI / 3) + (this.time * 0.3);
         let thickness2 = baseSize * 0.4 + (Math.abs(mouseY) * 20);
-        // Bajamos un poco la opacidad de los anillos secundarios para dar profundidad
-        ctx.globalAlpha = Math.max(0, globalAlpha * 0.7); 
-        this.drawOrbit(ctx, cx, cy, baseSize * 0.9 + expansionOffset, thickness2, angle2, mainColor, 1, [5, 10]); 
+        this.drawOrbit(ctx, cx, cy, baseSize * 0.9 + expansionOffset, thickness2, angle2, mainColor, 1.5, []); 
+        this.drawElectron(ctx, cx, cy, baseSize * 0.9 + expansionOffset, thickness2, angle2, this.time * 2.5, accentColor);
         
-        ctx.globalAlpha = Math.max(0, globalAlpha); // Restaurar alpha
-        
+        // Orbital 3: Diagonal 2
         let angle3 = -(Math.PI / 3) - (this.time * 0.4);
-        this.drawOrbit(ctx, cx, cy, baseSize * 0.8 + expansionOffset, thickness1, angle3, mainColor, 1, []);
+        this.drawOrbit(ctx, cx, cy, baseSize * 0.8 + expansionOffset, thickness1, angle3, mainColor, 1.5, []);
         this.drawElectron(ctx, cx, cy, baseSize * 0.8 + expansionOffset, thickness1, angle3, -this.time * 3, accentColor);
 
 
@@ -148,6 +168,7 @@ export class CubeSystem {
         ctx.globalAlpha = Math.min(1, globalAlpha * hudAlpha);
         let baseRadius = baseSize * 1.5 + expansionOffset;
 
+        // Anillo 1
         ctx.beginPath();
         ctx.arc(cx, cy, baseRadius, -this.time * 0.5, -this.time * 0.5 + Math.PI * 1.5); 
         ctx.strokeStyle = mainColor;
@@ -155,6 +176,7 @@ export class CubeSystem {
         ctx.setLineDash([2, 5]);
         ctx.stroke();
 
+        // Anillo 2
         ctx.beginPath();
         ctx.arc(cx, cy, baseRadius + 15, this.time * 0.3, this.time * 0.3 + Math.PI); 
         ctx.strokeStyle = mainColor;
@@ -162,6 +184,7 @@ export class CubeSystem {
         ctx.setLineDash([10, 10, 2, 10]); 
         ctx.stroke();
 
+        // Anillo 3
         ctx.beginPath();
         ctx.arc(cx, cy, baseRadius + 35, -this.time * 0.1, -this.time * 0.1 + Math.PI * 1.8); 
         ctx.strokeStyle = mainColor;

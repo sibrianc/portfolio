@@ -244,3 +244,374 @@ canvas {
 .form-control::placeholder {
     color: #888;
 }
+
+/* --- PROYECTOS: DATA GRID SYSTEM --- */
+
+/* Contenedor de la barra de búsqueda estilo terminal */
+.cyber-search-container {
+    background: rgba(5, 15, 25, 0.7);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%); /* Forma trapezoidal invertida */
+    margin-bottom: 40px;
+    backdrop-filter: blur(5px);
+}
+
+.cyber-input {
+    background: transparent;
+    border: none;
+    color: #00aaff;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    width: 100%;
+}
+.cyber-input:focus {
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+    color: #fff;
+}
+.cyber-input::placeholder { color: rgba(0, 170, 255, 0.5); }
+
+/* Grid personalizada (reemplaza a row/col de bootstrap para más control) */
+.cyber-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+/* --- ESTILOS DE LA TARJETA CON EFECTO 3D REAL (DOBLE CAPA) --- */
+
+.cyber-card {
+    position: relative;
+    
+    /* 1. EL "BORDE" ES EL FONDO DEL CONTENEDOR */
+    /* Usamos un gradiente diagonal brillante */
+    background: linear-gradient(135deg, 
+        rgba(0, 170, 255, 0.5) 0%, 
+        rgba(255, 255, 255, 0.1) 45%, 
+        rgba(255, 255, 255, 0.6) 50%, 
+        rgba(255, 255, 255, 0.1) 55%, 
+        rgba(0, 170, 255, 0.5) 100%
+    );
+    
+    /* IMPORTANTE: Quitamos el borde normal porque clip-path lo corta */
+    border: none !important; 
+    padding: 0; /* El padding lo maneja el contenido */
+    
+    /* La forma recortada */
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
+
+    /* Configuración 3D */
+    transform-style: preserve-3d;
+    transform: perspective(1000px);
+    
+    /* Sombra externa fuerte para levantar la tarjeta */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    
+    /* Transiciones */
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. LA CAPA NEGRA INTERNA (PSEUDO-ELEMENTO) */
+/* Esto crea el cuerpo de la tarjeta, dejando ver 2px del padre como borde */
+.cyber-card::before {
+    content: '';
+    position: absolute;
+    
+    /* Inset 2px: Hace que el negro sea más pequeño que el fondo brillante */
+    /* ¡ESTO ES LO QUE CREA EL EFECTO DE BORDE! */
+    top: 2px; left: 2px; right: 2px; bottom: 2px;
+    
+    background: rgba(10, 15, 20, 0.95); /* Color oscuro de la tarjeta */
+    
+    /* Debe tener el MISMO recorte que el padre para encajar */
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
+    
+    z-index: 0; /* Se queda atrás del texto/imagen */
+}
+
+/* 3. CONTENIDO ENCIMA DEL FONDO */
+/* Es vital ponerles z-index: 1, si no, el ::before los tapará */
+.cyber-img-container, .cyber-body {
+    position: relative;
+    z-index: 1; 
+}
+
+/* Ajustes visuales para que el contenido no toque el borde iluminado */
+.cyber-img-container {
+    /* Margen pequeño para no pisar el borde brillante */
+    margin: 2px 2px 0 2px; 
+    width: calc(100% - 4px);
+    
+    height: 160px;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+}
+
+.cyber-body {
+    margin: 0 2px 2px 2px;
+    width: calc(100% - 4px);
+    
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 4. HOVER: EL BORDE BRILLA MÁS Y LA TARJETA SE LEVANTA */
+.cyber-card:hover {
+    /* Movimiento 3D */
+    transform: perspective(1000px) rotateX(5deg) translateY(-15px) scale(1.02);
+    
+    /* Al pasar el mouse, el borde se vuelve Cyan Neón puro */
+    background: linear-gradient(135deg, #00aaff, #ffffff 50%, #00aaff);
+    
+    /* Sombra Neón */
+    box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.9), 
+        0 0 30px rgba(0, 170, 255, 0.4);
+        
+    z-index: 10;
+}
+
+/* Estilos de la imagen (Opcional, para asegurar que se ajuste) */
+.cyber-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(80%) contrast(1.2);
+    transition: filter 0.4s ease;
+}
+.cyber-card:hover .cyber-img {
+    filter: grayscale(0%) contrast(1.1);
+}
+
+/* Overlay de "Scanline" sobre la imagen */
+.cyber-img-container::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+}
+
+/* Contenido */
+.cyber-body {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.cyber-title {
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+.cyber-summary {
+    color: #aaa;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+/* Tags de Tecnologías */
+.tech-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.tech-tag {
+    font-size: 0.7rem;
+    background: rgba(0, 170, 255, 0.1);
+    color: #00aaff;
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    padding: 2px 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Footer de la tarjeta con acción */
+.cyber-footer {
+    margin-top: auto;
+    text-align: right;
+    padding-right: 15px; /* Espacio para no chocar con el corte */
+}
+
+.btn-cyber-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.3s;
+}
+.btn-cyber-link:hover {
+    color: #00aaff;
+    text-shadow: 0 0 8px #00aaff;
+}
+.btn-cyber-link::after {
+    content: ' >>';
+    font-size: 0.8rem;
+}
+/* --- PROYECTOS: CARRUSEL HORIZONTAL (GLASS STRIP) --- */
+
+.cyber-carousel-wrapper {
+    background: rgba(5, 10, 15, 0.65);
+    backdrop-filter: blur(15px);
+    
+    border-top: 1px solid rgba(0, 170, 255, 0.4);
+    border-bottom: none;
+    
+    padding-top: 40px; /* Un poco menos de padding arriba */
+    padding-bottom: 100px; /* Ajustado para que no tape */
+    
+    margin-top: 30px;
+    margin-bottom: -150px; 
+    
+    width: 100%;
+    position: relative;
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6);
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+}
+
+/* El riel donde se mueven las tarjetas */
+.cyber-carousel-track {
+    display: flex;
+    gap: 60px; /* AUMENTADO: Más espacio entre tarjetas para que giren bien */
+    padding: 10px 60px; /* Más padding lateral */
+    
+    width: max-content;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    
+    /* Para centrar verticalmente si alguna es más alta */
+    align-items: center; 
+}
+
+/* Ajuste a las tarjetas */
+.cyber-carousel-track .cyber-card {
+    flex: 0 0 340px; /* Ancho estándar cómodo */
+    height: 100%;
+    min-height: 420px; /* REDUCIDO: Antes 480px. Ahora son más compactas */
+}
+
+/* Ajuste de la imagen dentro de las tarjetas */
+.cyber-img-container {
+    height: 160px; /* REDUCIDO: Antes 180px */
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+
+/* Scrollbar personalizada */
+.cyber-carousel-track::-webkit-scrollbar {
+    height: 6px;
+}
+.cyber-carousel-track::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    margin: 0 15%; 
+    border-radius: 10px;
+}
+.cyber-carousel-track::-webkit-scrollbar-thumb {
+    background: #004466; 
+    border-radius: 10px;
+}
+.cyber-carousel-track::-webkit-scrollbar-thumb:hover {
+    background: #00aaff; 
+}
+/* --- ESTILOS DE LA TARJETA CON EFECTO 3D --- */
+
+.cyber-card {
+    position: relative;
+    background: rgba(10, 15, 20, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 2px solid rgba(0, 170, 255, 0.3);
+    backdrop-filter: blur(10px);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    
+    /* Forma Cyberpunk */
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
+
+    /* --- EFECTO 3D BASE --- */
+    /* Sombra profunda inicial */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); 
+    /* Preparar la transformación */
+    transform: perspective(1000px) rotateX(0deg) translateY(0);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.cyber-card:hover {
+    /* --- EFECTO 3D HOVER --- */
+    /* Se levanta (Y-15px), se escala un poco y se inclina (rotateX) */
+    transform: perspective(1000px) rotateX(5deg) translateY(-15px) scale(1.02);
+    
+    /* Borde brillante */
+    border-color: rgba(0, 170, 255, 0.9);
+    border-left-color: #00aaff;
+    
+    /* Sombra de neón fuerte para dar sensación de levitación */
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.8), /* Sombra negra de profundidad */
+        0 0 30px rgba(0, 170, 255, 0.2); /* Resplandor azul */
+        
+    z-index: 10; /* Asegura que se vea por encima de las otras */
+    background: rgba(15, 20, 30, 0.9);
+}
+
+/* --- PERSONALIZACIÓN DEL SCROLLBAR (ESTILO TECH) --- */
+.cyber-carousel-track::-webkit-scrollbar {
+    height: 6px;
+}
+.cyber-carousel-track::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    margin: 0 20%; /* Scrollbar más corta centrada visualmente */
+    border-radius: 10px;
+}
+.cyber-carousel-track::-webkit-scrollbar-thumb {
+    background: #004466; 
+    border-radius: 10px;
+}
+.cyber-carousel-track::-webkit-scrollbar-thumb:hover {
+    background: #00aaff; 
+    box-shadow: 0 0 10px #00aaff;
+}
+/* --- AJUSTE PARA TARJETAS CLICKEABLES --- */
+a.cyber-card {
+    text-decoration: none; /* Quita el subrayado del link */
+    color: inherit;        /* Mantiene los colores de texto originales */
+    cursor: pointer;       /* Asegura que salga la manito */
+    display: flex;         /* Mantiene el diseño flexible */
+}
+
+/* Asegurar que el hover siga funcionando igual */
+a.cyber-card:hover {
+    color: inherit;
+    text-decoration: none;
+}

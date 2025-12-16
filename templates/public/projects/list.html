@@ -1,34 +1,89 @@
 {% extends "layout/base.html" %}
 
 {% block title %}{{ t('projects') }} – Carlos Sibrian{% endblock %}
-{% block content %}
-<div class="container py-5">
-  <h1 class="mb-4 text-center text-light">{{ t('projects') }}</h1>
 
-  <!-- Filter by technology form -->
-  <div class="d-flex justify-content-end mb-4">
-    <form method="get" class="d-flex" style="max-width: 300px;">
-      <input type="text" name="tech" class="form-control form-control-sm me-2" placeholder="Filter by technology" value="{{ tech or '' }}">
-      <button type="submit" class="btn btn-sm btn-cyber">Filter</button>
-    </form>
+{% block content %}
+<div style="position: relative; z-index: 5; padding-top: 50px;">
+  
+  <div class="container text-center mb-4">
+    <h1 class="text-light display-4 fw-bold" style="letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 0 20px rgba(0, 170, 255, 0.4);">
+      {{ t('projects') }}
+    </h1>
+    <div style="width: 60px; height: 3px; background: #00aaff; margin: 20px auto;"></div>
   </div>
 
-  <!-- Projects grid -->
-  <div class="row">
-    {% for project in projects %}
-      <div class="col-md-4 mb-4">
-        <div class="card bg-dark h-100 border-light">
-          {% if project.cover_image %}
-            <img src="{{ project.cover_image }}" class="card-img-top" alt="{{ project.title }}">
-          {% endif %}
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title text-light">{{ project.title }}</h5>
-            <p class="card-text text-light-75">{{ project.summary }}</p>
-            <a href="{{ url_for('project_detail', slug=project.slug) }}" class="mt-auto btn btn-sm btn-cta">View Details</a>
-          </div>
+  <div class="container mb-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="cyber-search-container">
+          <span class="me-2 text-info">     </span>
+          <form method="get" class="w-100 d-flex">
+            <input type="text" name="tech" class="cyber-input" placeholder="Search technology..." value="{{ tech or '' }}" autocomplete="off" style="font-family: 'Segoe UI', sans-serif;">
+          </form>
         </div>
       </div>
-    {% endfor %}
+    </div>
   </div>
+
+  <div class="cyber-carousel-wrapper">
+    <div class="cyber-carousel-track" style="gap: 90px; padding: 30px 80px;">
+      
+      {% for project in projects %}
+        <a href="{{ url_for('project_detail', slug=project.slug) }}" class="cyber-card">
+          
+          <div class="cyber-img-container">
+            {% if project.cover_image %}
+              <img src="{{ project.cover_image }}" class="cyber-img" alt="{{ project.title }}">
+            {% else %}
+              <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-black text-secondary">
+                <span style="font-size: 2rem; opacity: 0.5;">No Image</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="cyber-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <h5 class="cyber-title" style="border:none;">{{ project.title }}</h5>
+              {% if project.is_featured %}
+                <span class="text-warning" style="font-size:1rem;" title="Featured">★</span>
+              {% endif %}
+            </div>
+
+            <p class="cyber-summary">{{ project.summary | truncate(100) }}</p>
+
+            {% if project.tech_stack %}
+            <div class="tech-cloud">
+              {% for tech in project.tech_stack.split(',')[:4] %}
+                <span class="tech-tag">{{ tech.strip() }}</span>
+              {% endfor %}
+              {% if project.tech_stack.split(',')|length > 4 %}
+                <span class="tech-tag" style="opacity: 0.5;">...</span>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="cyber-footer">
+              <span class="btn-cyber-link">
+                View Project <span style="font-size:1.2em;">&rsaquo;</span>
+              </span>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+
+      {% if not projects %}
+        <div class="text-center w-100 py-5 text-light">
+          <h3 class="text-muted">No projects found.</h3>
+          <a href="{{ url_for('projects_list') }}" class="btn btn-sm btn-outline-light mt-3">Clear Search</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="text-center mt-4" style="opacity: 0.7;">
+      <small class="text-muted" style="letter-spacing: 2px;">&larr; SCROLL TO EXPLORE &rarr;</small>
+    </div>
+
+  </div>
+
 </div>
 {% endblock %}

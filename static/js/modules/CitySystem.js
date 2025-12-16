@@ -223,27 +223,8 @@ export class CitySystem {
 
             ctx.save();
             
-            // Halo Celeste Neón (Solo Noche)
-            if (nightFactor > 0.4) {
-                ctx.save();
-                ctx.globalAlpha = nightFactor * 0.9; 
-                let haloColor = '#ffffffff'; 
-                let glowColor = '#00aaff'; 
-                ctx.shadowBlur = 20; 
-                ctx.shadowColor = glowColor;
-                ctx.strokeStyle = haloColor; 
-                ctx.lineWidth = 2; 
-                
-                let headCenterX = mx;
-                let headCenterY = drawY + (targetHeight * 0.11);
-                let haloRadius = targetWidth * 0.30; 
-
-                ctx.beginPath();
-                ctx.arc(headCenterX, headCenterY, haloRadius, 0, Math.PI*2);
-                ctx.stroke(); 
-                ctx.restore();
-            }
-
+            // Halo Celeste Neón [ELIMINADO]
+            
             // Imagen con filtro de brillo (Silueta)
             let brightness = Math.max(0, 1 - nightFactor); 
             ctx.filter = `brightness(${brightness})`;

@@ -87,3 +87,48 @@ if (canvas) {
     
     animate();
 }
+
+// ... (resto del código de main.js) ...
+
+// --- SISTEMA DE TARJETAS 3D (TILT EFFECT) ---
+function init3DTiltCards() {
+    const cards = document.querySelectorAll('.cyber-card');
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            // Calcular posición del mouse dentro de la tarjeta
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Calcular el centro
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            // Calcular rotación (Max 15 grados)
+            // Multiplicamos por -1 en X para que se incline hacia el mouse
+            const rotateX = ((y - centerY) / centerY) * -10; 
+            const rotateY = ((x - centerX) / centerX) * 10;
+
+            // Aplicar transformación en tiempo real
+            // "scale(1.05)" hace que se agrande un poquito
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+            
+            // Quitamos la transición mientras movemos para que sea instantáneo (sin lag)
+            card.style.transition = 'box-shadow 0.3s, border-color 0.3s'; 
+        });
+
+        card.addEventListener('mouseleave', () => {
+            // Al salir, devolvemos la tarjeta a su posición original
+            card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
+            
+            // Devolvemos la transición suave para que regrese "flotando"
+            card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease, border-color 0.3s';
+        });
+    });
+}
+
+// Llamar a la función si existen tarjetas
+if (document.querySelector('.cyber-card')) {
+    init3DTiltCards();
+}
