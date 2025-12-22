@@ -380,16 +380,44 @@ canvas {
     z-index: 10;
 }
 
-/* Estilos de la imagen (Opcional, para asegurar que se ajuste) */
+/* Estilos de la imagen */
 .cyber-img {
     width: 100%;
-    height: 100%;
+    
+    /* CAMBIO: Permitimos que la imagen sea más alta que el contenedor */
+    height: auto;
+    min-height: 100%; 
+    
     object-fit: cover;
+    object-position: top center; /* Siempre muestra el header al inicio */
+    
     filter: grayscale(80%) contrast(1.2);
-    transition: filter 0.4s ease;
+    
+    /* CAMBIO: Agregamos transición lenta a 'transform' para el scroll */
+    transition: transform 3s ease-in-out, filter 0.4s ease;
+    display: block; /* Elimina espacios fantasma */
 }
+
+/* HOVER: Scroll hacia abajo y color */
 .cyber-card:hover .cyber-img {
     filter: grayscale(0%) contrast(1.1);
+    /* Sube la imagen hasta que se vea el final. 
+       El '+ 200px' es para compensar la altura del contenedor y que no se pase */
+    transform: translateY(calc(-100% + 200px)); 
+}
+
+/* --- NUEVO: ESTILO PARA VIDEO INCRUSTADO --- */
+.cyber-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Hace que el video llene el cuadro sin bordes negros */
+    border: none;
+    filter: grayscale(60%) contrast(1.1);
+    transition: filter 0.4s ease;
+}
+
+.cyber-card:hover .cyber-video {
+    filter: grayscale(0%) contrast(1.0);
 }
 
 /* Overlay de "Scanline" sobre la imagen */
@@ -519,12 +547,20 @@ canvas {
     min-height: 420px; /* REDUCIDO: Antes 480px. Ahora son más compactas */
 }
 
-/* Ajuste de la imagen dentro de las tarjetas */
+/* --- ACTUALIZACIÓN: CONTENEDOR DE MEDIA (IMG/VIDEO) --- */
 .cyber-img-container {
-    height: 160px; /* REDUCIDO: Antes 180px */
-    overflow: hidden;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Mantenemos tu lógica de márgenes para no tapar el borde brillante */
+    margin: 2px 2px 0 2px; 
+    width: calc(100% - 4px);
+    
+    /* CAMBIO: Aumentamos altura a 200px para mejor proporción de video (16:9 aprox) */
+    height: 200px; 
+    
+    overflow: hidden; /* Vital para que el scroll no se salga */
+    border-bottom: 1px solid rgba(0, 170, 255, 0.2);
     position: relative;
+    z-index: 1; /* Se mantiene encima de la capa oscura */
+    background-color: #000; /* Fondo negro profesional por si el video tarda en cargar */
 }
 
 /* Scrollbar personalizada */
@@ -614,4 +650,120 @@ a.cyber-card {
 a.cyber-card:hover {
     color: inherit;
     text-decoration: none;
+}
+
+/* --- PROYECTO DETALLE: ESTILO CINEMÁTICO & BROWSER WINDOW --- */
+
+/* Contenedor del Navegador */
+.cyber-browser {
+  background: rgba(15, 20, 25, 0.9);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 20px rgba(0, 170, 255, 0.1);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  margin-bottom: 3rem; /* Espacio abajo */
+}
+
+.cyber-browser:hover {
+  box-shadow: 0 35px 70px rgba(0,0,0,0.8), 0 0 30px rgba(0, 170, 255, 0.2);
+  border-color: rgba(0, 170, 255, 0.6);
+}
+
+/* Header del Navegador */
+.browser-header {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Botones Mac-style Cyber */
+.window-controls { display: flex; gap: 8px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot.red { background: #ff5f56; box-shadow: 0 0 5px #ff5f56; }
+.dot.yellow { background: #ffbd2e; box-shadow: 0 0 5px #ffbd2e; }
+.dot.green { background: #27c93f; box-shadow: 0 0 5px #27c93f; }
+
+/* Barra de Direcciones */
+.address-bar {
+  flex-grow: 1;
+  background: rgba(0, 170, 255, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.1);
+  border-radius: 4px;
+  padding: 6px 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: #00aaff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lock-icon { font-size: 0.8rem; opacity: 0.7; }
+.url-text { opacity: 0.8; letter-spacing: 0.5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* Viewport (Donde va el video/img) */
+.browser-viewport {
+  width: 100%;
+  aspect-ratio: 16/9; /* Mantiene proporción cinemática siempre */
+  background: #000;
+  position: relative;
+  display: flex; /* Centrar contenido */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sidebar HUD Styles */
+.hud-panel {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky; top: 100px;
+  padding-left: 2rem;
+}
+
+.section-title {
+  letter-spacing: 2px; font-size: 0.9rem; 
+  border-bottom: 1px solid rgba(255,255,255,0.1); 
+  padding-bottom: 10px; display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.small-title { font-size: 0.8rem; letter-spacing: 1px; color: #888; margin-bottom: 1rem; text-transform: uppercase; }
+
+.tech-badge {
+  padding: 6px 12px;
+  background: rgba(0, 170, 255, 0.05); 
+  border: 1px solid rgba(0, 170, 255, 0.2); 
+  color: #00aaff; 
+  font-size: 0.85rem; 
+  border-radius: 4px;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.btn-hud {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 15px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #ccc;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+.btn-hud:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: #00aaff;
+  color: #fff;
+  transform: translateX(5px);
+}
+
+/* Texto de descripción */
+.description-content {
+    font-size: 1.05rem; 
+    line-height: 1.9; 
+    color: #e0e0e0;
+    text-align: justify;
 }

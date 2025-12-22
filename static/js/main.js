@@ -92,30 +92,53 @@ if (canvas) {
 
 // ... (resto del código de main.js para las tarjetas) ...
 
-// --- SISTEMA DE TARJETAS 3D (TILT EFFECT) ---
+// --- SISTEMA DE TARJETAS 3D (TILT EFFECT) - MEJORADO PARA TOUCH ---
 function init3DTiltCards() {
     const cards = document.querySelectorAll('.cyber-card');
 
     cards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
+        // Función unificada para calcular la inclinación
+        const handleTilt = (clientX, clientY) => {
             const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            // Calcular posición dentro de la tarjeta
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
             
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
             
+            // Calcular rotación (Max 10 grados)
             const rotateX = ((y - centerY) / centerY) * -10; 
             const rotateY = ((x - centerX) / centerX) * 10;
 
             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-            card.style.transition = 'box-shadow 0.3s, border-color 0.3s'; 
+            // Transición rápida para movimiento fluido
+            card.style.transition = 'box-shadow 0.1s, border-color 0.3s'; 
+        };
+
+        const resetTilt = () => {
+            card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
+            // Transición suave para el retorno
+            card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease, border-color 0.3s';
+        };
+
+        // --- MOUSE EVENTS (PC) ---
+        card.addEventListener('mousemove', (e) => {
+            handleTilt(e.clientX, e.clientY);
         });
 
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
-            card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease, border-color 0.3s';
-        });
+        card.addEventListener('mouseleave', resetTilt);
+
+        // --- TOUCH EVENTS (MOVIL) ---
+        card.addEventListener('touchmove', (e) => {
+            // No prevenimos default para permitir scroll, pero capturamos el movimiento
+            const touch = e.touches[0];
+            // Verificar si el dedo está sobre la tarjeta antes de aplicar (opcional, pero touchmove suele ser global al elemento)
+            handleTilt(touch.clientX, touch.clientY);
+        }, { passive: true });
+
+        card.addEventListener('touchend', resetTilt);
+        card.addEventListener('touchcancel', resetTilt);
     });
 }
 

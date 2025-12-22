@@ -1,10 +1,21 @@
 {% extends "layout/base.html" %}
 {% block title %}{{ t('home') }} – Carlos Sibrian{% endblock %}
 
-{% block navbar %}{% endblock %}
+{# --- SOBRESCRIBIMOS EL NAVBAR PARA EL HOME --- #}
+{# En lugar de la barra completa, solo mostramos el botón de idioma flotando arriba a la derecha #}
+{% block navbar %}
+<div class="position-fixed top-0 end-0 p-4" style="z-index: 2000;">
+    <a class="btn btn-sm btn-outline-light rounded-pill px-3" 
+       href="{{ url_for('switch_lang', code='en' if current_lang()=='es' else 'es') }}"
+       style="backdrop-filter: blur(5px); background: rgba(0,0,0,0.2); box-shadow: 0 0 15px rgba(0,0,0,0.5);">
+      {{ current_lang()|upper }}
+    </a>
+</div>
+{% endblock %}
 
 {% block content %}
 
+{# --- MENÚ 3D (Sin el idioma dentro) --- #}
 <div id="menu-container">
     <a href="{{ url_for('about') }}" class="menu-item">{{ t('about') }}</a>
     <a href="{{ url_for('projects_list') }}" class="menu-item">{{ t('projects') }}</a>
@@ -34,24 +45,39 @@
               
               <a href="{{ url_for('project_detail', slug=project.slug) }}" class="cyber-card mx-auto" style="max-width: 380px; min-height: 450px;">
                 
-                <div class="cyber-img-container" style="height: 200px;">
-                  {% if project.cover_image %}
+                {# --- ZONA DE MEDIA (VIDEO O IMAGEN) --- #}
+                <div class="cyber-img-container">
+                  {% if project.video_url %}
+                     {# OPCIÓN 1: VIDEO MP4 #}
+                     {# Se reproduce solo, sin sonido y en bucle. Se ve super pro. #}
+                     <video class="cyber-video" autoplay muted loop playsinline poster="{{ project.cover_image }}">
+                        <source src="{{ project.video_url }}" type="video/mp4">
+                        {# Fallback a imagen si el video falla #}
+                        <img src="{{ project.cover_image }}" class="cyber-img" alt="{{ project.title }}">
+                     </video>
+
+                  {% elif project.cover_image %}
+                     {# OPCIÓN 2: IMAGEN (Con efecto scroll al pasar el mouse) #}
                      <img src="{{ project.cover_image }}" class="cyber-img" alt="{{ project.title }}">
+
                   {% else %}
+                     {# OPCIÓN 3: PLACEHOLDER #}
                      <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-black text-secondary">
-                        <span style="font-size: 3rem;">NO_SIGNAL</span>
+                        <span style="font-size: 3rem; opacity: 0.5;">NO_SIGNAL</span>
                      </div>
                   {% endif %}
                 </div>
 
                 <div class="cyber-body">
                   <div class="d-flex justify-content-between align-items-start">
-                    <h3 class="cyber-title" style="border:none; font-size: 1.3rem;">{{ project.title }}</h3>
+                    {# Título traducido #}
+                    <h3 class="cyber-title" style="border:none; font-size: 1.3rem;">{{ get_loc_attr(project, 'title') }}</h3>
                     <span class="text-warning" style="font-size:1.1rem;" title="Featured">★</span>
                   </div>
                   
+                  {# Resumen traducido #}
                   <p class="cyber-summary" style="font-size: 0.85rem;">
-                    {{ project.summary | truncate(110) }}
+                    {{ get_loc_attr(project, 'summary') | truncate(110) }}
                   </p>
 
                   {% if project.tech_stack %}

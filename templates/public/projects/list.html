@@ -25,31 +25,44 @@
     </div>
   </div>
 
-  <div class="cyber-carousel-wrapper">
-    <div class="cyber-carousel-track" style="gap: 90px; padding: 30px 80px;">
+  <div class="container pb-5">
+    <div class="cyber-grid">
       
       {% for project in projects %}
         <a href="{{ url_for('project_detail', slug=project.slug) }}" class="cyber-card">
           
+          {# --- ZONA DE MEDIA (VIDEO O IMAGEN) --- #}
           <div class="cyber-img-container">
-            {% if project.cover_image %}
-              <img src="{{ project.cover_image }}" class="cyber-img" alt="{{ project.title }}">
+            {% if project.video_url %}
+                {# Opción 1: Video MP4 #}
+                <video class="cyber-video" autoplay muted loop playsinline poster="{{ project.cover_image }}">
+                  <source src="{{ project.video_url }}" type="video/mp4">
+                  <img src="{{ project.cover_image }}" class="cyber-img" alt="Fallback">
+                </video>
+
+            {% elif project.cover_image %}
+                {# Opción 2: Imagen con Scroll #}
+                <img src="{{ project.cover_image }}" class="cyber-img" alt="{{ project.title }}">
+
             {% else %}
-              <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-black text-secondary">
-                <span style="font-size: 2rem; opacity: 0.5;">No Image</span>
-              </div>
+                {# Opción 3: Placeholder #}
+                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-black text-secondary">
+                  <span style="font-size: 2rem; opacity: 0.5;">No Image</span>
+                </div>
             {% endif %}
           </div>
 
           <div class="cyber-body">
             <div class="d-flex justify-content-between align-items-start">
-              <h5 class="cyber-title" style="border:none;">{{ project.title }}</h5>
+              {# TRADUCCIÓN DEL TÍTULO #}
+              <h5 class="cyber-title" style="border:none;">{{ get_loc_attr(project, 'title') }}</h5>
               {% if project.is_featured %}
                 <span class="text-warning" style="font-size:1rem;" title="Featured">★</span>
               {% endif %}
             </div>
 
-            <p class="cyber-summary">{{ project.summary | truncate(100) }}</p>
+            {# TRADUCCIÓN DEL RESUMEN #}
+            <p class="cyber-summary">{{ get_loc_attr(project, 'summary') | truncate(100) }}</p>
 
             {% if project.tech_stack %}
             <div class="tech-cloud">
@@ -71,17 +84,14 @@
         </a>
       {% endfor %}
 
-      {% if not projects %}
-        <div class="text-center w-100 py-5 text-light">
-          <h3 class="text-muted">No projects found.</h3>
-          <a href="{{ url_for('projects_list') }}" class="btn btn-sm btn-outline-light mt-3">Clear Search</a>
-        </div>
-      {% endif %}
     </div>
 
-    <div class="text-center mt-4" style="opacity: 0.7;">
-      <small class="text-muted" style="letter-spacing: 2px;">&larr; SCROLL TO EXPLORE &rarr;</small>
-    </div>
+    {% if not projects %}
+      <div class="text-center w-100 py-5 text-light">
+        <h3 class="text-muted">No projects found.</h3>
+        <a href="{{ url_for('projects_list') }}" class="btn btn-sm btn-outline-light mt-3">Clear Search</a>
+      </div>
+    {% endif %}
 
   </div>
 

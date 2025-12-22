@@ -7,6 +7,28 @@ from urllib.parse import urlparse # Import necesario para el parche de seguridad
 
 # NOTE: Lightweight module registration
 def register(app):
+    
+    # --- NUEVO: HELPER DE TRADUCCIÓN INYECTADO ---
+    # Esto es lo único nuevo. Permite usar get_loc_attr() en tus HTML.
+    @app.context_processor
+    def utility_processor():
+        def get_loc_attr(obj, attr_name):
+            """
+            Si el idioma es español, intenta buscar el atributo con sufijo '_es'.
+            Ej: get_loc_attr(project, 'title') -> busca project.title_es
+            Si no existe o está vacío, devuelve el original (inglés).
+            """
+            lang = session.get('lang', 'en')
+            if lang == 'es':
+                # Buscamos si existe el campo traducido (ej: title_es)
+                val = getattr(obj, f"{attr_name}_es", None)
+                if val: return val
+            # Si es inglés o no hay traducción, devolvemos el normal
+            return getattr(obj, attr_name)
+
+        return dict(get_loc_attr=get_loc_attr)
+    # ---------------------------------------------
+
     @app.get("/")
     def index():
         # NOTE: Show featured projects on homepage
