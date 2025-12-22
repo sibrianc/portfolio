@@ -1,4 +1,3 @@
-// static/js/modules/CitySystem.js
 import { lerpColor } from './Utils.js';
 
 export class CitySystem {
@@ -120,13 +119,15 @@ export class CitySystem {
         const nightFactor = Math.max(0, 1 - (scrollPercent * 2.5));
         
         // --- 1. MONTAÑAS (FONDO) ---
-        // TRUCO PARA TAPAR HUECOS:
-        // Usamos 'round' para que las esquinas sellen bien.
+        // AQUI ESTA EL CAMBIO: "Guardamos" el brillo, lo apagamos para las montañas, y luego lo restauramos.
+        ctx.save(); 
+        ctx.shadowBlur = 0; // Apagar brillo
+        ctx.shadowColor = 'transparent';
+        
         ctx.lineJoin = 'round';
-        ctx.lineWidth = 1; // Un borde fino es suficiente.
+        ctx.lineWidth = 1; 
 
         this.mountainFacets.forEach(facet => {
-            // LA CLAVE: El color de relleno y el del borde SON EL MISMO.
             ctx.fillStyle = facet.color;
             ctx.strokeStyle = facet.color; 
             
@@ -136,9 +137,11 @@ export class CitySystem {
                 ctx.lineTo(facet.points[i].x, facet.points[i].y);
             }
             ctx.closePath();
-            ctx.fill();   // Rellena la forma
-            ctx.stroke(); // Dibuja el borde invisible para tapar huecos
+            ctx.fill();   
+            ctx.stroke(); 
         });
+        
+        ctx.restore(); // RESTAURAR EL BRILLO (Para que afecte a lo que sigue)
 
         // --- 2. EDIFICIOS FONDO (Siluetas) ---
         ctx.fillStyle = lerpColor('#050505', '#151515', scrollPercent);
