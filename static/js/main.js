@@ -2,26 +2,39 @@ import { SkySystem } from './modules/SkySystem.js';
 import { CitySystem } from './modules/CitySystem.js';
 import { CubeSystem } from './modules/CubeSystem.js';
 
-// --- INICIALIZACIÓN ---
+/* ==========================================================================
+   1. BACKGROUND SYSTEMS (SUN SCROLL, CITY, SKY)
+   ========================================================================== */
 const canvas = document.getElementById('canvas');
 
 if (canvas) {
     const ctx = canvas.getContext('2d');
     const menuContainer = document.getElementById('menu-container');
+    
+    // --- DETECCIÓN DE PÁGINA ---
     const isHome = !!menuContainer;
+    const isAbout = window.location.pathname.includes('about');
+    const isProjects = window.location.pathname.includes('projects');
+    
+    // Definimos el tipo de escenario para enviarlo al CitySystem
+    let pageType = 'generic';
+    if (isHome) pageType = 'home';
+    if (isAbout) pageType = 'about';
+    // Projects usa el fondo genérico (suelo oscuro simple) para no distraer
 
     let w, h;
     let time = 0;
     let scrollPercent = 0;
-    let mouseX = 0, mouseY = 0;
+    
+    // Variables para el Parallax del fondo
+    let bgMouseX = 0, bgMouseY = 0; 
 
-    // Instanciar Sistemas
+    // Instanciar Sistemas (Pasamos el pageType)
     const sky = new SkySystem();
-    const city = new CitySystem();
-    // El cubo solo se crea si estamos en home
+    const city = new CitySystem(pageType); 
     const cube = isHome ? new CubeSystem(menuContainer) : null;
 
-    // --- MANEJO DE ESTADO ---
+    // --- MANEJO DE SCROLL (Aquí ocurre la magia) ---
     function updateScrollState() {
         const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
         
@@ -33,6 +46,20 @@ if (canvas) {
 
         // Cálculo seguro del porcentaje (0.0 a 1.0)
         scrollPercent = (docHeight <= 0) ? 0 : Math.max(0, Math.min(1, scrollTop / docHeight));
+
+        // --- LÓGICA DEL CADEJO (Leyenda: Se esconde con la luz/scroll) ---
+        const cadejoEl = document.getElementById('cadejo-ghost');
+        
+        // Si existe el cadejo (en About o Projects)
+        if (cadejoEl && (isAbout || isProjects)) {
+            // Si bajamos más del 10%, el espíritu se desvanece
+            if (scrollPercent > 0.1) {
+                cadejoEl.style.opacity = '0';
+                cadejoEl.style.transition = 'opacity 0.5s ease';
+            } else {
+                cadejoEl.style.opacity = '1';
+            }
+        }
     }
 
     function resize() {
@@ -41,21 +68,22 @@ if (canvas) {
         city.resize(w, h);
     }
 
-    // --- EVENT LISTENERS GLOBALES ---
+    // Listeners del Fondo
     window.addEventListener('resize', resize);
     window.addEventListener('scroll', updateScrollState); 
     
+    // Parallax del fondo (Normalizado de -1 a 1)
     window.addEventListener('mousemove', e => {
-        // Normalizar mouse de -1 a 1 para efectos de parallax
-        mouseX = (e.clientX - w/2) / (w/2);
-        mouseY = (e.clientY - h/2) / (h/2);
+        bgMouseX = (e.clientX - w/2) / (w/2);
+        bgMouseY = (e.clientY - h/2) / (h/2);
         
-        // Cursor interactivo para el cubo
+        // Cursor interactivo para el cubo (solo si está en home)
         if (isHome && cube) {
             let dx = e.clientX - w/2; 
             let dy = e.clientY - h/2;
             let dist = Math.sqrt(dx*dx + dy*dy);
-            let hitRadius = cube.isMenuOpen ? 450 : 160; // Radio expandido si está abierto
+            let hitRadius = cube.isMenuOpen ? 450 : 160; 
+            
             document.body.style.cursor = (dist < hitRadius) ? 'pointer' : 'default';
         }
     });
@@ -63,85 +91,172 @@ if (canvas) {
     // Iniciar
     resize();
 
-    function animate() {
+    // --- LOOP DE ANIMACIÓN DEL FONDO ---
+    function animateBackground() {
         updateScrollState();
         time++;
         ctx.clearRect(0, 0, w, h);
 
-        // --- CALCULAR LUZ DEL MENÚ ---
-        // Obtenemos qué tan abierto está el menú (0.0 a 1.0)
+        // Calcular luz del menú
         let menuLight = (isHome && cube) ? cube.expansion : 0;
 
-        // 1. Cielo
+        // 1. Renderizar Cielo (Sol y Estrellas se mueven con scrollPercent)
         sky.render(ctx, w, h, time, scrollPercent);
         
-        // 2. Ciudad (Aquí pasamos menuLight)
-        // CitySystem usará este valor para iluminar edificios pero ignorar montañas
+        // 2. Renderizar Ciudad/Paisaje (Depende de pageType)
         city.render(ctx, w, h, time, scrollPercent, menuLight);
         
-        // 3. Artefacto/Cubo
+        // 3. Renderizar Cubo
         if (isHome && cube) {
-            cube.render(ctx, w, h, time, mouseX, mouseY, scrollPercent);
+            cube.render(ctx, w, h, time, bgMouseX, bgMouseY, scrollPercent);
         }
 
-        window.svAnimationId = requestAnimationFrame(animate);
+        requestAnimationFrame(animateBackground);
     }
     
-    animate();
+    animateBackground();
 }
 
-// ... (resto del código de main.js para las tarjetas) ...
-
-// --- SISTEMA DE TARJETAS 3D (TILT EFFECT) - MEJORADO PARA TOUCH ---
+/* ==========================================================================
+   2. 3D TILT CARDS (EFECTO PROYECTOS)
+   ========================================================================== */
 function init3DTiltCards() {
     const cards = document.querySelectorAll('.cyber-card');
 
     cards.forEach(card => {
-        // Función unificada para calcular la inclinación
         const handleTilt = (clientX, clientY) => {
             const rect = card.getBoundingClientRect();
-            // Calcular posición dentro de la tarjeta
             const x = clientX - rect.left;
             const y = clientY - rect.top;
             
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
             
-            // Calcular rotación (Max 10 grados)
             const rotateX = ((y - centerY) / centerY) * -10; 
             const rotateY = ((x - centerX) / centerX) * 10;
 
             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-            // Transición rápida para movimiento fluido
             card.style.transition = 'box-shadow 0.1s, border-color 0.3s'; 
         };
 
         const resetTilt = () => {
             card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
-            // Transición suave para el retorno
             card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease, border-color 0.3s';
         };
 
-        // --- MOUSE EVENTS (PC) ---
-        card.addEventListener('mousemove', (e) => {
-            handleTilt(e.clientX, e.clientY);
+        card.addEventListener('mousemove', (e) => handleTilt(e.clientX, e.clientY));
+        card.addEventListener('mouseleave', resetTilt);
+        card.addEventListener('touchmove', (e) => handleTilt(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+        card.addEventListener('touchend', resetTilt);
+    });
+}
+if (document.querySelector('.cyber-card')) {
+    init3DTiltCards();
+}
+
+/* ==========================================================================
+   3. CADEJO: GHOST FOLLOWER SYSTEM (PREMIUM UX)
+   ========================================================================== */
+function initCadejoFollower() {
+    const cadejo = document.getElementById('cadejo-ghost');
+    const eyes = document.querySelectorAll('.eye-socket');
+    
+    if (!cadejo) return;
+
+    cadejo.style.position = 'fixed'; 
+
+    let targetX = window.innerWidth / 2;
+    let targetY = window.innerHeight / 2;
+    
+    let currentX = targetX;
+    let currentY = targetY;
+    
+    let isVisible = false;
+    let isMobileTouch = false;
+
+    // --- LOOP DE ANIMACIÓN CADEJO ---
+    const animateGhost = () => {
+        // Interpolación (Lerp) para movimiento suave
+        const speed = 0.12; 
+        currentX += (targetX - currentX) * speed;
+        currentY += (targetY - currentY) * speed;
+
+        cadejo.style.left = `${currentX}px`;
+        cadejo.style.top = `${currentY}px`;
+
+        // Lógica de Ojos (Mirar al cursor real)
+        const dx = targetX - currentX;
+        const dy = targetY - currentY;
+        const angle = Math.atan2(dy, dx);
+        const dist = Math.min(Math.sqrt(dx*dx + dy*dy) / 10, 3); 
+
+        eyes.forEach(eye => {
+            const pupil = eye.querySelector('.pupil');
+            if(pupil) {
+                const moveX = Math.cos(angle) * dist;
+                const moveY = Math.sin(angle) * dist;
+                pupil.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            }
         });
 
-        card.addEventListener('mouseleave', resetTilt);
+        requestAnimationFrame(animateGhost);
+    };
+    
+    requestAnimationFrame(animateGhost);
 
-        // --- TOUCH EVENTS (MOVIL) ---
-        card.addEventListener('touchmove', (e) => {
-            // No prevenimos default para permitir scroll, pero capturamos el movimiento
-            const touch = e.touches[0];
-            // Verificar si el dedo está sobre la tarjeta antes de aplicar (opcional, pero touchmove suele ser global al elemento)
-            handleTilt(touch.clientX, touch.clientY);
-        }, { passive: true });
+    // --- LISTENERS ---
+    
+    // PC: Mouse
+    document.addEventListener('mousemove', (e) => {
+        if(isMobileTouch) return;
+        targetX = e.clientX;
+        targetY = e.clientY;
 
-        card.addEventListener('touchend', resetTilt);
-        card.addEventListener('touchcancel', resetTilt);
+        if (!isVisible) {
+            cadejo.classList.add('is-summoned'); // Usamos la clase de CSS para mostrarlo
+            isVisible = true;
+        }
+    });
+
+    // Si el mouse sale de la ventana, el fantasma desaparece
+    document.addEventListener('mouseleave', () => {
+        cadejo.classList.remove('is-summoned');
+        isVisible = false;
+    });
+
+    // MÓVIL: Touch
+    const handleTouch = (e) => {
+        isMobileTouch = true;
+        const touch = e.touches[0];
+        targetX = touch.clientX;
+        // Offset visual: El cadejo flota 60px arriba del dedo para que se vea
+        targetY = touch.clientY - 60; 
+        
+        if (!isVisible) {
+            currentX = targetX;
+            currentY = targetY;
+            cadejo.classList.add('is-summoned');
+            isVisible = true;
+        }
+    };
+
+    document.addEventListener('touchstart', handleTouch, { passive: true });
+    document.addEventListener('touchmove', handleTouch, { passive: true });
+
+    document.addEventListener('touchend', () => {
+        cadejo.classList.remove('is-summoned');
+        isVisible = false;
+        setTimeout(() => { isMobileTouch = false; }, 500);
     });
 }
 
-if (document.querySelector('.cyber-card')) {
-    init3DTiltCards();
+// --- EJECUCIÓN SEGURA GLOBAL ---
+const initApp = () => {
+    initCadejoFollower();
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
 }
