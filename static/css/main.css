@@ -1,660 +1,557 @@
-@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+/* ==========================================================================
+   1. CONFIGURACIÓN GLOBAL & VARIABLES
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Space+Grotesk:wght@300;500;600;700&display=swap');
 
 :root {
+  /* --- COLORES BASE --- */
   --bg-dark: #050505;
-  --accent: #bd4b00; 
-  --accent-hover: #ff5500;
-  --text-main: #ffffff;
+  --text-main: #e0e6ed;
+  --text-muted: #9ca3af;
+
+  /* --- ACENTOS --- */
+  --accent: #ff6600;       /* Naranja Láser (Principal) */
+  --accent-hover: #ff8533;
+  --accent-tech: #00e5ff;  /* Cian Eléctrico (Secundario/Tech) */
+
+  /* --- SISTEMA DE VIDRIO --- */
+  --glass-bg: rgba(15, 20, 25, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  
+  /* --- SISTEMA CADEJO (Variables Ojos) --- */
+  --eye-iris-gradient: radial-gradient(circle, #5D4037 40%, #3E2723 90%);
 }
 
 body, html {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  font-family: 'Segoe UI', sans-serif;
-  /* IMPORTANTE: Transparent para ver el canvas de fondo */
-  background-color: transparent; 
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: transparent; /* Importante para ver el canvas */
   color: var(--text-main);
   overflow-x: hidden;
 }
 
-/* --- CANVAS BACKGROUND --- */
-#canvas-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1; /* Se queda detrás de todo */
-  background-color: #050505; /* El color base negro va aquí, por si el JS falla */
-}
-canvas {
-  display: block;
+/* Tipografía Futurista */
+h1, h2, h3, h4, h5, h6, 
+.title, .menu-item, .navbar-brand, 
+.btn-cta, .btn-cyber, .stat-value, .card-title, .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
 }
 
-/* --- UI OVERLAY (Títulos SIVAR) --- */
+/* ==========================================================================
+   2. CANVAS & UI ELEMENTS
+   ========================================================================== */
+#canvas-container {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: -1; background-color: var(--bg-dark);
+}
+canvas { display: block; }
+
+/* Títulos UI (Esquina inferior) */
 #ui-layer {
-  position: absolute;
-  bottom: 30px;
-  left: 40px; 
-  text-align: left;
-  pointer-events: none;
-  z-index: 10;
+  position: absolute; bottom: 30px; left: 40px; 
+  text-align: left; pointer-events: none; z-index: 10;
 }
 .title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 3px;
-  color: var(--accent); 
-  text-transform: uppercase;
-  opacity: 0.8;
+  font-size: 1.2rem; font-weight: 600; letter-spacing: 3px;
+  color: var(--accent); text-transform: uppercase; opacity: 0.8;
 }
 .subtitle {
-  font-size: 0.7rem;
-  color: #5e1919;
-  letter-spacing: 2px;
-  margin-top: 2px;
-  font-weight: bold;
+  font-size: 0.7rem; color: #5e1919; letter-spacing: 2px;
+  margin-top: 2px; font-weight: bold;
 }
 
-/* --- MENU CUBO --- */
+/* ==========================================================================
+   3. MENÚ CUBO (HOME)
+   ========================================================================== */
 #menu-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(0.8);
-  text-align: center;
-  opacity: 0;
+  text-align: center; opacity: 0;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  pointer-events: none; 
-  z-index: 20;
+  pointer-events: none; z-index: 20;
   background: rgba(0, 0, 0, 0.85);
   padding: 30px;
   border: 1px solid rgba(255, 100, 0, 0.2);
   clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
 }
-.menu-item {
-  display: block;
-  margin: 12px 0;
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 4px;
-  text-decoration: none;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.2s;
-  position: relative;
-}
-.menu-item::before {
-  content: '>';
-  position: absolute;
-  left: -15px;
-  opacity: 0;
-  color: #ff5500;
-  transition: opacity 0.2s, left 0.2s;
-}
-.menu-item:hover { color: #ff5500; }
-.menu-item:hover::before { opacity: 1; left: -20px; }
 .menu-active {
-  opacity: 1 !important;
-  transform: translate(-50%, -50%) scale(1) !important;
+  opacity: 1 !important; transform: translate(-50%, -50%) scale(1) !important;
   pointer-events: auto !important;
 }
-
-/* Estilos para Featured Projects y otros contenedores */
-.carousel-container-custom {
-  display: flex;
-  gap: 30px;
-  overflow-x: auto;
-  padding: 30px 10px;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
+.menu-item {
+  display: block; margin: 12px 0; color: #fff;
+  font-size: 0.9rem; font-weight: 600; letter-spacing: 4px;
+  text-decoration: none; text-transform: uppercase; cursor: pointer;
+  transition: color 0.2s; position: relative;
 }
-.carousel-container-custom::-webkit-scrollbar { display: none; }
-
-/* ... código anterior ... */
-
-/* Actualizado para funcionar bien solo o en carrusel */
-.project-card-custom {
-  /* Quitamos el flex: 0 0 350px antiguo */
-  width: 100%;
-  max-width: 450px; /* Tamaño máximo elegante */
-  margin: 0 auto;   /* Centrado horizontal automático */
-  
-  background: rgba(20, 10, 10, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(189, 75, 0, 0.2);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
+.menu-item::before {
+  content: '>'; position: absolute; left: -15px; opacity: 0;
+  color: var(--accent); transition: opacity 0.2s, left 0.2s;
 }
+.menu-item:hover { color: var(--accent); }
+.menu-item:hover::before { opacity: 1; left: -20px; }
 
-/* ... resto del código (card-img-custom, etc) ... */
-.project-card-custom:hover {
-  transform: translateY(-10px);
-  border-color: var(--accent);
-  box-shadow: 0 10px 40px rgba(189, 75, 0, 0.3);
+/* Texto Hero (Home) */
+#hero-text-container {
+    position: absolute; bottom: 25%; left: 5%; z-index: 10;
+    pointer-events: none;
 }
-.card-img-custom {
-  width: 100%;
-  height: 200px;
-  background-color: #0f0505;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 4rem;
-  color: #333;
+.hero-title {
+    font-size: 3.5rem; font-weight: 700; line-height: 1;
+    text-transform: uppercase; color: #fff;
+    text-shadow: 0 0 20px rgba(0,0,0,0.5); margin-bottom: 10px;
 }
-.card-content-custom {
-  padding: 25px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-.card-title-custom { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; color: #fff; }
-.card-desc-custom { font-size: 0.95rem; color: #aaaaaa; margin-bottom: 25px; line-height: 1.5; flex-grow: 1; }
-.btn-details-custom {
-  display: block; text-align: center; padding: 12px; background: transparent;
-  border: 1px solid var(--accent); color: var(--accent); text-transform: uppercase;
-  font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; text-decoration: none;
-  border-radius: 4px; transition: all 0.3s;
-}
-.btn-details-custom:hover { background: var(--accent); color: #000; }
-.btn-link-custom { color: #fff; text-decoration: none; font-size: 1.1rem; border-bottom: 1px solid transparent; transition: border-color 0.3s; }
-.btn-link-custom:hover { border-color: var(--accent); color: var(--accent); }
-
-/* --- CORRECCIÓN 4: TARJETAS EN RUTA /PROJECTS --- */
-/* Forzar estilos oscuros en las tarjetas de Bootstrap estándar */
-.card {
-    background-color: rgba(20, 20, 20, 0.85) !important; /* Fondo oscuro semi-transparente */
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(5px);
-    color: #fff; /* Texto blanco */
-}
-
-.card-title {
-    color: var(--accent); /* Título naranja */
-    font-weight: 700;
-}
-
-.card-text {
-    color: #cccccc !important; /* Descripción gris claro legible */
-}
-
-/* --- CORRECCIÓN 5: BOTONES (View Details, View Live, View Code) --- */
-
-/* Botón de Acción Principal (Naranja) */
-.btn-cta {
-    background-color: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 1px;
-    padding: 8px 20px;
-    transition: all 0.3s ease;
-    text-decoration: none;
+.hero-subtitle {
+    font-size: 1rem; color: var(--accent); letter-spacing: 4px;
+    text-transform: uppercase; background: rgba(0,0,0,0.6);
+    padding: 5px 10px; border-left: 2px solid var(--accent);
     display: inline-block;
 }
 
-.btn-cta:hover {
-    background-color: var(--accent);
-    color: #000; /* Texto negro sobre fondo naranja */
-    box-shadow: 0 0 15px var(--accent);
+/* ==========================================================================
+   4. NAVBAR FLOTANTE
+   ========================================================================== */
+.navbar-floating-container {
+    position: fixed; top: 20px; left: 0; right: 0; z-index: 1000;
+    display: flex; justify-content: center; pointer-events: none;
 }
-
-/* Botón "Cyber" Secundario (Azul/Cyan) */
-.btn-cyber {
-    background-color: transparent;
-    border: 1px solid #00d2ff;
-    color: #00d2ff;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 1px;
-    padding: 8px 20px;
+.navbar-glass {
+    pointer-events: auto;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px; padding: 8px 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     transition: all 0.3s ease;
-    text-decoration: none;
+    display: flex; align-items: center;
+}
+.brand-logo { color: #fff !important; text-decoration: none; font-weight: 700; font-size: 1.1rem; }
+
+.nav-link-custom {
+    color: rgba(255,255,255,0.7) !important; font-size: 0.85rem; font-weight: 500;
+    text-transform: uppercase; margin: 0 12px; position: relative; 
+    text-decoration: none; transition: color 0.3s;
+}
+.nav-link-custom:hover { color: #fff !important; }
+.nav-link-custom::after {
+    content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 2px; background: var(--accent); transition: width 0.3s;
+    box-shadow: 0 0 8px var(--accent);
+}
+.nav-link-custom:hover::after { width: 20px; }
+
+/* Botón de Idioma (RESTAURADO) */
+.btn-lang {
     display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 6px 16px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.75rem; font-weight: 600;
+    text-transform: uppercase; text-decoration: none; letter-spacing: 1px;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    margin-left: 10px;
+}
+.btn-lang:hover {
+    border-color: var(--accent); color: var(--accent);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
 }
 
-.btn-cyber:hover {
-    background-color: rgba(0, 210, 255, 0.1);
-    color: #fff;
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
-    border-color: #fff;
+/* ==========================================================================
+   5. BOTONES GLOBALES
+   ========================================================================== */
+/* Botón Principal (Naranja) - Para CTAs generales */
+.btn-cta, .btn-primary {
+    background: transparent; color: var(--accent); border: 1px solid var(--accent);
+    padding: 10px 25px; border-radius: 4px; text-decoration: none;
+    display: inline-block; transition: all 0.3s ease; 
+    text-transform: uppercase; font-weight: 700;
+}
+.btn-cta:hover, .btn-primary:hover {
+    background: var(--accent); color: #000 !important;
+    box-shadow: 0 0 20px var(--accent); transform: translateY(-2px);
 }
 
-/* Asegurar legibilidad en inputs de filtro */
-.form-control {
-    background-color: rgba(0,0,0,0.5);
-    border: 1px solid #444;
-    color: #fff;
+/* Botón Secundario (Cian) - Para código/tech */
+.btn-cyber, .btn-outline-info {
+    background: transparent; color: var(--accent-tech); border: 1px solid rgba(0, 229, 255, 0.5);
+    padding: 8px 20px; border-radius: 4px; text-decoration: none;
+    display: inline-block; transition: all 0.3s ease; 
+    text-transform: uppercase; font-weight: 600;
 }
-.form-control:focus {
-    background-color: rgba(0,0,0,0.8);
-    color: #fff;
-    border-color: var(--accent);
-    box-shadow: 0 0 5px var(--accent);
-}
-.form-control::placeholder {
-    color: #888;
+.btn-cyber:hover, .btn-outline-info:hover {
+    background: rgba(0, 229, 255, 0.1); color: #fff;
+    border-color: var(--accent-tech); box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
 }
 
-/* --- PROYECTOS: DATA GRID SYSTEM --- */
+/* ==========================================================================
+   6. PROJECTS: CAROUSEL VS GRID
+   ========================================================================== */
 
-/* Contenedor de la barra de búsqueda estilo terminal */
-.cyber-search-container {
-    background: rgba(5, 15, 25, 0.7);
-    border: 1px solid rgba(0, 170, 255, 0.3);
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%); /* Forma trapezoidal invertida */
-    margin-bottom: 40px;
-    backdrop-filter: blur(5px);
+/* --- A. ESTILOS BASE DE LA TARJETA (Compartido) --- */
+.cyber-card {
+    position: relative; 
+    background: rgba(10, 15, 20, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-left: 2px solid rgba(0, 170, 255, 0.3);
+    backdrop-filter: blur(10px); 
+    display: flex; flex-direction: column; overflow: hidden;
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    transform: perspective(1000px); 
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    text-decoration: none; color: inherit;
+}
+.cyber-card:hover {
+    transform: perspective(1000px) rotateX(5deg) translateY(-15px) scale(1.02);
+    border-color: rgba(0, 170, 255, 0.9); border-left-color: #00aaff;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 170, 255, 0.2);
+    z-index: 10; background: rgba(15, 20, 30, 0.9);
 }
 
-.cyber-input {
-    background: transparent;
-    border: none;
-    color: #00aaff;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-    width: 100%;
+/* Imagen/Video */
+.cyber-img-container {
+    width: 100%; height: 200px; overflow: hidden; position: relative;
+    border-bottom: 1px solid rgba(0, 170, 255, 0.2); background: #000;
 }
-.cyber-input:focus {
-    outline: none;
-    box-shadow: none;
-    background: transparent;
-    color: #fff;
+.cyber-img, .cyber-video {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(80%) contrast(1.2); transition: filter 0.4s ease;
 }
-.cyber-input::placeholder { color: rgba(0, 170, 255, 0.5); }
+.cyber-card:hover .cyber-img, .cyber-card:hover .cyber-video { filter: grayscale(0%); }
 
-/* Grid personalizada (reemplaza a row/col de bootstrap para más control) */
+/* Cuerpo */
+.cyber-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+.cyber-title {
+    color: #fff; font-size: 1.2rem; text-transform: uppercase; margin-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 170, 255, 0.2); display: inline-block;
+}
+.cyber-summary { color: #aaa; font-size: 0.9rem; flex-grow: 1; margin-bottom: 20px; }
+.btn-cyber-link {
+    color: #fff; text-decoration: none; font-size: 0.85rem; text-transform: uppercase;
+    text-align: right; display: block; transition: color 0.3s;
+}
+.btn-cyber-link:hover { color: #00aaff; text-shadow: 0 0 8px #00aaff; }
+
+/* --- B. CARRUSEL (Featured) --- */
+.cyber-carousel-wrapper {
+    background: rgba(5, 10, 15, 0.65); backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(0, 170, 255, 0.4);
+    padding: 40px 0 100px 0; margin: 30px 0 -150px 0; width: 100%;
+    display: flex; justify-content: center; box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6);
+}
+.cyber-carousel-track {
+    display: flex; gap: 60px; padding: 10px 60px;
+    width: max-content; max-width: 100%; margin: 0 auto;
+    overflow-x: auto; scroll-behavior: smooth; align-items: center;
+}
+.cyber-carousel-track::-webkit-scrollbar { height: 6px; }
+.cyber-carousel-track::-webkit-scrollbar-thumb { background: #004466; border-radius: 10px; }
+.cyber-carousel-track .cyber-card { flex: 0 0 340px; min-height: 420px; }
+
+/* --- C. GRID [ARREGLADO: 3 Columnas] --- */
 .cyber-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(3, 1fr); /* 3 Columnas Fijas */
+    gap: 30px; width: 100%; margin-bottom: 50px;
+}
+.cyber-grid .cyber-card { height: 100%; }
+@media (max-width: 1200px) { .cyber-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .cyber-grid { grid-template-columns: 1fr; } }
+
+/* Buscador Cyber */
+.cyber-search-box {
+    background: rgba(10, 15, 20, 0.8);
+    border: 1px solid var(--accent-tech);
+    padding: 15px; border-radius: 8px;
+    display: flex; align-items: center; gap: 15px;
+    backdrop-filter: blur(10px); margin-bottom: 40px;
+}
+.cyber-input {
+    background: transparent; border: none; color: #fff;
+    width: 100%; font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem; outline: none;
 }
 
-/* --- ESTILOS DE LA TARJETA CON EFECTO 3D REAL (DOBLE CAPA) --- */
-
-.cyber-card {
-    position: relative;
-    
-    /* 1. EL "BORDE" ES EL FONDO DEL CONTENEDOR */
-    /* Usamos un gradiente diagonal brillante */
-    background: linear-gradient(135deg, 
-        rgba(0, 170, 255, 0.5) 0%, 
-        rgba(255, 255, 255, 0.1) 45%, 
-        rgba(255, 255, 255, 0.6) 50%, 
-        rgba(255, 255, 255, 0.1) 55%, 
-        rgba(0, 170, 255, 0.5) 100%
-    );
-    
-    /* IMPORTANTE: Quitamos el borde normal porque clip-path lo corta */
-    border: none !important; 
-    padding: 0; /* El padding lo maneja el contenido */
-    
-    /* La forma recortada */
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
-
-    /* Configuración 3D */
-    transform-style: preserve-3d;
-    transform: perspective(1000px);
-    
-    /* Sombra externa fuerte para levantar la tarjeta */
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-    
-    /* Transiciones */
-    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
-    
-    display: flex;
-    flex-direction: column;
+/* ==========================================================================
+   7. PROJECT DETAIL & MINI BROWSER (HUD RESTAURADO)
+   ========================================================================== */
+.cyber-browser {
+    background: rgba(15, 20, 25, 0.9);
+    border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 20px rgba(0, 170, 255, 0.1);
+    backdrop-filter: blur(10px); overflow: hidden; margin-bottom: 3rem;
 }
-
-/* 2. LA CAPA NEGRA INTERNA (PSEUDO-ELEMENTO) */
-/* Esto crea el cuerpo de la tarjeta, dejando ver 2px del padre como borde */
-.cyber-card::before {
-    content: '';
-    position: absolute;
-    
-    /* Inset 2px: Hace que el negro sea más pequeño que el fondo brillante */
-    /* ¡ESTO ES LO QUE CREA EL EFECTO DE BORDE! */
-    top: 2px; left: 2px; right: 2px; bottom: 2px;
-    
-    background: rgba(10, 15, 20, 0.95); /* Color oscuro de la tarjeta */
-    
-    /* Debe tener el MISMO recorte que el padre para encajar */
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
-    
-    z-index: 0; /* Se queda atrás del texto/imagen */
-}
-
-/* 3. CONTENIDO ENCIMA DEL FONDO */
-/* Es vital ponerles z-index: 1, si no, el ::before los tapará */
-.cyber-img-container, .cyber-body {
-    position: relative;
-    z-index: 1; 
-}
-
-/* Ajustes visuales para que el contenido no toque el borde iluminado */
-.cyber-img-container {
-    /* Margen pequeño para no pisar el borde brillante */
-    margin: 2px 2px 0 2px; 
-    width: calc(100% - 4px);
-    
-    height: 160px;
-    overflow: hidden;
+.browser-header {
+    background: rgba(0, 0, 0, 0.6); padding: 12px 20px;
     border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+    display: flex; align-items: center; gap: 20px;
+}
+.window-controls { display: flex; gap: 8px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot.red { background: #ff5f56; } .dot.yellow { background: #ffbd2e; } .dot.green { background: #27c93f; }
+.address-bar {
+    flex-grow: 1; background: rgba(0, 170, 255, 0.05);
+    border: 1px solid rgba(0, 170, 255, 0.1); border-radius: 4px;
+    padding: 6px 15px; font-family: 'Courier New', monospace;
+    font-size: 0.85rem; color: #00aaff;
+}
+.browser-viewport {
+    width: 100%; aspect-ratio: 16/9; background: #000;
+    position: relative; display: flex; align-items: center; justify-content: center;
 }
 
-.cyber-body {
-    margin: 0 2px 2px 2px;
-    width: calc(100% - 4px);
-    
-    padding: 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+/* --- [RESTAURADO] HUD PANEL & BOTONES LIVE/SOURCE --- */
+/* Esta sección es vital para que aparezcan los botones laterales en Detalle */
+.hud-panel {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky; top: 100px; padding-left: 2rem;
+}
+.section-title {
+    letter-spacing: 2px; font-size: 0.9rem; 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    padding-bottom: 10px; display: inline-block;
+    margin-bottom: 1.5rem; color: var(--accent);
+}
+/* Estilo del Botón HUD (Live/Code) */
+.btn-hud {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 15px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #ccc;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+    text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
+}
+.btn-hud:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--accent-tech);
+    color: #fff;
+    transform: translateX(5px);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+/* Badges de tecnología en detalle */
+.tech-badge {
+    padding: 6px 12px;
+    background: rgba(0, 170, 255, 0.05); 
+    border: 1px solid rgba(0, 170, 255, 0.2); 
+    color: #00aaff; 
+    font-size: 0.85rem; 
+    border-radius: 4px;
+    text-transform: uppercase;
+    display: inline-block;
+    margin: 0 5px 5px 0;
+}
+.description-content {
+    font-size: 1.05rem; line-height: 1.9; 
+    color: #e0e0e0; text-align: justify;
 }
 
-/* 4. HOVER: EL BORDE BRILLA MÁS Y LA TARJETA SE LEVANTA */
-.cyber-card:hover {
-    /* Movimiento 3D */
-    transform: perspective(1000px) rotateX(5deg) translateY(-15px) scale(1.02);
-    
-    /* Al pasar el mouse, el borde se vuelve Cyan Neón puro */
-    background: linear-gradient(135deg, #00aaff, #ffffff 50%, #00aaff);
-    
-    /* Sombra Neón */
-    box-shadow: 
-        0 30px 60px rgba(0, 0, 0, 0.9), 
-        0 0 30px rgba(0, 170, 255, 0.4);
-        
+/* ... (Tus estilos anteriores del 1 al 7 se mantienen igual) ... */
+
+/* ==========================================================================
+   8. ABOUT PAGE & CADEJO INTEGRATION (SUMMONED SPIRIT STYLE)
+   ========================================================================== */
+
+/* Layout About */
+.about-container { 
+    z-index: 10; 
+    position: relative; /* Necesario para que el cadejo se posicione respecto a esto */
+}
+
+/* Paneles de Vidrio */
+.glass-card, .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border); border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* --- 1. BLOQUE DE IDENTIDAD (Limpio) --- */
+.identity-block {
+    position: relative;
     z-index: 10;
+    padding-bottom: 10px;
+    background: transparent; 
+    margin-bottom: 0; 
 }
 
-/* Estilos de la imagen (Opcional, para asegurar que se ajuste) */
-.cyber-img {
-    width: 100%;
-    height: 100%;
+.profile-img {
+    width: 180px; 
+    height: 180px;
+    border-radius: 50%;
     object-fit: cover;
-    filter: grayscale(80%) contrast(1.2);
-    transition: filter 0.4s ease;
-}
-.cyber-card:hover .cyber-img {
-    filter: grayscale(0%) contrast(1.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+    position: relative;
+    z-index: 10;
+    cursor: pointer; 
+    transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
-/* Overlay de "Scanline" sobre la imagen */
-.cyber-img-container::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 2px, 3px 100%;
+/* Efecto al pasar el mouse por la foto */
+#profile-trigger:hover .profile-img {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.glow-ring {
+    position: absolute; top: 50%; left: 50%; 
+    transform: translate(-50%, -50%);
+    width: 210px; height: 210px; 
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    animation: pulseProfile 3s infinite;
     pointer-events: none;
 }
 
-/* Contenido */
-.cyber-body {
-    padding: 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+.text-readable {
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
 
-.cyber-title {
-    color: #fff;
-    font-family: 'Segoe UI', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    border-bottom: 1px solid rgba(0, 170, 255, 0.2);
-    padding-bottom: 5px;
-    display: inline-block;
+@keyframes pulseProfile { 
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.95); } 
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); } 
+    100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.95); } 
 }
 
-.cyber-summary {
-    color: #aaa;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    flex-grow: 1;
-}
-
-/* Tags de Tecnologías */
-.tech-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.tech-tag {
-    font-size: 0.7rem;
-    background: rgba(0, 170, 255, 0.1);
-    color: #00aaff;
-    border: 1px solid rgba(0, 170, 255, 0.3);
-    padding: 2px 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Footer de la tarjeta con acción */
-.cyber-footer {
-    margin-top: auto;
-    text-align: right;
-    padding-right: 15px; /* Espacio para no chocar con el corte */
-}
-
-.btn-cyber-link {
-    color: #fff;
-    text-decoration: none;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    transition: color 0.3s;
-}
-.btn-cyber-link:hover {
-    color: #00aaff;
-    text-shadow: 0 0 8px #00aaff;
-}
-.btn-cyber-link::after {
-    content: ' >>';
-    font-size: 0.8rem;
-}
-/* --- PROYECTOS: CARRUSEL HORIZONTAL (GLASS STRIP) --- */
-
-.cyber-carousel-wrapper {
-    background: rgba(5, 10, 15, 0.65);
-    backdrop-filter: blur(15px);
+/* --- 2. CADEJO: EL ESPÍRITU INVOCADO --- */
+.cadejo-integration {
+    position: absolute;
+    /* IMPORTANTE: Fixed para que funcione el seguimiento global */
+    /* El JS lo fuerza a fixed, pero es bueno tenerlo aquí */
+    /* top: 8%; left: 50%; (Manejado por JS ahora) */
     
-    border-top: 1px solid rgba(0, 170, 255, 0.4);
-    border-bottom: none;
+    transform: translateX(-50%) scale(0.8); 
+    width: 100px; 
+    max-width: 100px;
     
-    padding-top: 40px; /* Un poco menos de padding arriba */
-    padding-bottom: 100px; /* Ajustado para que no tape */
+    opacity: 0; /* Empieza oculto */
+    /* visibility: hidden; (Quitamos esto para que el JS maneje solo opacity) */
+    pointer-events: none; 
+    z-index: 9999; /* Encima de todo */
     
-    margin-top: 30px;
-    margin-bottom: -150px; 
-    
-    width: 100%;
-    position: relative;
-    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6);
-    
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-    align-items: center;
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
 }
 
-/* El riel donde se mueven las tarjetas */
-.cyber-carousel-track {
-    display: flex;
-    gap: 60px; /* AUMENTADO: Más espacio entre tarjetas para que giren bien */
-    padding: 10px 60px; /* Más padding lateral */
-    
-    width: max-content;
-    max-width: 100%;
-    margin: 0 auto;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    
-    /* Para centrar verticalmente si alguna es más alta */
-    align-items: center; 
+/* CLASE ACTIVA */
+.cadejo-integration.is-summoned {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
 }
 
-/* Ajuste a las tarjetas */
-.cyber-carousel-track .cyber-card {
-    flex: 0 0 340px; /* Ancho estándar cómodo */
-    height: 100%;
-    min-height: 420px; /* REDUCIDO: Antes 480px. Ahora son más compactas */
+.cadejo-bg-img {
+    width: 100%; height: auto; display: block;
+    position: relative; z-index: 10;
 }
 
-/* Ajuste de la imagen dentro de las tarjetas */
-.cyber-img-container {
-    height: 160px; /* REDUCIDO: Antes 180px */
+.eye-socket {
+    position: absolute;
+    width: 33%; height: 33%; 
+    background: var(--eye-iris-gradient);
+    border-radius: 50%;
+    z-index: 1;
     overflow: hidden;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: relative;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: inset 0 0 8px #000;
 }
 
-/* Scrollbar personalizada */
-.cyber-carousel-track::-webkit-scrollbar {
-    height: 6px;
-}
-.cyber-carousel-track::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    margin: 0 15%; 
-    border-radius: 10px;
-}
-.cyber-carousel-track::-webkit-scrollbar-thumb {
-    background: #004466; 
-    border-radius: 10px;
-}
-.cyber-carousel-track::-webkit-scrollbar-thumb:hover {
-    background: #00aaff; 
-}
-/* --- ESTILOS DE LA TARJETA CON EFECTO 3D --- */
-
-.cyber-card {
-    position: relative;
-    background: rgba(10, 15, 20, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-left: 2px solid rgba(0, 170, 255, 0.3);
-    backdrop-filter: blur(10px);
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    
-    /* Forma Cyberpunk */
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
-
-    /* --- EFECTO 3D BASE --- */
-    /* Sombra profunda inicial */
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); 
-    /* Preparar la transformación */
-    transform: perspective(1000px) rotateX(0deg) translateY(0);
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+.pupil {
+    width: 45%; height: 45%;
+    background-color: #000; border-radius: 50%;
+    position: relative; will-change: transform;
+    transition: transform 0.1s;
 }
 
-.cyber-card:hover {
-    /* --- EFECTO 3D HOVER --- */
-    /* Se levanta (Y-15px), se escala un poco y se inclina (rotateX) */
-    transform: perspective(1000px) rotateX(5deg) translateY(-15px) scale(1.02);
-    
-    /* Borde brillante */
-    border-color: rgba(0, 170, 255, 0.9);
-    border-left-color: #00aaff;
-    
-    /* Sombra de neón fuerte para dar sensación de levitación */
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.8), /* Sombra negra de profundidad */
-        0 0 30px rgba(0, 170, 255, 0.2); /* Resplandor azul */
-        
-    z-index: 10; /* Asegura que se vea por encima de las otras */
-    background: rgba(15, 20, 30, 0.9);
+.pupil::after {
+    content: ''; position: absolute;
+    top: 35%; left: 35%; width: 25%; height: 25%;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 50%; box-shadow: 0 0 4px rgba(255,255,255,0.8);
 }
 
-/* --- PERSONALIZACIÓN DEL SCROLLBAR (ESTILO TECH) --- */
-.cyber-carousel-track::-webkit-scrollbar {
-    height: 6px;
+/* --- 3. BOTONES SOCIALES --- */
+.social-overlay { position: relative; z-index: 20; }
+.social-btn-glass {
+    width: 45px; height: 45px; border-radius: 12px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: white; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.cyber-carousel-track::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    margin: 0 20%; /* Scrollbar más corta centrada visualmente */
-    border-radius: 10px;
-}
-.cyber-carousel-track::-webkit-scrollbar-thumb {
-    background: #004466; 
-    border-radius: 10px;
-}
-.cyber-carousel-track::-webkit-scrollbar-thumb:hover {
-    background: #00aaff; 
-    box-shadow: 0 0 10px #00aaff;
-}
-/* --- AJUSTE PARA TARJETAS CLICKEABLES --- */
-a.cyber-card {
-    text-decoration: none; /* Quita el subrayado del link */
-    color: inherit;        /* Mantiene los colores de texto originales */
-    cursor: pointer;       /* Asegura que salga la manito */
-    display: flex;         /* Mantiene el diseño flexible */
+.social-btn-glass:hover {
+    background: white; color: black;
+    transform: translateY(-4px); box-shadow: 0 5px 15px rgba(255,255,255,0.15);
 }
 
-/* Asegurar que el hover siga funcionando igual */
-a.cyber-card:hover {
-    color: inherit;
-    text-decoration: none;
+/* Responsive */
+@media (max-width: 991px) {
+    .glass-panel { padding: 2rem !important; }
+    .about-container { padding-top: 120px; padding-bottom: 60px; }
+    .cadejo-integration { width: 120px; } /* Un poco más grande en móvil para que se vea */
 }
 
-/* --- PROYECTOS: GRILLA VERICAL (PARA RUTA /PROJECTS) --- */
-
-.cyber-grid-wrapper {
-    /* Mismo efecto de cristal que el carrusel */
-    background: rgba(5, 10, 15, 0.65);
-    backdrop-filter: blur(15px);
-    border-top: 1px solid rgba(0, 170, 255, 0.4);
-    
-    /* Ajustes para llenar la pantalla hacia abajo */
-    width: 100%;
-    min-height: 100vh; /* Fuerza que llegue al fondo al menos */
-    
-    padding: 60px 40px; /* Espacio interno */
-    margin-top: 30px;
-    margin-bottom: -150px; /* Margen negativo para cubrir footer */
-    
-    /* Centrar el contenido */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-.cyber-grid-layout {
+/* ==========================================================================
+   9. TECH ARSENAL (MODULAR STYLE)
+   ========================================================================== */
+.tech-grid {
     display: grid;
-    /* ESTO HACE LA MAGIA: 
-       Crea columnas automáticas. Con 350px de ancho mínimo, 
-       en una pantalla normal caben exactamente 3. */
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    
-    gap: 60px; /* Espacio entre tarjetas vertical y horizontal */
-    
-    width: 100%;
-    max-width: 1400px; /* Ancho máximo para que no se estiren demasiado */
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
+    gap: 12px;
+    margin-top: 15px;
 }
 
-/* Asegurar que las tarjetas se comporten bien en la grilla */
-.cyber-grid-layout .cyber-card {
-    width: 100%;
-    max-width: 380px; /* Tamaño máximo igual al home */
-    min-height: 450px;
-    margin: 0 auto;   /* Centrado en su celda */
+.tech-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    padding: 12px 10px;
+    border-radius: 12px;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: default;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex; align-items: center; justify-content: center;
+}
+
+.tech-card:hover {
+    background: rgba(0, 170, 255, 0.1);
+    border-color: var(--accent-tech);
+    color: #fff;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 229, 255, 0.15);
+}
+
+/* ==========================================================================
+   10. CADEJO NEGRO (VARIANTE MALVADA/PROTECTORA)
+   ========================================================================== */
+
+/* Brillo Rojo/Fuego */
+.cadejo-integration.cadejo-black {
+    filter: drop-shadow(0 0 15px rgba(255, 50, 50, 0.4)); 
+}
+
+/* Ojos Rojos */
+.cadejo-integration.cadejo-black .eye-socket {
+    background: radial-gradient(circle);
+    box-shadow: inset 0 0 5px #000;
+}
+
+/* Pupila Bestia (Opcional: más vertical) */
+.cadejo-integration.cadejo-black .pupil {
+    height: 60%;
+    width: 30%;
+    background: #000;
 }

@@ -17,29 +17,48 @@
     <canvas id="canvas"></canvas>
   </div>
 
-  {% block navbar %}
-  <nav class="navbar navbar-expand-lg navbar-dark bg-transparent border-bottom border-secondary" style="background: rgba(0,0,0,0.8) !important; backdrop-filter: blur(10px);">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="{{ url_for('index') }}" style="color: #bd4b00; letter-spacing: 2px;">
-        CARLOS_SIBRIAN
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" 
-              aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div id="nav" class="collapse navbar-collapse justify-content-center">
-        <ul class="navbar-nav text-center">
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">{{ t('home') }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">{{ t('about') }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('projects_list') }}">{{ t('projects') }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}">{{ t('contact') }}</a></li>
-        </ul>
-      </div>
-      <a class="btn btn-sm btn-outline-light ms-lg-3 rounded-pill px-3" href="{{ url_for('switch_lang', code='en' if current_lang()=='es' else 'es') }}">
-        {{ current_lang()|upper }}
-      </a>
-    </div>
-  </nav>
+{% block navbar %}
+  <div class="navbar-floating-container">
+    <nav class="navbar navbar-expand-lg navbar-glass">
+      
+        <a class="brand-logo me-4" href="{{ url_for('index') }}">
+          CS<span style="color: var(--accent);">.</span>DEV
+        </a>
+
+        <button class="navbar-toggler border-0 p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navMenu">
+          <ul class="navbar-nav ms-auto align-items-center">
+            
+            <li class="nav-item">
+              <a class="nav-link-custom" href="{{ url_for('index') }}">{{ t('home') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link-custom" href="{{ url_for('about') }}">{{ t('about') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link-custom" href="{{ url_for('projects_list') }}">{{ t('projects') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link-custom" href="{{ url_for('contact') }}">{{ t('contact') }}</a>
+            </li>
+            
+            <li class="d-none d-lg-block mx-3" style="width: 1px; height: 15px; background: rgba(255,255,255,0.2);"></li>
+
+            <li class="nav-item mt-2 mt-lg-0">
+               <a class="btn-lang"
+                  href="{{ url_for('switch_lang', code='en' if current_lang()=='es' else 'es') }}">
+                 {{ current_lang()|upper }}
+               </a>
+            </li>
+
+          </ul>
+        </div>
+
+    </nav>
+  </div>
   {% endblock %}
 
   <main style="padding-bottom: 80px;">
@@ -70,6 +89,9 @@
   {% endblock %}
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script src="https://unpkg.com/feather-icons"></script>
+
   <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
   <script type="importmap">
   {
@@ -78,5 +100,6 @@
     }
   }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </body>
 </html>
