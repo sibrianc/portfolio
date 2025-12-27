@@ -8,8 +8,7 @@ from urllib.parse import urlparse # Import necesario para el parche de seguridad
 # NOTE: Lightweight module registration
 def register(app):
     
-    # --- NUEVO: HELPER DE TRADUCCIÓN INYECTADO ---
-    # Esto es lo único nuevo. Permite usar get_loc_attr() en tus HTML.
+    # --- HELPER DE TRADUCCIÓN INYECTADO ---
     @app.context_processor
     def utility_processor():
         def get_loc_attr(obj, attr_name):
@@ -59,20 +58,32 @@ def register(app):
     @app.route("/contact", methods=["GET", "POST"])
     def contact():
         form = ContactForm()
+        
         if form.validate_on_submit():
-            # 1) Guardar en BD
-            msg_row = ContactMessage(
-                name=form.name.data.strip(),
-                email=form.email.data.strip(),
-                message=form.message.data.strip(),
-            )
-            db.session.add(msg_row)
-            db.session.commit()
+            # --- 🛡️ TRAMPA ANTI-BOTS (Nivel Servidor) ---
+            # El campo 'bot_catcher' es invisible para humanos.
+            # Si tiene datos, es un bot tonto que llenó todo.
+            if form.bot_catcher.data:
+                print(f"🤖 BOT BLOQUEADO: IP {request.remote_addr}")
+                # Le mentimos al bot diciendo que todo salió bien (Shadowban)
+                # No guardamos nada en DB ni enviamos correo.
+                return render_template("public/contact.html", form=ContactForm(), success=True)
 
-            # 2) Enviar correo (si está configurado)
+            # --- PROCESO REAL PARA HUMANOS ---
+            # 1) Guardar en BD
             try:
+                msg_row = ContactMessage(
+                    name=form.name.data.strip(),
+                    email=form.email.data.strip(),
+                    message=form.message.data.strip(),
+                )
+                db.session.add(msg_row)
+                db.session.commit()
+
+                # 2) Enviar correo (si está configurado)
                 contact_recipient = current_app.config.get("CONTACT_RECIPIENT") or current_app.config.get("MAIL_USERNAME")
                 mail_ext = current_app.extensions.get("mail")
+                
                 if contact_recipient and mail_ext:
                     m = Message(
                         subject="Nuevo mensaje desde tu portafolio",
@@ -84,16 +95,19 @@ def register(app):
                         )
                     )
                     mail_ext.send(m)
+            
             except Exception as e:
-                flash("Tu mensaje fue recibido, pero hubo un problema al enviar el correo de notificación.", "warning")
+                # Si falla el envío de correo, no le decimos al usuario para no asustarlo,
+                # pero lo logueamos en el servidor. El mensaje ya está en la DB.
+                print(f"⚠️ Error al enviar correo o guardar DB: {e}")
 
-            # 3) Volver a renderizar la página actual con mensaje de éxito
+            # 3) Volver a renderizar la página limpia con mensaje de éxito
             return render_template("public/contact.html", form=ContactForm(), success=True)
 
-        # GET o validación fallida
+        # GET o validación fallida (El JS debería haber atrapado esto antes, pero por si acaso)
         return render_template("public/contact.html", form=form)
     
-    # --- RUTA SWITCH LANG (Solo una vez y segura) ---
+    # --- RUTA SWITCH LANG ---
     @app.route("/switch_lang/<string:code>")
     def switch_lang(code):
         if code in ("en", "es"):
@@ -101,7 +115,6 @@ def register(app):
         
         # --- FIX DE SEGURIDAD: Evitar Open Redirect ---
         target = request.referrer
-        # Verificamos que el referer exista y pertenezca al mismo dominio
         if not target or urlparse(target).netloc != urlparse(request.host_url).netloc:
             target = url_for('index')
         # ----------------------------------------------

@@ -9,6 +9,13 @@ class ContactForm(FlaskForm):
     name = StringField("form_name", validators=[DataRequired(), Length(max=120)])
     email = StringField("form_email", validators=[DataRequired(), Email(), Length(max=240)])
     message = TextAreaField("form_message", validators=[DataRequired(), Length(max=2000)])
+    
+    # --- TRAMPA PARA BOTS (Honeypot) ---
+    # Este campo estará oculto en el HTML. 
+    # Los humanos no lo ven, pero los bots sí y lo llenarán.
+    # Si llega con datos al servidor, sabremos que es spam.
+    bot_catcher = StringField('Nick') 
+
     submit = SubmitField("form_send")
 
 # Admin login form

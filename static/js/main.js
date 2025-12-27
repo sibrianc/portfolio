@@ -1,6 +1,10 @@
+/* ==========================================================================
+   MAIN SYSTEM CONTROLLER
+   ========================================================================== */
 import { SkySystem } from './modules/SkySystem.js';
 import { CitySystem } from './modules/CitySystem.js';
 import { CubeSystem } from './modules/CubeSystem.js';
+import { CipitioSystem } from './modules/CipitioSystem.js'; 
 
 /* ==========================================================================
    1. BACKGROUND SYSTEMS (SUN SCROLL, CITY, SKY)
@@ -15,11 +19,14 @@ if (canvas) {
     const isHome = !!menuContainer;
     const isAbout = window.location.pathname.includes('about');
     const isProjects = window.location.pathname.includes('projects');
-    
+    const isContact = window.location.pathname.includes('contact'); // <--- NUEVO
+
     // Definimos el tipo de escenario para enviarlo al CitySystem
     let pageType = 'generic';
     if (isHome) pageType = 'home';
     if (isAbout) pageType = 'about';
+    if (isContact) pageType = 'contact'; // <--- NUEVO: Activa las pirámides
+
     // Projects usa el fondo genérico (suelo oscuro simple) para no distraer
 
     let w, h;
@@ -34,7 +41,7 @@ if (canvas) {
     const city = new CitySystem(pageType); 
     const cube = isHome ? new CubeSystem(menuContainer) : null;
 
-    // --- MANEJO DE SCROLL (Aquí ocurre la magia) ---
+    // --- MANEJO DE SCROLL ---
     function updateScrollState() {
         const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
         
@@ -250,9 +257,25 @@ function initCadejoFollower() {
     });
 }
 
-// --- EJECUCIÓN SEGURA GLOBAL ---
+/* ==========================================================================
+   4. EJECUCIÓN SEGURA GLOBAL & INICIO DE SISTEMAS
+   ========================================================================== */
 const initApp = () => {
+    // 1. Iniciar Efectos Globales
+    if (typeof feather !== 'undefined') feather.replace();
+
+    // 2. Iniciar el Cadejo (si existe en el DOM)
     initCadejoFollower();
+
+    // 3. INICIAR EL CIPITÍO 🍌 (Solo si estamos en la página de Contacto)
+    if (document.getElementById('contact-panel')) {
+        try {
+            new CipitioSystem();
+            console.log('🔮 Cipitio System Online');
+        } catch (e) {
+            console.warn('Cipitio System not loaded yet', e);
+        }
+    }
 };
 
 if (document.readyState === 'loading') {

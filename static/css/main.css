@@ -555,3 +555,233 @@ canvas { display: block; }
     width: 30%;
     background: #000;
 }
+
+/* ==========================================================================
+   12. CONTACT PAGE REDESIGN & CIPITIO SYSTEM (ALWAYS WATCHING MODE)
+   ========================================================================== */
+
+/* --- PANEL TECH & DECORACIÓN --- */
+.border-cyber {
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 229, 255, 0.05);
+}
+.ui-corner {
+    position: absolute; width: 20px; height: 20px;
+    border: 2px solid var(--accent-tech); opacity: 0.7; pointer-events: none;
+}
+.ui-corner.top-left { top: 0; left: 0; border-right: none; border-bottom: none; }
+.ui-corner.bottom-right { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+.scanline {
+    position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+    background: rgba(0, 229, 255, 0.1); opacity: 0.4; pointer-events: none;
+    animation: scanMove 4s linear infinite;
+}
+@keyframes scanMove { 
+    0% { top: -10%; opacity: 0; } 
+    50% { opacity: 0.5; } 
+    100% { top: 110%; opacity: 0; } 
+}
+
+/* --- INPUTS CYBERPUNK --- */
+.cyber-label {
+    display: block; color: var(--accent-tech); font-size: 0.75rem; 
+    letter-spacing: 2px; margin-bottom: 8px; font-weight: 600; text-transform: uppercase;
+}
+.cyber-input {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; color: #fff !important;
+    font-family: 'Space Grotesk', monospace; transition: all 0.3s ease;
+}
+.cyber-input:focus {
+    background: rgba(0, 229, 255, 0.05) !important;
+    border-color: var(--accent-tech) !important;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2) !important;
+}
+
+/* --- REDES SOCIALES (NODOS) --- */
+.node-btn {
+    display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px; color: #ccc; text-decoration: none;
+    font-size: 0.8rem; letter-spacing: 1px; font-weight: 600;
+    transition: all 0.3s;
+}
+.node-btn:hover {
+    background: rgba(0, 229, 255, 0.1); border-color: var(--accent-tech);
+    color: #fff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.2);
+}
+.blink { animation: blinking 1s infinite; }
+@keyframes blinking { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* -----------------------------------------------------------
+   SISTEMA CIPITÍO: VIGILANCIA PERMANENTE
+   ----------------------------------------------------------- */
+
+.cipitio-sprite {
+    position: absolute;
+    width: 100px; height: 100px; 
+    
+    /* POSICIÓN FIJA: Siempre asomado en el borde */
+    bottom: -35px; 
+    left: 50%; /* Controlado por JS aleatoriamente */
+    
+    background-image: url('../img/cipitio_peek.png'); 
+    background-repeat: no-repeat;
+    background-size: 300px 100%; 
+    
+    /* Frame inicial: Centro */
+    background-position: -200px 0px; 
+
+    z-index: 1; pointer-events: auto; cursor: crosshair;
+    transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    /* ANIMACIÓN DE VIGILANCIA (IDLE) - Suave y lenta */
+    animation: idle-watch 8s steps(1) infinite;
+}
+
+/* Keyframes de vigilancia (Mueve los ojos tranquilamente) */
+@keyframes idle-watch {
+    0% { background-position: -200px 0px; } /* Centro */
+    40% { background-position: 0px 0px; }    /* Mira Izquierda */
+    50% { background-position: -200px 0px; } /* Centro */
+    90% { background-position: -100px 0px; } /* Mira Derecha */
+    100% { background-position: -200px 0px; } /* Centro */
+}
+
+
+/* --- ANIMACIÓN DE ATAQUE (LANZAR) --- */
+/* Solo se activa cuando hay error (clase .is-throwing-...) */
+
+.cipitio-sprite.is-throwing-right {
+    background-image: url('../img/cipitio_throw_right.png');
+    background-size: 300px 100%;
+    /* Empieza en frame 1 */
+    background-position: 0px 0px; 
+    animation: throw-manual 0.9s steps(1) forwards; 
+}
+
+.cipitio-sprite.is-throwing-left {
+    background-image: url('../img/cipitio_throw_left.png');
+    background-size: 300px 100%;
+    /* Empieza en frame 1 */
+    background-position: 0px 0px; 
+    animation: throw-manual 0.9s steps(1) forwards; 
+}
+
+@keyframes throw-manual {
+    /* Frame 1: PREPARAR */
+    0% { background-position: 0px 0px; }
+    
+    /* Frame 2: LANZAR (Acción) */
+    25% { background-position: -100px 0px; }
+    
+    /* Frame 3: FINALIZAR (Follow through) */
+    60% { background-position: -200px 0px; }
+    
+    100% { background-position: -200px 0px; }
+}
+
+
+/* LA ROCA DIGITAL */
+.digital-rock {
+    position: absolute; width: 14px; height: 14px;
+    background-color: var(--accent-tech);
+    box-shadow: 0 0 10px var(--accent-tech);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    opacity: 0; pointer-events: none; z-index: 3;
+    transition: transform 0.4s cubic-bezier(0.2, 0.6, 0.3, 1), opacity 0.1s;
+}
+
+/* EFECTO GLITCH EN INPUT */
+.input-glitch {
+    animation: glitchShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    border-color: #ff0055 !important; box-shadow: 0 0 15px #ff0055 !important;
+}
+@keyframes glitchShake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+  40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+/* ==========================================================================
+   13. CYBER MODAL (VENTANA LIMPIA SIN BLUR)
+   ========================================================================== */
+.cyber-modal-overlay {
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%;
+    
+    /* CAMBIO CLAVE: Fondo casi transparente para ver la animación */
+    background: rgba(0, 0, 0, 0.2); 
+    
+    /* QUITAMOS EL BLUR: Para ver al Cipitío en HD */
+    backdrop-filter: none; 
+    
+    z-index: 9999; 
+    display: none; 
+    align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.3s ease;
+}
+
+.cyber-modal-overlay.active {
+    display: flex; 
+    opacity: 1; 
+}
+
+.cyber-modal-box {
+    /* La caja sí debe tener fondo sólido para leer el texto */
+    background: rgba(10, 15, 20, 0.95); 
+    border: 1px solid #ff0055;
+    box-shadow: 0 0 30px rgba(255, 0, 85, 0.4); /* Brillo rojo más intenso */
+    padding: 30px; 
+    max-width: 400px; 
+    text-align: center;
+    position: relative;
+    
+    /* Animación de entrada */
+    transform: scale(0.8); 
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cyber-modal-overlay.active .cyber-modal-box { 
+    transform: scale(1); 
+}
+
+.modal-title {
+    color: #ff0055; 
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem; 
+    margin-top: 0; 
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+    border-bottom: 1px solid rgba(255, 0, 85, 0.3); 
+    padding-bottom: 15px;
+}
+
+.modal-msg { 
+    color: #fff; 
+    font-size: 1rem; 
+    font-weight: 500;
+    margin: 20px 0; 
+    line-height: 1.5; 
+}
+
+.btn-cyber-modal {
+    background: rgba(255, 0, 85, 0.1); 
+    color: #ff0055; 
+    border: 1px solid #ff0055;
+    padding: 12px 30px; 
+    font-weight: bold; 
+    cursor: pointer;
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    transition: all 0.3s;
+}
+
+.btn-cyber-modal:hover {
+    background: #ff0055; 
+    color: #fff; 
+    box-shadow: 0 0 20px #ff0055;
+    transform: translateY(-2px);
+}
