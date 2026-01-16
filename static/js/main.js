@@ -19,13 +19,13 @@ if (canvas) {
     const isHome = !!menuContainer;
     const isAbout = window.location.pathname.includes('about');
     const isProjects = window.location.pathname.includes('projects');
-    const isContact = window.location.pathname.includes('contact'); // <--- NUEVO
+    const isContact = window.location.pathname.includes('contact');
 
     // Definimos el tipo de escenario para enviarlo al CitySystem
     let pageType = 'generic';
     if (isHome) pageType = 'home';
     if (isAbout) pageType = 'about';
-    if (isContact) pageType = 'contact'; // <--- NUEVO: Activa las pirámides
+    if (isContact) pageType = 'contact';
 
     // Projects usa el fondo genérico (suelo oscuro simple) para no distraer
 
@@ -258,7 +258,41 @@ function initCadejoFollower() {
 }
 
 /* ==========================================================================
-   4. EJECUCIÓN SEGURA GLOBAL & INICIO DE SISTEMAS
+   4. SMART NAVBAR (AUTO-HIDE & AUTO-CLOSE) <--- NUEVA FUNCIÓN
+   ========================================================================== */
+function initSmartNavbar() {
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar-floating-container');
+    const navCollapse = document.querySelector('.navbar-collapse'); // Menú móvil
+
+    if (!navbar) return;
+
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // 1. Evitar "rebotes" molestos en móviles
+        if (Math.abs(scrollTop - lastScrollTop) <= 5) return;
+
+        // 2. Si bajamos más de 80px: OCULTAR
+        if (scrollTop > lastScrollTop && scrollTop > 80) {
+            navbar.classList.add('nav-hidden');
+            
+            // EXTRA: Si el menú móvil estaba abierto, ciérralo suavemente
+            if (navCollapse && navCollapse.classList.contains('show')) {
+                navCollapse.classList.remove('show');
+            }
+        } 
+        // 3. Si subimos: MOSTRAR
+        else {
+            navbar.classList.remove('nav-hidden');
+        }
+        
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }, { passive: true });
+}
+
+/* ==========================================================================
+   5. EJECUCIÓN SEGURA GLOBAL & INICIO DE SISTEMAS
    ========================================================================== */
 const initApp = () => {
     // 1. Iniciar Efectos Globales
@@ -267,7 +301,10 @@ const initApp = () => {
     // 2. Iniciar el Cadejo (si existe en el DOM)
     initCadejoFollower();
 
-    // 3. INICIAR EL CIPITÍO 🍌 (Solo si estamos en la página de Contacto)
+    // 3. Iniciar Navbar Inteligente (NUEVO)
+    initSmartNavbar();
+
+    // 4. INICIAR EL CIPITÍO 🍌 (Solo si estamos en la página de Contacto)
     if (document.getElementById('contact-panel')) {
         try {
             new CipitioSystem();
