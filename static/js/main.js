@@ -32,6 +32,41 @@ if (canvas) {
     let w, h;
     let time = 0;
     let scrollPercent = 0;
+
+    // -----------------------------------------------------------------------------
+// Fake (virtual) scroll for ABOUT + CONTACT
+// Purpose: wheel mueve scrollPercent sin mover la pagina (no scroll real).
+// -----------------------------------------------------------------------------
+const isDesktopPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+const isWideEnough = window.matchMedia('(min-width: 992px)').matches; // ajusta si quieres
+const isFakeScrollPage = (isAbout || isContact) && isDesktopPointer && isWideEnough;
+
+let fakeScrollTarget = 0;   // 0..1 (lo que “queremos”)
+let fakeScrollCurrent = 0;  // 0..1 (lo que se usa, suavizado)
+
+const FAKE_SCROLL_SENSITIVITY = 0.0012; // ajusta si lo quieres mas rapido/lento
+const FAKE_SCROLL_EASE = 0.14;          // suavizado (0.10–0.25)
+
+const clamp01 = (v) => Math.max(0, Math.min(1, v));
+
+if (isFakeScrollPage) {
+  // Bloquea el scroll real
+  document.documentElement.classList.add('fake-scroll');
+  document.body.classList.add('fake-scroll');
+  window.scrollTo(0, 0);
+
+  // Wheel => cambia fakeScrollTarget
+  const onWheel = (e) => {
+    // Permite scroll natural dentro de inputs/textarea si lo necesitas
+    const allowNative = e.target.closest('textarea, input, select, [data-allow-native-scroll]');
+    if (allowNative) return;
+
+    e.preventDefault();
+    fakeScrollTarget = clamp01(fakeScrollTarget + (e.deltaY * FAKE_SCROLL_SENSITIVITY));
+  };
+
+  window.addEventListener('wheel', onWheel, { passive: false });
+}
     
     // Variables para el Parallax del fondo
     let bgMouseX = 0, bgMouseY = 0; 
@@ -43,31 +78,46 @@ if (canvas) {
 
     // --- MANEJO DE SCROLL ---
     function updateScrollState() {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
-        
-        const docHeight = Math.max(
-            document.body.scrollHeight, document.documentElement.scrollHeight,
-            document.body.offsetHeight, document.documentElement.offsetHeight,
-            document.body.clientHeight, document.documentElement.clientHeight
-        ) - window.innerHeight;
 
-        // Cálculo seguro del porcentaje (0.0 a 1.0)
-        scrollPercent = (docHeight <= 0) ? 0 : Math.max(0, Math.min(1, scrollTop / docHeight));
+  // ============================
+  // A) FAKE SCROLL (ABOUT/CONTACT)
+  // ============================
+  if (isFakeScrollPage) {
+    // Suaviza el movimiento hacia el target
+    fakeScrollCurrent += (fakeScrollTarget - fakeScrollCurrent) * FAKE_SCROLL_EASE;
+    scrollPercent = clamp01(fakeScrollCurrent);
+  }
 
-        // --- LÓGICA DEL CADEJO (Leyenda: Se esconde con la luz/scroll) ---
-        const cadejoEl = document.getElementById('cadejo-ghost');
-        
-        // Si existe el cadejo (en About o Projects)
-        if (cadejoEl && (isAbout || isProjects)) {
-            // Si bajamos más del 10%, el espíritu se desvanece
-            if (scrollPercent > 0.1) {
-                cadejoEl.style.opacity = '0';
-                cadejoEl.style.transition = 'opacity 0.5s ease';
-            } else {
-                cadejoEl.style.opacity = '1';
-            }
-        }
+  // ============================
+  // B) SCROLL REAL (HOME/PROJECTS/OTRAS)
+  // ============================
+  else {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+
+    const docHeight = Math.max(
+      document.body.scrollHeight, document.documentElement.scrollHeight,
+      document.body.offsetHeight, document.documentElement.offsetHeight,
+      document.body.clientHeight, document.documentElement.clientHeight
+    ) - window.innerHeight;
+
+    // Cálculo seguro del porcentaje (0.0 a 1.0)
+    scrollPercent = (docHeight <= 0) ? 0 : Math.max(0, Math.min(1, scrollTop / docHeight));
+  }
+
+  // --- LÓGICA DEL CADEJO (se esconde con la luz/scroll) ---
+  const cadejoEl = document.getElementById('cadejo-ghost');
+
+  // Si existe el cadejo (About o Projects)
+  if (cadejoEl && (isAbout || isProjects)) {
+    if (scrollPercent > 0.1) {
+      cadejoEl.style.opacity = '0';
+      cadejoEl.style.transition = 'opacity 0.5s ease';
+    } else {
+      cadejoEl.style.opacity = '1';
     }
+  }
+}
+
 
     function resize() {
         w = canvas.width = window.innerWidth;

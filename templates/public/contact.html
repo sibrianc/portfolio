@@ -2,130 +2,78 @@
 {% block title %}{{ t('contact') }} – Carlos Sibrian{% endblock %}
 
 {% block content %}
-<div class="container position-relative" style="padding-top: 120px; padding-bottom: 80px; z-index: 10;">
+<div id="contact-panel" class="contact-container position-relative w-100">
   
-  <div class="row g-5 align-items-center">
+  <div class="row g-5 align-items-stretch w-100 m-0">
     
-    {# COLUMNA IZQUIERDA: INFO & REDES #}
-    <div class="col-lg-5 text-lg-start text-center">
-      <h1 class="display-3 fw-bold text-white mb-3" style="text-shadow: 0 0 30px rgba(0,0,0,0.5);">
-        {{ t('contact') }}
-      </h1>
-      <p class="text-muted fs-5 mb-5" style="letter-spacing: 1px;">
-        Hablemos de tu próximo proyecto <span class="text-accent blink">_</span>
-      </p>
+    <div class="col-lg-5">
+      <div class="glass-panel contact-info-box h-100 p-5">
+          <h1 class="display-3 fw-bold text-white mb-3" style="text-shadow: 0 0 30px rgba(0,0,0,0.5);">
+            {{ t('contact') }}
+          </h1>
+          <p class="text-muted fs-5 mb-5" style="letter-spacing: 1px;">
+            Hablemos de tu próximo proyecto <span class="text-accent blink">_</span>
+          </p>
 
-      <div class="contact-info-block mb-5">
-        <p class="text-white-50">
-          ¿Tienes una idea innovadora o necesitas ayuda con desarrollo? 
-          Envíame un mensaje y conectemos.
-        </p>
-      </div>
+          <div class="contact-info-block mb-5">
+            <p class="text-white-50">
+              ¿Tienes una idea innovadora o necesitas ayuda con desarrollo? 
+              Envíame un mensaje y conectemos.
+            </p>
+          </div>
 
-      {# REDES SOCIALES #}
-      <div class="social-nodes d-flex flex-wrap gap-3 justify-content-lg-start justify-content-center">
-        
-        <a href="https://linkedin.com/in/tu-usuario" target="_blank" class="node-btn">
-           <i data-feather="linkedin"></i>
-           <span>LinkedIn</span>
-        </a>
-        
-        <a href="https://github.com/tu-usuario" target="_blank" class="node-btn">
-           <i data-feather="github"></i>
-           <span>GitHub</span>
-        </a>
-        
-        <a href="mailto:tu@email.com" class="node-btn">
-           <i data-feather="mail"></i>
-           <span>Email</span>
-        </a>
-
+          <div class="social-nodes d-flex flex-wrap gap-3">
+            <a href="https://linkedin.com/" target="_blank" class="node-btn"><i data-feather="linkedin"></i><span>LinkedIn</span></a>
+            <a href="https://github.com/" target="_blank" class="node-btn"><i data-feather="github"></i><span>GitHub</span></a>
+            <a href="mailto:tu@email.com" class="node-btn"><i data-feather="mail"></i><span>Email</span></a>
+          </div>
       </div>
     </div>
 
-    {# COLUMNA DERECHA: EL FORMULARIO (LA CASA DEL CIPITÍO) #}
     <div class="col-lg-7">
-      <div class="glass-panel position-relative p-5 border-cyber" id="contact-panel" style="overflow: hidden;">
-        
-        {# --- SISTEMA CIPITÍO --- #}
-        {# 1. El Actor (Spritesheet) #}
+      <div class="glass-panel position-relative p-5 border-cyber h-100" style="overflow: hidden;">
         <div id="cipitio-entity" class="cipitio-sprite"></div>
-        {# 2. El Proyectil (Roca Digital) #}
         <div id="cipitio-rock" class="digital-rock"></div>
-
-        {# Decoración UI #}
         <div class="ui-corner top-left"></div>
         <div class="ui-corner bottom-right"></div>
         <div class="scanline"></div>
 
-        {% if success %}
-          <div class="alert alert-success bg-transparent border-success text-success text-center mb-4">
-            <i data-feather="check-circle" class="me-2"></i>
-            {{ t('contact_success') }}
-          </div>
-        {% endif %}
-
         <form method="POST" novalidate class="position-relative" style="z-index: 2;">
           {{ form.hidden_tag() }}
-          
-          {# --- TRAMPA ANTI-BOTS (Invisible) --- #}
-          <div style="display: none; opacity: 0; position: absolute; left: -9999px;">
-             {{ form.bot_catcher(class="cyber-input", tabindex="-1", autocomplete="off") }}
-          </div>
+          <div style="display: none;">{{ form.bot_catcher(class="cyber-input") }}</div>
 
           <div class="mb-4 group-cyber">
-            <label class="cyber-label">
-              <i data-feather="user" class="me-2" style="width: 14px;"></i>
-              {{ t(form.name.label.text) }}
-            </label>
-            {# Cambio: Placeholder claro #}
-            {{ form.name(class="form-control cyber-input", placeholder="Escribe tu nombre") }}
+            <label class="cyber-label"><i data-feather="user" class="me-2"></i> {{ t(form.name.label.text) }}</label>
+            {{ form.name(class="form-control cyber-input", placeholder="Tu nombre") }}
           </div>
-          
           <div class="mb-4 group-cyber">
-            <label class="cyber-label">
-              <i data-feather="at-sign" class="me-2" style="width: 14px;"></i>
-              {{ t(form.email.label.text) }}
-            </label>
-            {# Cambio: Placeholder claro #}
-            {{ form.email(class="form-control cyber-input", placeholder="ejemplo@correo.com") }}
+            <label class="cyber-label"><i data-feather="at-sign" class="me-2"></i> {{ t(form.email.label.text) }}</label>
+            {{ form.email(class="form-control cyber-input", placeholder="name@example.com") }}
           </div>
-          
           <div class="mb-5 group-cyber">
-            <label class="cyber-label">
-              <i data-feather="message-square" class="me-2" style="width: 14px;"></i>
-              {{ t(form.message.label.text) }}
-            </label>
-            {# Cambio: Placeholder claro #}
-            {{ form.message(class="form-control cyber-input", rows="5", placeholder="Escribe aquí tu mensaje...") }}
+            <label class="cyber-label"><i data-feather="message-square" class="me-2"></i> {{ t(form.message.label.text) }}</label>
+            {{ form.message(class="form-control cyber-input", rows="5", placeholder="Escribe tu mensaje...") }}
           </div>
           
           <button type="submit" class="btn btn-cyber w-100 py-3 d-flex align-items-center justify-content-center gap-2">
-            {# Cambio: Texto claro #}
-            <span>ENVIAR MENSAJE</span>
-            <i data-feather="send" style="width: 16px;"></i>
+            <span>ENVIAR MENSAJE</span><i data-feather="send"></i>
           </button>
         </form>
-
       </div>
     </div>
+    
   </div>
 </div>
 
-{# --- VENTANA MODAL DE ERROR (Mensajes claros) --- #}
 <div id="cyber-modal" class="cyber-modal-overlay">
     <div class="cyber-modal-box">
-        {# Cambio: Título claro #}
         <h3 class="modal-title">⚠️ FALTAN DATOS</h3>
-        {# El texto de abajo se reemplaza con JS según el error específico #}
         <p id="modal-message" class="modal-msg">Por favor, revisa que todos los campos estén llenos correctamente.</p>
         <button id="close-modal" class="btn-cyber-modal">OK, ENTENDIDO</button>
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        if (typeof feather !== 'undefined') feather.replace();
-    });
+    document.addEventListener("DOMContentLoaded", function() { if (typeof feather !== 'undefined') feather.replace(); });
 </script>
 {% endblock %}

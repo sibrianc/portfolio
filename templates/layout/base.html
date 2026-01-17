@@ -29,11 +29,8 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navMenu">
-          <ul class="navbar-nav w-100 justify-content-evenly align-items-center">
+          <ul class="navbar-nav ms-auto align-items-center gap-4 gap-lg-5">
             
-            <li class="nav-item">
-              <a class="nav-link-custom" href="{{ url_for('index') }}">{{ t('home') }}</a>
-            </li>
             <li class="nav-item">
               <a class="nav-link-custom" href="{{ url_for('about') }}">{{ t('about') }}</a>
             </li>
@@ -44,7 +41,7 @@
               <a class="nav-link-custom" href="{{ url_for('contact') }}">{{ t('contact') }}</a>
             </li>
             
-            <li class="d-none d-lg-block mx-3" style="width: 1px; height: 15px; background: rgba(255,255,255,0.2);"></li>
+            <li class="d-none d-lg-block" style="width: 1px; height: 20px; background: rgba(255,255,255,0.2);"></li>
 
             <li class="nav-item mt-2 mt-lg-0">
                <a class="btn-lang"
@@ -60,7 +57,7 @@
   </div>
 {% endblock %}
 
-  <main style="padding-bottom: 80px;">
+  <main>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div class="container mt-4 position-relative" style="z-index: 20;">
@@ -75,11 +72,7 @@
   </main>
 
   {% block footer %}
-  <footer class="text-center py-3 position-fixed bottom-0 start-0 w-100" 
-          style="z-index: 100; color: #888; font-size: 0.85rem; 
-                 background: rgba(5, 5, 10, 0.95); 
-                 backdrop-filter: blur(8px);
-                 border-top: 1px solid rgba(255, 255, 255, 0.1);">
+  <footer class="main-footer">
     <span>© 2025 Carlos Sibrian</span>
   </footer>
   {% endblock %}

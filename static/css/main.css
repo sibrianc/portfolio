@@ -1,738 +1,1030 @@
 /* ==========================================================================
-   1. CONFIGURACIÓN GLOBAL & VARIABLES
+   0. FONTS
    ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Space+Grotesk:wght@300;500;600;700&display=swap');
 
+/* ==========================================================================
+   1. DESIGN TOKENS (COLORES / TIPOGRAFIA / ESPACIADO / SOMBRAS)
+   ========================================================================== */
 :root {
-  /* --- COLORES BASE --- */
+  /* Base */
   --bg-dark: #050505;
   --text-main: #e0e6ed;
-  --text-muted: #9ca3af;
+  --text-muted: rgba(224, 230, 237, 0.72);
+  --text-faint: rgba(224, 230, 237, 0.55);
 
-  /* --- ACENTOS --- */
-  --accent: #ff6600;       /* Naranja Láser (Principal) */
-  --accent-hover: #ff8533;
-  --accent-tech: #00e5ff;  /* Cian Eléctrico (Secundario/Tech) */
+  /* Accents */
+  --accent: #ff6600;       /* Naranja laser */
+  --accent-tech: #00e5ff;  /* Cian eléctrico */
 
-  /* --- SISTEMA DE VIDRIO --- */
-  --glass-bg: rgba(15, 20, 25, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.15);
-  
-  /* --- SISTEMA CADEJO (Variables Ojos) --- */
-  --eye-iris-gradient: radial-gradient(circle, #5D4037 40%, #3E2723 90%);
+  /* Surfaces */
+  --glass-bg: rgba(15, 20, 25, 0.72);
+  --glass-bg-strong: rgba(10, 15, 20, 0.90);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --border-soft: rgba(255, 255, 255, 0.10);
+  --border-tech: rgba(0, 229, 255, 0.35);
+
+  /* Layout */
+  --header-height: 60px;
+  --footer-height: 50px;
+
+  /* Spacing scale */
+  --s-1: 6px;
+  --s-2: 10px;
+  --s-3: 14px;
+  --s-4: 18px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 44px;
+  --s-8: 64px;
+
+  /* Radius */
+  --r-1: 12px;
+  --r-2: 16px;
+  --r-3: 20px;
+
+  /* Shadows */
+  --sh-1: 0 8px 28px rgba(0, 0, 0, 0.45);
+  --sh-2: 0 18px 48px rgba(0, 0, 0, 0.55);
+  --sh-glow-accent: 0 0 20px rgba(255, 102, 0, 0.35);
+  --sh-glow-tech: 0 0 18px rgba(0, 229, 255, 0.28);
+
+  /* Type scale (jerarquía consistente) */
+  --fs-00: 0.78rem;                 /* micro */
+  --fs-0: 0.88rem;                  /* small */
+  --fs-1: 1rem;                     /* base */
+  --fs-2: clamp(1.15rem, 1.1rem + 0.4vw, 1.35rem);
+  --fs-3: clamp(1.35rem, 1.2rem + 0.9vw, 1.9rem);
+  --fs-4: clamp(1.8rem, 1.5rem + 1.6vw, 2.6rem);
+  --fs-5: clamp(2.2rem, 1.8rem + 2.4vw, 3.4rem);
+
+  --lh-tight: 1.1;
+  --lh-normal: 1.55;
+  --lh-loose: 1.9;
+
+  /* Cadejo eyes (miel, realista) */
+  --eye-sclera: radial-gradient(circle at 20% 20%, #ffffff 0%, #f1f1f1 45%, #d0d0d0 100%);
+  --eye-iris-gradient: radial-gradient(circle at 35% 35%,
+    #ffe0a8 0%,
+    #d08a2c 30%,
+    #8a4a17 62%,
+    #3a1a08 100%
+  );
 }
 
-body, html {
-  margin: 0; padding: 0; width: 100%; height: 100%;
-  font-family: 'Inter', sans-serif;
-  background-color: transparent; /* Importante para ver el canvas */
-  color: var(--text-main);
+/* ==========================================================================
+   2. BASE RESET / GLOBAL
+   ========================================================================== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
   overflow-x: hidden;
 }
 
-/* Tipografía Futurista */
-h1, h2, h3, h4, h5, h6, 
-.title, .menu-item, .navbar-brand, 
-.btn-cta, .btn-cyber, .stat-value, .card-title, .section-title {
-    font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: -0.02em;
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: transparent; /* IMPORTANTE: deja ver el canvas */
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tipografía futurista para headings + UI */
+h1, h2, h3, h4, h5, h6,
+.title, .menu-item, .navbar-brand,
+.btn-cta, .btn-cyber, .stat-value, .card-title, .section-title,
+.brand-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: var(--fs-5); line-height: var(--lh-tight); margin: 0 0 var(--s-4); }
+h2 { font-size: var(--fs-4); line-height: var(--lh-tight); margin: 0 0 var(--s-4); }
+h3 { font-size: var(--fs-3); line-height: 1.2; margin: 0 0 var(--s-3); }
+p  { font-size: var(--fs-1); line-height: var(--lh-normal); color: var(--text-muted); }
+
+a { color: inherit; }
+a:hover { color: #fff; }
+
+::selection { background: rgba(255, 102, 0, 0.28); color: #fff; }
+
+:focus-visible {
+  outline: 2px solid rgba(0, 229, 255, 0.75);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Utilidades que tus HTML ya usan o te conviene usar */
+.text-accent { color: var(--accent) !important; }
+.text-tech   { color: var(--accent-tech) !important; }
+.text-glow   { text-shadow: 0 0 22px rgba(255, 102, 0, 0.25); }
+.text-readable { text-shadow: 0 2px 5px rgba(0,0,0,0.55); }
+
+.spacing-2 { letter-spacing: 0.14em; }
+.xsmall { font-size: var(--fs-00); }
+.role-text { font-size: var(--fs-0); letter-spacing: 0.18em; }
+
+/* Para reemplazar inline paddings repetidos en páginas */
+.page-pad {
+  padding-top: 120px;
+  padding-bottom: 80px;
+  position: relative;
+  z-index: 10;
 }
 
 /* ==========================================================================
-   2. CANVAS & UI ELEMENTS
+   3. CANVAS & UI LAYER (HOME)
    ========================================================================== */
 #canvas-container {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  z-index: -1; background-color: var(--bg-dark);
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  background-color: var(--bg-dark);
 }
 canvas { display: block; }
 
-/* Títulos UI (Esquina inferior) */
+/* UI (esquina inferior) */
 #ui-layer {
-  position: absolute; bottom: 30px; left: 40px; 
-  text-align: left; pointer-events: none; z-index: 10;
+  position: absolute;
+  bottom: 30px; left: 40px;
+  text-align: left;
+  pointer-events: none;
+  z-index: 10;
 }
 .title {
-  font-size: 1.2rem; font-weight: 600; letter-spacing: 3px;
-  color: var(--accent); text-transform: uppercase; opacity: 0.8;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+  opacity: 0.85;
 }
 .subtitle {
-  font-size: 0.7rem; color: #5e1919; letter-spacing: 2px;
-  margin-top: 2px; font-weight: bold;
+  font-size: 0.72rem;
+  color: rgba(255, 102, 0, 0.35);
+  letter-spacing: 2px;
+  margin-top: 4px;
+  font-weight: 700;
 }
 
 /* ==========================================================================
-   3. MENÚ CUBO (HOME)
+   4. MENÚ CUBO (HOME)
    ========================================================================== */
 #menu-container {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
-  text-align: center; opacity: 0;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.88);
+  text-align: center;
+  opacity: 0;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  pointer-events: none; z-index: 20;
-  background: rgba(0, 0, 0, 0.85);
-  padding: 30px;
-  border: 1px solid rgba(255, 100, 0, 0.2);
+  pointer-events: none;
+  z-index: 20;
+
+  background: rgba(0, 0, 0, 0.82);
+  padding: 28px;
+  border: 1px solid rgba(255, 100, 0, 0.18);
+  box-shadow: var(--sh-1);
   clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
 }
 .menu-active {
-  opacity: 1 !important; transform: translate(-50%, -50%) scale(1) !important;
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1) !important;
   pointer-events: auto !important;
 }
 .menu-item {
-  display: block; margin: 12px 0; color: #fff;
-  font-size: 0.9rem; font-weight: 600; letter-spacing: 4px;
-  text-decoration: none; text-transform: uppercase; cursor: pointer;
-  transition: color 0.2s; position: relative;
+  display: block;
+  margin: 12px 0;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  position: relative;
 }
 .menu-item::before {
-  content: '>'; position: absolute; left: -15px; opacity: 0;
-  color: var(--accent); transition: opacity 0.2s, left 0.2s;
+  content: '>';
+  position: absolute;
+  left: -15px;
+  opacity: 0;
+  color: var(--accent);
+  transition: opacity 0.2s, left 0.2s;
 }
-.menu-item:hover { color: var(--accent); }
+.menu-item:hover { color: var(--accent); transform: translateX(2px); }
 .menu-item:hover::before { opacity: 1; left: -20px; }
 
-/* Texto Hero (Home) */
+/* Hero text HOME */
 #hero-text-container {
-    position: absolute; bottom: 25%; left: 5%; z-index: 10;
-    pointer-events: none;
+  position: absolute;
+  bottom: 25%;
+  left: 5%;
+  z-index: 10;
+  pointer-events: none;
 }
 .hero-title {
-    font-size: 3.5rem; font-weight: 700; line-height: 1;
-    text-transform: uppercase; color: #fff;
-    text-shadow: 0 0 20px rgba(0,0,0,0.5); margin-bottom: 10px;
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 24px rgba(0,0,0,0.55);
+  margin-bottom: 12px;
 }
 .hero-subtitle {
-    font-size: 1rem; color: var(--accent); letter-spacing: 4px;
-    text-transform: uppercase; background: rgba(0,0,0,0.6);
-    padding: 5px 10px; border-left: 2px solid var(--accent);
-    display: inline-block;
+  font-size: 0.95rem;
+  color: var(--accent);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  background: rgba(0,0,0,0.55);
+  padding: 6px 10px;
+  border-left: 2px solid var(--accent);
+  display: inline-block;
+}
+
+/* Featured cards (estaba en <style> del home.html) */
+.featured-card {
+  background: rgba(15, 20, 25, 0.85);
+  border: 1px solid rgba(0,229,255,0.25);
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.35s ease;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--sh-1);
+  height: 100%;
+}
+.featured-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(0,229,255,0.55);
+  box-shadow: var(--sh-2), var(--sh-glow-tech);
+}
+.featured-card img {
+  border-radius: 12px;
+  margin-bottom: 15px;
+  max-height: 180px;
+  width: 100%;
+  object-fit: cover;
+}
+.featured-card h5 {
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.featured-card p {
+  color: rgba(255,255,255,0.72);
+  font-size: 0.9rem;
+  margin-bottom: 15px;
 }
 
 /* ==========================================================================
-   4. NAVBAR SUPERIOR (FULL WIDTH + DISTRIBUTED + SMART)
+   5. NAVBAR (FLOATING GLASS) + FOOTER
    ========================================================================== */
 .navbar-floating-container {
-    position: fixed; 
-    top: 0; left: 0; right: 0; 
-    width: 100%;
-    z-index: 1000;
-    
-    /* Para que el Smart Hide funcione suave */
-    transition: transform 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
-    
-    /* Flex para centrar si fuera necesario, pero el glass ocupa 100% */
-    display: flex; justify-content: center; 
-    pointer-events: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: transform 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+  pointer-events: none;
 }
-
-/* CLASE QUE OCULTA EL NAVBAR AL BAJAR */
-.nav-hidden {
-    transform: translateY(-100%); /* Se esconde arriba */
-}
+.nav-hidden { transform: translateY(-100%); }
 
 .navbar-glass {
-    pointer-events: auto;
-    width: 100%; /* Ocupa toda la pantalla */
-    height: 80px; /* Altura fija elegante */
-    
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    
-    /* Borde solo abajo */
-    border-bottom: 1px solid var(--glass-border);
-    border-radius: 0; 
-    
-    padding: 0 40px; /* Aire a los lados */
-    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-    transition: background 0.3s ease;
-    
-    display: flex; align-items: center;
-    /* justify-content se maneja internamente con el HTML modificado */
+  pointer-events: auto;
+  width: 100%;
+  height: var(--header-height);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+  border-radius: 0;
+  padding: 0 5%;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.brand-logo { 
-    color: #fff !important; 
-    text-decoration: none; 
-    font-weight: 700; 
-    font-size: 1.1rem;
-    white-space: nowrap; /* Que no se rompa */
+.brand-logo {
+  color: #fff !important;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
 }
 
-/* LINKS */
+/* Links */
 .nav-link-custom {
-    color: rgba(255,255,255,0.7) !important; 
-    font-size: 0.9rem; /* Un poco más grande para legibilidad */
-    font-weight: 500;
-    text-transform: uppercase; 
-    position: relative; 
-    text-decoration: none; 
-    transition: color 0.3s;
-    letter-spacing: 1px;
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.25s ease;
 }
 .nav-link-custom:hover { color: #fff !important; }
 .nav-link-custom::after {
-    content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
-    width: 0; height: 2px; background: var(--accent); transition: width 0.3s;
-    box-shadow: 0 0 8px var(--accent);
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.25s ease;
+  box-shadow: 0 0 8px rgba(255, 102, 0, 0.45);
 }
 .nav-link-custom:hover::after { width: 100%; }
 
-/* BUTTON LANG */
+/* Language button */
 .btn-lang {
-    display: inline-block;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    padding: 8px 20px;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.8rem; font-weight: 600;
-    text-transform: uppercase; text-decoration: none; letter-spacing: 1px;
-    background: rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+  display: inline-block;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  padding: 6px 14px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 1px;
+  background: rgba(0, 0, 0, 0.20);
+  transition: all 0.25s ease;
 }
 .btn-lang:hover {
-    border-color: var(--accent); color: var(--accent);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
+  border-color: rgba(255, 102, 0, 0.8);
+  color: var(--accent);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: var(--sh-glow-accent);
 }
 
+/* Footer fijo */
+.main-footer {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: var(--footer-height);
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 5%;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  font-family: 'Space Grotesk', sans-serif;
+
+  background: rgba(5, 5, 10, 0.95);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.main-footer p { margin: 0; }
+
 /* ==========================================================================
-   5. BOTONES GLOBALES
+   6. BOTONES GLOBALES (CONSISTENTES)
    ========================================================================== */
-/* Botón Principal (Naranja) - Para CTAs generales */
 .btn-cta, .btn-primary {
-    background: transparent; color: var(--accent); border: 1px solid var(--accent);
-    padding: 10px 25px; border-radius: 4px; text-decoration: none;
-    display: inline-block; transition: all 0.3s ease; 
-    text-transform: uppercase; font-weight: 700;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(255, 102, 0, 0.9);
+  padding: 10px 22px;
+  border-radius: 10px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.08em;
 }
 .btn-cta:hover, .btn-primary:hover {
-    background: var(--accent); color: #000 !important;
-    box-shadow: 0 0 20px var(--accent); transform: translateY(-2px);
+  background: var(--accent);
+  color: #000 !important;
+  box-shadow: var(--sh-glow-accent);
+  transform: translateY(-2px);
 }
 
-/* Botón Secundario (Cian) - Para código/tech */
 .btn-cyber, .btn-outline-info {
-    background: transparent; color: var(--accent-tech); border: 1px solid rgba(0, 229, 255, 0.5);
-    padding: 8px 20px; border-radius: 4px; text-decoration: none;
-    display: inline-block; transition: all 0.3s ease; 
-    text-transform: uppercase; font-weight: 600;
+  background: transparent;
+  color: var(--accent-tech);
+  border: 1px solid rgba(0, 229, 255, 0.55);
+  padding: 9px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 .btn-cyber:hover, .btn-outline-info:hover {
-    background: rgba(0, 229, 255, 0.1); color: #fff;
-    border-color: var(--accent-tech); box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+  background: rgba(0, 229, 255, 0.08);
+  color: #fff;
+  border-color: rgba(0, 229, 255, 0.9);
+  box-shadow: var(--sh-glow-tech);
 }
 
 /* ==========================================================================
-   6. PROJECTS: CAROUSEL VS GRID
+   7. PROJECTS GRID + SEARCH (ELEGANTE, MENOS AGRESIVO)
    ========================================================================== */
+.cyber-search-box {
+  background: rgba(10, 15, 20, 0.8);
+  border: 1px solid rgba(0, 229, 255, 0.55);
+  padding: 14px 16px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(10px);
+  margin-bottom: 40px;
+  box-shadow: var(--sh-1);
+}
+.cyber-search-box .cyber-input {
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+  width: 100% !important;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem;
+  outline: none;
+}
+.cyber-search-box .cyber-input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
 
-/* --- A. ESTILOS BASE DE LA TARJETA (Compartido) --- */
+/* Cards */
 .cyber-card {
-    position: relative; 
-    background: rgba(10, 15, 20, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1); 
-    border-left: 2px solid rgba(0, 170, 255, 0.3);
-    backdrop-filter: blur(10px); 
-    display: flex; flex-direction: column; overflow: hidden;
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-    transform: perspective(1000px); 
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    text-decoration: none; color: inherit;
+  position: relative;
+  background: rgba(10, 15, 20, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: var(--sh-1);
+  transform: translateZ(0);
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease, background 0.28s ease;
+  text-decoration: none;
+  color: inherit;
 }
 .cyber-card:hover {
-    transform: perspective(1000px) rotateX(5deg) translateY(-15px) scale(1.02);
-    border-color: rgba(0, 170, 255, 0.9); border-left-color: #00aaff;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 170, 255, 0.2);
-    z-index: 10; background: rgba(15, 20, 30, 0.9);
+  transform: translateY(-10px);
+  border-color: rgba(0, 229, 255, 0.5);
+  background: rgba(15, 20, 30, 0.88);
+  box-shadow: var(--sh-2), var(--sh-glow-tech);
+  z-index: 10;
 }
 
-/* Imagen/Video */
 .cyber-img-container {
-    width: 100%; height: 200px; overflow: hidden; position: relative;
-    border-bottom: 1px solid rgba(0, 170, 255, 0.2); background: #000;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.18);
+  background: #000;
 }
 .cyber-img, .cyber-video {
-    width: 100%; height: 100%; object-fit: cover;
-    filter: grayscale(80%) contrast(1.2); transition: filter 0.4s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(75%) contrast(1.15);
+  transition: filter 0.35s ease, transform 0.35s ease;
 }
-.cyber-card:hover .cyber-img, .cyber-card:hover .cyber-video { filter: grayscale(0%); }
+.cyber-card:hover .cyber-img,
+.cyber-card:hover .cyber-video {
+  filter: grayscale(0%);
+  transform: scale(1.02);
+}
 
-/* Cuerpo */
-.cyber-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+.cyber-body {
+  padding: 18px 18px 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
 .cyber-title {
-    color: #fff; font-size: 1.2rem; text-transform: uppercase; margin-bottom: 10px;
-    border-bottom: 1px solid rgba(0, 170, 255, 0.2); display: inline-block;
+  color: #fff;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: 0.08em;
 }
-.cyber-summary { color: #aaa; font-size: 0.9rem; flex-grow: 1; margin-bottom: 20px; }
+.cyber-summary {
+  color: rgba(255,255,255,0.70);
+  font-size: 0.92rem;
+  flex-grow: 1;
+  margin-bottom: 16px;
+  line-height: 1.65;
+}
+
 .btn-cyber-link {
-    color: #fff; text-decoration: none; font-size: 0.85rem; text-transform: uppercase;
-    text-align: right; display: block; transition: color 0.3s;
+  color: rgba(255,255,255,0.82);
+  text-decoration: none;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  text-align: right;
+  display: block;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+  letter-spacing: 0.12em;
 }
-.btn-cyber-link:hover { color: #00aaff; text-shadow: 0 0 8px #00aaff; }
+.btn-cyber-link:hover { color: var(--accent-tech); text-shadow: 0 0 10px rgba(0,229,255,0.35); }
 
-/* --- B. CARRUSEL (Featured) --- */
-.cyber-carousel-wrapper {
-    background: rgba(5, 10, 15, 0.65); backdrop-filter: blur(15px);
-    border-top: 1px solid rgba(0, 170, 255, 0.4);
-    padding: 40px 0 100px 0; margin: 30px 0 -150px 0; width: 100%;
-    display: flex; justify-content: center; box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6);
-}
-.cyber-carousel-track {
-    display: flex; gap: 60px; padding: 10px 60px;
-    width: max-content; max-width: 100%; margin: 0 auto;
-    overflow-x: auto; scroll-behavior: smooth; align-items: center;
-}
-.cyber-carousel-track::-webkit-scrollbar { height: 6px; }
-.cyber-carousel-track::-webkit-scrollbar-thumb { background: #004466; border-radius: 10px; }
-.cyber-carousel-track .cyber-card { flex: 0 0 340px; min-height: 420px; }
-
-/* --- C. GRID [ARREGLADO: 3 Columnas] --- */
+/* Grid */
 .cyber-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 Columnas Fijas */
-    gap: 30px; width: 100%; margin-bottom: 50px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+  width: 100%;
+  margin-bottom: 50px;
 }
-.cyber-grid .cyber-card { height: 100%; }
 @media (max-width: 1200px) { .cyber-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 768px) { .cyber-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px)  { .cyber-grid { grid-template-columns: 1fr; } }
 
-/* Buscador Cyber */
-.cyber-search-box {
-    background: rgba(10, 15, 20, 0.8);
-    border: 1px solid var(--accent-tech);
-    padding: 15px; border-radius: 8px;
-    display: flex; align-items: center; gap: 15px;
-    backdrop-filter: blur(10px); margin-bottom: 40px;
+/* Tech tags (usado en list.html) */
+.tech-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
 }
-.cyber-input {
-    background: transparent; border: none; color: #fff;
-    width: 100%; font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.1rem; outline: none;
+.tech-tag {
+  font-size: 0.72rem;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 229, 255, 0.28);
+  background: rgba(0, 229, 255, 0.06);
+  color: rgba(0, 229, 255, 0.9);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* ==========================================================================
-   7. PROJECT DETAIL & MINI BROWSER (HUD RESTAURADO)
+   8. PROJECT DETAIL (BROWSER + HUD)
    ========================================================================== */
 .cyber-browser {
-    background: rgba(15, 20, 25, 0.9);
-    border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 20px rgba(0, 170, 255, 0.1);
-    backdrop-filter: blur(10px); overflow: hidden; margin-bottom: 3rem;
+  background: rgba(15, 20, 25, 0.9);
+  border: 1px solid rgba(0, 170, 255, 0.25);
+  border-radius: 16px;
+  box-shadow: var(--sh-2);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  margin-bottom: 3rem;
 }
 .browser-header {
-    background: rgba(0, 0, 0, 0.6); padding: 12px 20px;
-    border-bottom: 1px solid rgba(0, 170, 255, 0.2);
-    display: flex; align-items: center; gap: 20px;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(0, 170, 255, 0.18);
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 .window-controls { display: flex; gap: 8px; }
 .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .dot.red { background: #ff5f56; } .dot.yellow { background: #ffbd2e; } .dot.green { background: #27c93f; }
+
 .address-bar {
-    flex-grow: 1; background: rgba(0, 170, 255, 0.05);
-    border: 1px solid rgba(0, 170, 255, 0.1); border-radius: 4px;
-    padding: 6px 15px; font-family: 'Courier New', monospace;
-    font-size: 0.85rem; color: #00aaff;
-}
-.browser-viewport {
-    width: 100%; aspect-ratio: 16/9; background: #000;
-    position: relative; display: flex; align-items: center; justify-content: center;
+  flex-grow: 1;
+  background: rgba(0, 170, 255, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.12);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.82rem;
+  color: rgba(0, 229, 255, 0.95);
 }
 
-/* --- [RESTAURADO] HUD PANEL & BOTONES LIVE/SOURCE --- */
-/* Esta sección es vital para que aparezcan los botones laterales en Detalle */
+.browser-viewport {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .hud-panel {
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    position: sticky; top: 100px; padding-left: 2rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.10);
+  position: sticky;
+  top: 100px;
+  padding-left: 2rem;
 }
 .section-title {
-    letter-spacing: 2px; font-size: 0.9rem; 
-    border-bottom: 1px solid rgba(255,255,255,0.1); 
-    padding-bottom: 10px; display: inline-block;
-    margin-bottom: 1.5rem; color: var(--accent);
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  padding-bottom: 10px;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--accent);
+  text-transform: uppercase;
 }
-/* Estilo del Botón HUD (Live/Code) */
 .btn-hud {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 15px;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.15);
-    color: #ccc;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    margin-bottom: 10px;
-    text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
 }
 .btn-hud:hover {
-    background: rgba(255,255,255,0.05);
-    border-color: var(--accent-tech);
-    color: #fff;
-    transform: translateX(5px);
-    box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(0, 229, 255, 0.55);
+  color: #fff;
+  transform: translateX(4px);
+  box-shadow: var(--sh-glow-tech);
 }
-/* Badges de tecnología en detalle */
+
 .tech-badge {
-    padding: 6px 12px;
-    background: rgba(0, 170, 255, 0.05); 
-    border: 1px solid rgba(0, 170, 255, 0.2); 
-    color: #00aaff; 
-    font-size: 0.85rem; 
-    border-radius: 4px;
-    text-transform: uppercase;
-    display: inline-block;
-    margin: 0 5px 5px 0;
+  padding: 6px 12px;
+  background: rgba(0, 170, 255, 0.06);
+  border: 1px solid rgba(0, 170, 255, 0.18);
+  color: rgba(0, 229, 255, 0.9);
+  font-size: 0.82rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin: 0 6px 8px 0;
+  letter-spacing: 0.1em;
 }
 .description-content {
-    font-size: 1.05rem; line-height: 1.9; 
-    color: #e0e0e0; text-align: justify;
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.85);
+  text-align: left;
 }
-
-/* ... (Tus estilos anteriores del 1 al 7 se mantienen igual) ... */
 
 /* ==========================================================================
-   8. ABOUT PAGE & CADEJO INTEGRATION (SUMMONED SPIRIT STYLE)
+   9. ABOUT (GLASS) + CADEJO (OJOS REALISTAS)
    ========================================================================== */
-
-/* Layout About */
-.about-container { 
-    z-index: 10; 
-    position: relative; /* Necesario para que el cadejo se posicione respecto a esto */
+.about-container {
+  z-index: 10;
+  position: relative;
 }
 
-/* Paneles de Vidrio */
+/* Panels */
 .glass-card, .glass-panel {
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border); border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--sh-1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.glass-card:hover, .glass-panel:hover {
+  box-shadow: var(--sh-2);
 }
 
-/* --- 1. BLOQUE DE IDENTIDAD (Limpio) --- */
-.identity-block {
-    position: relative;
-    z-index: 10;
-    padding-bottom: 10px;
-    background: transparent; 
-    margin-bottom: 0; 
+/* Profile block helpers */
+.profile-wrapper {
+  width: 210px;
+  height: 210px;
+  display: grid;
+  place-items: center;
 }
-
 .profile-img {
-    width: 180px; 
-    height: 180px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255,255,255,0.2);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
-    position: relative;
-    z-index: 10;
-    cursor: pointer; 
-    transition: transform 0.3s ease, border-color 0.3s ease;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.18);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.55);
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
-
-/* Efecto al pasar el mouse por la foto */
 #profile-trigger:hover .profile-img {
-    transform: scale(1.05);
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+  border-color: rgba(255,255,255,0.7);
+  box-shadow: 0 0 22px rgba(255,255,255,0.20);
 }
-
 .glow-ring {
-    position: absolute; top: 50%; left: 50%; 
-    transform: translate(-50%, -50%);
-    width: 210px; height: 210px; 
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-    animation: pulseProfile 3s infinite;
-    pointer-events: none;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 210px; height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  animation: pulseProfile 3s infinite;
+  pointer-events: none;
+}
+@keyframes pulseProfile {
+  0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.95); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.95); }
 }
 
-.text-readable {
-    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
-}
-
-@keyframes pulseProfile { 
-    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.95); } 
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); } 
-    100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.95); } 
-}
-
-/* --- 2. CADEJO: EL ESPÍRITU INVOCADO --- */
+/* Cadejo container (lo usa el JS) */
 .cadejo-integration {
-    position: absolute;
-    /* IMPORTANTE: Fixed para que funcione el seguimiento global */
-    /* El JS lo fuerza a fixed, pero es bueno tenerlo aquí */
-    /* top: 8%; left: 50%; (Manejado por JS ahora) */
-    
-    transform: translateX(-50%) scale(0.8); 
-    width: 100px; 
-    max-width: 100px;
-    
-    opacity: 0; /* Empieza oculto */
-    /* visibility: hidden; (Quitamos esto para que el JS maneje solo opacity) */
-    pointer-events: none; 
-    z-index: 9999; /* Encima de todo */
-    
-    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
+  position: absolute;
+  transform: translateX(-50%) scale(0.8);
+  width: 100px;
+  max-width: 100px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.35));
 }
-
-/* CLASE ACTIVA */
 .cadejo-integration.is-summoned {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
 }
-
 .cadejo-bg-img {
-    width: 100%; height: auto; display: block;
-    position: relative; z-index: 10;
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 10;
 }
 
+/* Eyes (realistas) */
 .eye-socket {
-    position: absolute;
-    width: 33%; height: 33%; 
-    background: var(--eye-iris-gradient);
-    border-radius: 50%;
-    z-index: 1;
-    overflow: hidden;
-    display: flex; justify-content: center; align-items: center;
-    box-shadow: inset 0 0 8px #000;
+  position: absolute;
+  width: 33%;
+  height: 33%;
+  border-radius: 50%;
+  z-index: 1;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+
+  background: var(--eye-sclera);
+  box-shadow:
+    inset 0 0 14px rgba(0,0,0,0.78),
+    0 0 0 1px rgba(0,0,0,0.35);
+}
+
+/* Iris */
+.eye-socket::before {
+  content: '';
+  position: absolute;
+  width: 68%;
+  height: 68%;
+  border-radius: 50%;
+  background: var(--eye-iris-gradient);
+  box-shadow:
+    inset 0 0 12px rgba(0,0,0,0.55),
+    0 0 10px rgba(255, 150, 50, 0.12);
+}
+
+/* Subtle lid shadow */
+.eye-socket::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 20%, rgba(0,0,0,0.35), transparent 55%);
+  mix-blend-mode: multiply;
+  opacity: 0.55;
 }
 
 .pupil {
-    width: 45%; height: 45%;
-    background-color: #000; border-radius: 50%;
-    position: relative; will-change: transform;
-    transition: transform 0.1s;
+  width: 28%;
+  height: 28%;
+  background-color: #050505;
+  border-radius: 50%;
+  position: absolute;
+  will-change: transform;
+  transition: transform 0.08s linear;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.35), inset 0 -2px 8px rgba(255,255,255,0.08);
 }
-
 .pupil::after {
-    content: ''; position: absolute;
-    top: 35%; left: 35%; width: 25%; height: 25%;
-    background-color: rgba(255, 255, 255, 0.95);
-    border-radius: 50%; box-shadow: 0 0 4px rgba(255,255,255,0.8);
+  content: '';
+  position: absolute;
+  top: 26%;
+  left: 28%;
+  width: 30%;
+  height: 30%;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255,255,255,0.65);
 }
 
-/* --- 3. BOTONES SOCIALES --- */
+/* Social buttons */
 .social-overlay { position: relative; z-index: 20; }
 .social-btn-glass {
-    width: 45px; height: 45px; border-radius: 12px;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-    display: flex; align-items: center; justify-content: center;
-    color: white; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .social-btn-glass:hover {
-    background: white; color: black;
-    transform: translateY(-4px); box-shadow: 0 5px 15px rgba(255,255,255,0.15);
+  background: white;
+  color: black;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(255,255,255,0.12);
 }
 
-/* Responsive */
-@media (max-width: 991px) {
-    .glass-panel { padding: 2rem !important; }
-    .about-container { padding-top: 120px; padding-bottom: 60px; }
-    .cadejo-integration { width: 120px; } /* Un poco más grande en móvil para que se vea */
-}
-
-/* ==========================================================================
-   9. TECH ARSENAL (MODULAR STYLE)
-   ========================================================================== */
+/* Tech Arsenal pills/cards (si las usas) */
 .tech-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
-    gap: 12px;
-    margin-top: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  margin-top: 15px;
 }
-
 .tech-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
-    padding: 12px 10px;
-    border-radius: 12px;
-    text-align: center;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.8);
-    cursor: default;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(5px);
+  padding: 12px 10px;
+  border-radius: 12px;
+  text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.82);
+  cursor: default;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 .tech-card:hover {
-    background: rgba(0, 170, 255, 0.1);
-    border-color: var(--accent-tech);
-    color: #fff;
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 5px 15px rgba(0, 229, 255, 0.15);
+  background: rgba(0, 170, 255, 0.10);
+  border-color: rgba(0,229,255,0.55);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: var(--sh-glow-tech);
 }
 
-/* ==========================================================================
-   10. CADEJO NEGRO (VARIANTE MALVADA/PROTECTORA)
-   ========================================================================== */
-
-/* Brillo Rojo/Fuego */
+/* Cadejo black variant */
 .cadejo-integration.cadejo-black {
-    filter: drop-shadow(0 0 15px rgba(255, 50, 50, 0.4)); 
+  filter: drop-shadow(0 0 16px rgba(255, 50, 50, 0.35));
 }
-
-/* Ojos Rojos */
-.cadejo-integration.cadejo-black .eye-socket {
-    background: radial-gradient(circle);
-    box-shadow: inset 0 0 5px #000;
+.cadejo-integration.cadejo-black .eye-socket::before {
+  background: radial-gradient(circle at 35% 35%, #ffb3b3 0%, #ff2c2c 35%, #6b0000 70%, #240000 100%);
 }
-
-/* Pupila Bestia (Opcional: más vertical) */
 .cadejo-integration.cadejo-black .pupil {
-    height: 60%;
-    width: 30%;
-    background: #000;
+  height: 55%;
+  width: 40%;
 }
 
 /* ==========================================================================
-   12. CONTACT PAGE REDESIGN & CIPITIO SYSTEM (ALWAYS WATCHING MODE)
+   10. CONTACT + CIPITIO + MODAL
    ========================================================================== */
-
-/* --- PANEL TECH & DECORACIÓN --- */
 .border-cyber {
-    border: 1px solid rgba(0, 229, 255, 0.2);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 229, 255, 0.05);
+  border: 1px solid rgba(0, 229, 255, 0.20);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 229, 255, 0.05);
+  border-radius: 18px;
 }
+
 .ui-corner {
-    position: absolute; width: 20px; height: 20px;
-    border: 2px solid var(--accent-tech); opacity: 0.7; pointer-events: none;
+  position: absolute;
+  width: 20px; height: 20px;
+  border: 2px solid rgba(0,229,255,0.75);
+  opacity: 0.65;
+  pointer-events: none;
 }
 .ui-corner.top-left { top: 0; left: 0; border-right: none; border-bottom: none; }
 .ui-corner.bottom-right { bottom: 0; right: 0; border-left: none; border-top: none; }
 
 .scanline {
-    position: absolute; top: 0; left: 0; width: 100%; height: 5px;
-    background: rgba(0, 229, 255, 0.1); opacity: 0.4; pointer-events: none;
-    animation: scanMove 4s linear infinite;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 5px;
+  background: rgba(0, 229, 255, 0.10);
+  opacity: 0.35;
+  pointer-events: none;
+  animation: scanMove 4s linear infinite;
 }
-@keyframes scanMove { 
-    0% { top: -10%; opacity: 0; } 
-    50% { opacity: 0.5; } 
-    100% { top: 110%; opacity: 0; } 
+@keyframes scanMove {
+  0% { top: -10%; opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { top: 110%; opacity: 0; }
 }
 
-/* --- INPUTS CYBERPUNK --- */
 .cyber-label {
-    display: block; color: var(--accent-tech); font-size: 0.75rem; 
-    letter-spacing: 2px; margin-bottom: 8px; font-weight: 600; text-transform: uppercase;
+  display: block;
+  color: rgba(0,229,255,0.95);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 .cyber-input {
-    background: rgba(0, 0, 0, 0.3) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important; color: #fff !important;
-    font-family: 'Space Grotesk', monospace; transition: all 0.3s ease;
+  background: rgba(0, 0, 0, 0.28) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  color: #fff !important;
+  font-family: 'Space Grotesk', monospace;
+  transition: all 0.25s ease;
+  border-radius: 12px;
 }
 .cyber-input:focus {
-    background: rgba(0, 229, 255, 0.05) !important;
-    border-color: var(--accent-tech) !important;
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2) !important;
+  background: rgba(0, 229, 255, 0.05) !important;
+  border-color: rgba(0,229,255,0.75) !important;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.18) !important;
 }
 
-/* --- REDES SOCIALES (NODOS) --- */
+/* Social nodes */
 .node-btn {
-    display: flex; align-items: center; gap: 10px; padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50px; color: #ccc; text-decoration: none;
-    font-size: 0.8rem; letter-spacing: 1px; font-weight: 600;
-    transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 999px;
+  color: rgba(255,255,255,0.78);
+  text-decoration: none;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  transition: all 0.25s ease;
 }
 .node-btn:hover {
-    background: rgba(0, 229, 255, 0.1); border-color: var(--accent-tech);
-    color: #fff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.2);
+  background: rgba(0, 229, 255, 0.10);
+  border-color: rgba(0,229,255,0.55);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: var(--sh-glow-tech);
 }
 .blink { animation: blinking 1s infinite; }
 @keyframes blinking { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-/* -----------------------------------------------------------
-   SISTEMA CIPITÍO: VIGILANCIA PERMANENTE
-   ----------------------------------------------------------- */
-
+/* Cipitio */
 .cipitio-sprite {
-    position: absolute;
-    width: 100px; height: 100px; 
-    
-    /* POSICIÓN FIJA: Siempre asomado en el borde */
-    bottom: -35px; 
-    left: 50%; /* Controlado por JS aleatoriamente */
-    
-    background-image: url('../img/cipitio_peek.png'); 
-    background-repeat: no-repeat;
-    background-size: 300px 100%; 
-    
-    /* Frame inicial: Centro */
-    background-position: -200px 0px; 
-
-    z-index: 1; pointer-events: auto; cursor: crosshair;
-    transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    
-    /* ANIMACIÓN DE VIGILANCIA (IDLE) - Suave y lenta */
-    animation: idle-watch 8s steps(1) infinite;
+  position: absolute;
+  width: 100px; height: 100px;
+  bottom: -35px;
+  left: 50%;
+  background-image: url('../img/cipitio_peek.png');
+  background-repeat: no-repeat;
+  background-size: 300px 100%;
+  background-position: -200px 0px;
+  z-index: 1;
+  pointer-events: auto;
+  cursor: crosshair;
+  transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: idle-watch 8s steps(1) infinite;
 }
-
-/* Keyframes de vigilancia (Mueve los ojos tranquilamente) */
 @keyframes idle-watch {
-    0% { background-position: -200px 0px; } /* Centro */
-    40% { background-position: 0px 0px; }    /* Mira Izquierda */
-    50% { background-position: -200px 0px; } /* Centro */
-    90% { background-position: -100px 0px; } /* Mira Derecha */
-    100% { background-position: -200px 0px; } /* Centro */
+  0% { background-position: -200px 0px; }
+  40% { background-position: 0px 0px; }
+  50% { background-position: -200px 0px; }
+  90% { background-position: -100px 0px; }
+  100% { background-position: -200px 0px; }
 }
-
-
-/* --- ANIMACIÓN DE ATAQUE (LANZAR) --- */
-/* Solo se activa cuando hay error (clase .is-throwing-...) */
-
-.cipitio-sprite.is-throwing-right {
-    background-image: url('../img/cipitio_throw_right.png');
-    background-size: 300px 100%;
-    /* Empieza en frame 1 */
-    background-position: 0px 0px; 
-    animation: throw-manual 0.9s steps(1) forwards; 
-}
-
+.cipitio-sprite.is-throwing-right,
 .cipitio-sprite.is-throwing-left {
-    background-image: url('../img/cipitio_throw_left.png');
-    background-size: 300px 100%;
-    /* Empieza en frame 1 */
-    background-position: 0px 0px; 
-    animation: throw-manual 0.9s steps(1) forwards; 
+  background-size: 300px 100%;
+  background-position: 0px 0px;
+  animation: throw-manual 0.9s steps(1) forwards;
 }
+.cipitio-sprite.is-throwing-right { background-image: url('../img/cipitio_throw_right.png'); }
+.cipitio-sprite.is-throwing-left  { background-image: url('../img/cipitio_throw_left.png'); }
 
 @keyframes throw-manual {
-    /* Frame 1: PREPARAR */
-    0% { background-position: 0px 0px; }
-    
-    /* Frame 2: LANZAR (Acción) */
-    25% { background-position: -100px 0px; }
-    
-    /* Frame 3: FINALIZAR (Follow through) */
-    60% { background-position: -200px 0px; }
-    
-    100% { background-position: -200px 0px; }
+  0% { background-position: 0px 0px; }
+  25% { background-position: -100px 0px; }
+  60% { background-position: -200px 0px; }
+  100% { background-position: -200px 0px; }
 }
 
-
-/* LA ROCA DIGITAL */
 .digital-rock {
-    position: absolute; width: 14px; height: 14px;
-    background-color: var(--accent-tech);
-    box-shadow: 0 0 10px var(--accent-tech);
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    opacity: 0; pointer-events: none; z-index: 3;
-    transition: transform 0.4s cubic-bezier(0.2, 0.6, 0.3, 1), opacity 0.1s;
+  position: absolute;
+  width: 14px; height: 14px;
+  background-color: rgba(0,229,255,1);
+  box-shadow: 0 0 10px rgba(0,229,255,0.9);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: transform 0.4s cubic-bezier(0.2, 0.6, 0.3, 1), opacity 0.1s;
 }
 
-/* EFECTO GLITCH EN INPUT */
 .input-glitch {
-    animation: glitchShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-    border-color: #ff0055 !important; box-shadow: 0 0 15px #ff0055 !important;
+  animation: glitchShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  border-color: #ff0055 !important;
+  box-shadow: 0 0 15px rgba(255,0,85,0.75) !important;
 }
 @keyframes glitchShake {
   10%, 90% { transform: translate3d(-2px, 0, 0); }
@@ -741,83 +1033,216 @@ canvas { display: block; }
   40%, 60% { transform: translate3d(6px, 0, 0); }
 }
 
-/* ==========================================================================
-   13. CYBER MODAL (VENTANA LIMPIA SIN BLUR)
-   ========================================================================== */
+/* Modal */
 .cyber-modal-overlay {
-    position: fixed; 
-    top: 0; left: 0; width: 100%; height: 100%;
-    
-    /* CAMBIO CLAVE: Fondo casi transparente para ver la animación */
-    background: rgba(0, 0, 0, 0.2); 
-    
-    /* QUITAMOS EL BLUR: Para ver al Cipitío en HD */
-    backdrop-filter: none; 
-    
-    z-index: 9999; 
-    display: none; 
-    align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.3s ease;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.20);
+  backdrop-filter: none;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
-
 .cyber-modal-overlay.active {
-    display: flex; 
-    opacity: 1; 
+  display: flex;
+  opacity: 1;
 }
-
 .cyber-modal-box {
-    /* La caja sí debe tener fondo sólido para leer el texto */
-    background: rgba(10, 15, 20, 0.95); 
-    border: 1px solid #ff0055;
-    box-shadow: 0 0 30px rgba(255, 0, 85, 0.4); /* Brillo rojo más intenso */
-    padding: 30px; 
-    max-width: 400px; 
-    text-align: center;
-    position: relative;
-    
-    /* Animación de entrada */
-    transform: scale(0.8); 
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: rgba(10, 15, 20, 0.95);
+  border: 1px solid #ff0055;
+  box-shadow: 0 0 30px rgba(255, 0, 85, 0.30);
+  padding: 28px;
+  max-width: 420px;
+  width: min(92vw, 420px);
+  text-align: center;
+  position: relative;
+  transform: scale(0.88);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 18px;
 }
-
-.cyber-modal-overlay.active .cyber-modal-box { 
-    transform: scale(1); 
-}
+.cyber-modal-overlay.active .cyber-modal-box { transform: scale(1); }
 
 .modal-title {
-    color: #ff0055; 
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.5rem; 
-    margin-top: 0; 
-    text-transform: uppercase; 
-    letter-spacing: 2px;
-    border-bottom: 1px solid rgba(255, 0, 85, 0.3); 
-    padding-bottom: 15px;
+  color: #ff0055;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.35rem;
+  margin-top: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(255, 0, 85, 0.25);
+  padding-bottom: 14px;
 }
-
-.modal-msg { 
-    color: #fff; 
-    font-size: 1rem; 
-    font-weight: 500;
-    margin: 20px 0; 
-    line-height: 1.5; 
+.modal-msg {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 18px 0;
+  line-height: 1.6;
 }
-
 .btn-cyber-modal {
-    background: rgba(255, 0, 85, 0.1); 
-    color: #ff0055; 
-    border: 1px solid #ff0055;
-    padding: 12px 30px; 
-    font-weight: bold; 
-    cursor: pointer;
-    text-transform: uppercase; 
-    letter-spacing: 1px; 
-    transition: all 0.3s;
+  background: rgba(255, 0, 85, 0.10);
+  color: #ff0055;
+  border: 1px solid #ff0055;
+  padding: 12px 22px;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.25s ease;
+  border-radius: 12px;
+}
+.btn-cyber-modal:hover {
+  background: #ff0055;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255,0,85,0.55);
+  transform: translateY(-2px);
 }
 
-.btn-cyber-modal:hover {
-    background: #ff0055; 
-    color: #fff; 
-    box-shadow: 0 0 20px #ff0055;
-    transform: translateY(-2px);
+/* ==========================================================================
+   11. RESPONSIVE (SIN ROMPER: quitamos el "centrar .d-flex global")
+   ========================================================================== */
+@media (max-width: 991px) {
+  /* Si usas scroll-trigger-body en móvil */
+  .scroll-trigger-body { height: auto !important; overflow-y: auto !important; }
+
+  .static-content-wrapper {
+    position: relative !important;
+    height: auto !important;
+    display: block !important;
+    pointer-events: auto !important;
+    padding-top: 100px;
+    padding-bottom: 80px;
+  }
+
+  .about-container { padding-top: 120px; padding-bottom: 60px; }
+
+  /* En móvil, centra SOLO dentro de páginas de contenido, no global */
+  .about-container .d-flex,
+  .contact-container .d-flex {
+    justify-content: center !important;
+  }
+
+  .glass-panel { padding: 2rem !important; }
+  .cadejo-integration { width: 120px; }
+}
+
+/* ==========================================================================
+   12. ACCESIBILIDAD: REDUCED MOTION
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+
+/* ======================================================================
+   FIX v2: PAGE FRAME (ABOUT + CONTACT)
+   - About deja de ser tan alto (override de min-vh-100 y centrado)
+   - Más ancho en desktop (menos “espacio vacío” a los lados)
+   - Padding simétrico en mobile/tablet/desktop
+   ====================================================================== */
+
+:root{
+  /* Más ancho en desktop (antes 1140px era muy poco) */
+  --page-max-width: 1320px;
+
+  /* Padding lateral más razonable */
+  --page-safe-x: clamp(14px, 2.4vw, 32px);
+
+  /* “Aire” arriba/abajo sin inflar el alto */
+  --page-gap-top: 26px;
+  --page-gap-bottom: 26px;
+
+  --page-safe-top: calc(var(--header-height) + var(--page-gap-top));
+  --page-safe-bottom: calc(var(--footer-height) + var(--page-gap-bottom));
+}
+
+/* Wrapper consistente */
+.about-container,
+.contact-container{
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin-inline: auto;
+
+  padding-top: var(--page-safe-top) !important;
+  padding-bottom: var(--page-safe-bottom) !important;
+  padding-left: var(--page-safe-x) !important;
+  padding-right: var(--page-safe-x) !important;
+
+  position: relative;
+  z-index: 10;
+}
+
+/* ABOUT: quita el efecto “min-vh-100 + d-flex + align-items-center” sin tocar el HTML */
+.about-container{
+  min-height: auto !important;
+  height: auto !important;
+  display: block !important;
+}
+
+/* Rows: gutters simétricos */
+.about-container > .row,
+.contact-container > .row{
+  width: 100%;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+
+  --bs-gutter-x: 2.25rem;
+  --bs-gutter-y: 2.25rem;
+}
+
+/* Panels: un poco más compactos para bajar altura total */
+.about-container .glass-panel,
+.contact-container .border-cyber{
+  padding: clamp(1.35rem, 1.8vw, 2.15rem) !important;
+}
+
+/* Profile header del About (reduce un poquito el alto total) */
+#profileCard > .p-4{
+  padding: clamp(1.1rem, 1.4vw, 1.6rem) !important;
+}
+
+/* Avatar: ligeramente más compacto (ayuda a que About no quede tan largo) */
+.profile-wrapper{ width: 200px; height: 200px; }
+.profile-img{ width: 168px; height: 168px; }
+.glow-ring{ width: 200px; height: 200px; }
+
+/* Responsive */
+@media (max-width: 991px){
+  :root{
+    --page-max-width: 100%;
+    --page-safe-x: 16px;
+    --page-gap-top: 44px;
+    --page-gap-bottom: 32px;
+  }
+
+  .about-container > .row,
+  .contact-container > .row{
+    --bs-gutter-x: 1.25rem;
+    --bs-gutter-y: 1.25rem;
+  }
+
+  /* Evita desbalances raros laterales */
+  .about-container,
+  .contact-container{
+    overflow-x: hidden;
+  }
+
+  .about-container .glass-panel,
+  .contact-container .border-cyber{
+    padding: 1.25rem !important;
+  }
+}
+
+/* ======================================================================
+   FAKE SCROLL LOCK (ABOUT + CONTACT)
+   Se activa desde main.js agregando la clase .fake-scroll a <html> y <body>
+   ====================================================================== */
+html.fake-scroll,
+body.fake-scroll {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
