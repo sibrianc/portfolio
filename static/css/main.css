@@ -1246,3 +1246,628 @@ body.fake-scroll {
   overflow: hidden;
   overscroll-behavior: none;
 }
+
+/* =========================================================
+   PATCH: PROJECT CARDS — MISMO TAMAÑO (HOME + PROJECTS LIST)
+   (no cambia HTML, override a estilos inline de home)
+   ========================================================= */
+
+:root{
+  --proj-card-min-h: 520px;
+  --proj-card-img-h: 200px;
+}
+
+@media (max-width: 768px){
+  :root{
+    --proj-card-min-h: 420px;
+    --proj-card-img-h: 180px;
+  }
+}
+
+/* 1) Altura uniforme en TODAS las .cyber-card */
+a.cyber-card{
+  min-height: var(--proj-card-min-h);
+}
+
+/* 2) Imagen/preview uniforme */
+a.cyber-card .cyber-img-container{
+  height: var(--proj-card-img-h) !important;
+}
+
+/* 3) Cuerpo flexible + footer abajo */
+a.cyber-card .cyber-body{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* 4) Misma “cantidad visual” de texto (evita cards más altas por texto largo) */
+a.cyber-card .cyber-title{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  min-height: 2.6em; /* estabiliza títulos */
+}
+
+a.cyber-card .cyber-summary{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  min-height: 4.95em; /* ~3 líneas consistente */
+}
+
+/* 5) Tech tags: altura mínima para no “bailar” */
+a.cyber-card .tech-cloud{
+  min-height: 34px;
+}
+
+/* 6) Featured override (home inline style) */
+a.cyber-card.featured-card{
+  min-height: var(--proj-card-min-h) !important;
+}
+
+.card-wrapper-height{
+  min-height: var(--proj-card-min-h) !important;
+}
+
+/* =========================================================
+   MOBILE NAV V2 (HUD PANEL + TILE BUTTONS)
+   ========================================================= */
+@media (max-width: 991.98px){
+
+  /* Toggler estilo “control” */
+  .navbar-glass .navbar-toggler{
+    border: 1px solid rgba(0,229,255,0.28);
+    border-radius: 14px;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+  .navbar-glass .navbar-toggler:focus{
+    box-shadow: 0 0 0 3px rgba(0,229,255,0.18), 0 10px 30px rgba(0,0,0,0.35);
+  }
+  /* Hamburgesa custom (sin depender de navbar-dark) */
+  .navbar-glass .navbar-toggler .navbar-toggler-icon{
+    background-image: none !important;
+    width: 22px; height: 14px;
+    position: relative;
+    display: inline-block;
+  }
+  .navbar-glass .navbar-toggler .navbar-toggler-icon::before,
+  .navbar-glass .navbar-toggler .navbar-toggler-icon::after{
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.78);
+    box-shadow: 0 0 12px rgba(0,229,255,0.12);
+    transition: transform .22s ease, top .22s ease, opacity .22s ease;
+  }
+  .navbar-glass .navbar-toggler .navbar-toggler-icon::before{ top: 3px; }
+  .navbar-glass .navbar-toggler .navbar-toggler-icon::after{ top: 9px; }
+
+  /* Panel: debajo del navbar */
+  .navbar-glass{ position: relative; }
+
+  .navbar-glass .navbar-collapse{
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 12px;
+    right: 12px;
+    z-index: 2200;
+
+    /* “HUD glass” */
+    background:
+      radial-gradient(900px 280px at 20% 0%, rgba(255,102,0,0.10), transparent 55%),
+      radial-gradient(700px 260px at 80% 30%, rgba(0,229,255,0.10), transparent 60%),
+      rgba(10, 15, 20, 0.92);
+
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 18px;
+    box-shadow: 0 22px 70px rgba(0,0,0,0.65);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    padding: 14px;
+
+    /* Animación extra (además del height de Bootstrap) */
+    transform: translateY(-6px) scale(0.99);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .22s cubic-bezier(.2,.7,.25,1);
+    overflow: hidden;
+  }
+
+  /* Cuando Bootstrap lo abre */
+  .navbar-glass .navbar-collapse.show{
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  /* Scanlines sutiles + “noise” (sin imágenes) */
+  .navbar-glass .navbar-collapse::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.04) 0px,
+        rgba(255,255,255,0.04) 1px,
+        transparent 3px,
+        transparent 6px
+      );
+    opacity: 0.35;
+    pointer-events:none;
+    mix-blend-mode: overlay;
+  }
+
+  /* Borde “energía” */
+  .navbar-glass .navbar-collapse::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius: 18px;
+    padding: 1px;
+    background: linear-gradient(90deg,
+      rgba(255,102,0,0.55),
+      rgba(0,229,255,0.45),
+      rgba(255,102,0,0.35)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.55;
+    pointer-events:none;
+  }
+
+  /* “Header” mini dentro del panel (sin tocar HTML) */
+  .navbar-glass .navbar-collapse .navbar-nav{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 0;
+    padding: 8px 6px 10px;
+  }
+
+  /* Botones como tiles (tap-friendly) */
+  .navbar-glass .navbar-nav .nav-link,
+  .navbar-glass .navbar-nav .nav-link-custom{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 12px 14px;
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+
+    color: rgba(255,255,255,0.85) !important;
+    text-decoration: none;
+
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+
+    position: relative;
+    overflow: hidden;
+
+    transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+  }
+
+  /* Flechita “command” al final */
+  .navbar-glass .navbar-nav .nav-link::after,
+  .navbar-glass .navbar-nav .nav-link-custom::after{
+    content: "›";
+    opacity: 0.65;
+    transform: translateX(0);
+    transition: transform .18s ease, opacity .18s ease, color .18s ease;
+    color: rgba(0,229,255,0.85);
+  }
+
+  /* Hover/press elegante */
+  .navbar-glass .navbar-nav .nav-link:hover,
+  .navbar-glass .navbar-nav .nav-link-custom:hover{
+    transform: translateY(-2px);
+    background: rgba(0,229,255,0.08);
+    border-color: rgba(0,229,255,0.28);
+    box-shadow: 0 0 0 1px rgba(0,229,255,0.10), 0 16px 38px rgba(0,0,0,0.45);
+  }
+  .navbar-glass .navbar-nav .nav-link:hover::after,
+  .navbar-glass .navbar-nav .nav-link-custom:hover::after{
+    transform: translateX(4px);
+    opacity: 1;
+  }
+
+  /* Active tap feedback */
+  .navbar-glass .navbar-nav .nav-link:active,
+  .navbar-glass .navbar-nav .nav-link-custom:active{
+    transform: translateY(0);
+  }
+
+  /* Que tu botón de idioma se vea coherente si está en el navbar */
+  .navbar-glass .btn-lang{
+    border-color: rgba(255,102,0,0.40);
+    background: rgba(255,102,0,0.10);
+  }
+}
+
+@media (max-width: 991.98px){
+  body.nav-open{
+    overflow: hidden;
+    touch-action: none;
+  }
+  body.nav-open::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 1500;
+  }
+
+  /* Asegura navbar arriba del overlay */
+  .navbar-floating-container{ z-index: 2500; }
+}
+
+/* ==========================================================================
+   8B. PROJECT DETAIL — VISUAL POLISH (CONSISTENTE + MÁS VIDA)
+   ========================================================================== */
+
+.project-detail-shell{
+  position: relative;
+  z-index: 10;
+  padding-top: var(--page-safe-top);
+  padding-bottom: var(--page-safe-bottom);
+  padding-left: var(--page-safe-x);
+  padding-right: var(--page-safe-x);
+}
+
+/* Un poquito más ancho que about/contact para que no se vea “muy centrado” */
+.project-detail-shell .container{
+  max-width: 1260px;
+}
+
+/* Fondo de lectura: oscuro elegante + glows suaves */
+.detail-reading-bg{
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(0,229,255,0.10), transparent 60%),
+    radial-gradient(900px 520px at 85% 20%, rgba(255,102,0,0.12), transparent 62%),
+    linear-gradient(to bottom, rgba(5,5,10,0.78) 0%, rgba(5,5,10,0.94) 45%, rgba(5,5,10,0.98) 100%);
+}
+
+/* Top nav (Back + ID) */
+.project-topnav{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.project-back{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: rgba(255,255,255,0.62);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
+  transition: transform .22s ease, border-color .22s ease, background .22s ease, color .22s ease, box-shadow .22s ease;
+}
+.project-back:hover{
+  color: #fff;
+  transform: translateY(-2px);
+  border-color: rgba(0,229,255,0.35);
+  background: rgba(0,229,255,0.06);
+  box-shadow: var(--sh-glow-tech);
+}
+
+.project-id-pill{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.55);
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.22);
+  backdrop-filter: blur(10px);
+}
+
+/* Hero panel: más “fino” y con textura */
+.project-hero{
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(15,20,25,0.72) 35%, rgba(10,15,20,0.78) 100%);
+  box-shadow: var(--sh-2);
+  padding: clamp(18px, 2.2vw, 28px);
+  margin-bottom: 28px;
+}
+
+.project-hero::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:
+    linear-gradient(90deg, rgba(0,229,255,0.00), rgba(0,229,255,0.10), rgba(255,102,0,0.08), rgba(255,102,0,0.00));
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.project-hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 6px);
+  opacity: 0.08;
+  pointer-events:none;
+}
+
+.project-title-row{
+  position: relative;
+  z-index: 2;
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.project-title{
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 20px rgba(255,255,255,0.10);
+}
+
+.featured-pill{
+  display: inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 900;
+  color: rgba(255,189,46,0.95);
+  border: 1px solid rgba(255,189,46,0.20);
+  background: rgba(255,189,46,0.06);
+}
+
+.project-lead{
+  position: relative;
+  z-index: 2;
+  margin: 12px 0 0;
+  max-width: 72ch;
+  color: rgba(0,229,255,0.90);
+  opacity: 0.95;
+  font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.25rem);
+  line-height: 1.6;
+}
+
+/* CYBER BROWSER: más profundidad + scan/noise elegante */
+.cyber-browser{
+  position: relative;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  box-shadow: var(--sh-2);
+}
+
+.cyber-browser::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius: 16px;
+  pointer-events:none;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 0 40px rgba(0,229,255,0.08),
+    0 0 55px rgba(255,102,0,0.06);
+  opacity: 0.8;
+}
+
+.browser-header{
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.55));
+}
+
+.window-controls .dot{
+  box-shadow: 0 0 10px rgba(0,0,0,0.25);
+}
+
+.address-bar{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.address-bar .lock-icon{
+  opacity: .85;
+  filter: drop-shadow(0 0 6px rgba(0,229,255,0.12));
+}
+
+.address-bar .url-text,
+.address-bar a.url-text{
+  color: rgba(0,229,255,0.95);
+}
+
+.address-bar a.url-text:hover{
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0,229,255,0.28);
+}
+
+/* “menu” a la derecha del browser header (decorativo) */
+.window-menu{
+  width: 34px;
+  height: 22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity: 0.55;
+}
+.window-menu .menu-lines{
+  width: 18px;
+  height: 10px;
+  position: relative;
+}
+.window-menu .menu-lines::before,
+.window-menu .menu-lines::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.55);
+}
+.window-menu .menu-lines::before{ top:0; }
+.window-menu .menu-lines::after{ bottom:0; }
+
+.browser-viewport{
+  position: relative;
+  overflow: hidden;
+}
+
+/* scanlines + noise */
+.browser-viewport::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(600px 260px at 30% 10%, rgba(0,229,255,0.10), transparent 70%),
+    radial-gradient(700px 320px at 80% 20%, rgba(255,102,0,0.10), transparent 72%);
+  opacity: 0.6;
+  pointer-events:none;
+  z-index: 2;
+}
+
+.browser-viewport::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,0.05) 0px,
+      rgba(255,255,255,0.05) 1px,
+      transparent 2px,
+      transparent 7px);
+  opacity: 0.06;
+  pointer-events:none;
+  z-index: 3;
+}
+
+/* Content column: mejor lectura y separadores finos */
+.project-body-title{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.project-body-title::before{
+  content:"";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,102,0,0.95);
+  box-shadow: 0 0 14px rgba(255,102,0,0.35);
+}
+
+.description-content{
+  font-size: 1.02rem;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.86);
+}
+
+.reading-divider{
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  margin: 18px 0 0;
+}
+
+/* Sidebar HUD: más “sistema” */
+.hud-panel{
+  position: relative;
+  border-radius: 18px;
+  background: rgba(10, 15, 20, 0.78);
+}
+
+.hud-panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: 18px;
+  pointer-events:none;
+  background:
+    radial-gradient(380px 220px at 20% 10%, rgba(0,229,255,0.10), transparent 60%),
+    radial-gradient(380px 220px at 85% 25%, rgba(255,102,0,0.08), transparent 60%);
+  opacity: 0.75;
+}
+
+.small-title{
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.62);
+}
+
+.tech-badge{
+  transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.tech-badge:hover{
+  transform: translateY(-2px);
+  border-color: rgba(0,229,255,0.35);
+  background: rgba(0,229,255,0.08);
+  box-shadow: var(--sh-glow-tech);
+}
+
+/* Tablet/Mobile tweaks */
+@media (max-width: 991px){
+  .project-detail-shell .container{ max-width: 100%; }
+  .project-hero{ padding: 18px; }
+  .project-lead{ margin-top: 10px; }
+}
+
+/* ==========================================================
+   FIX: Project Detail se cortaba abajo (footer fijo)
+   - Agrega “espacio” extra SOLO en la fila del detail
+   - No toca About/Contact/Home
+   ========================================================== */
+
+/* En detail.html tu fila principal es: <div class="row gx-5"> ... */
+.container .row.gx-5{
+  padding-bottom: calc(var(--footer-height) + 90px);
+}
+
+/* Mobile: menos extra porque el footer tapa menos visualmente */
+@media (max-width: 991px){
+  .container .row.gx-5{
+    padding-bottom: calc(var(--footer-height) + 60px);
+  }
+}
+
+

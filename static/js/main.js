@@ -370,3 +370,25 @@ if (document.readyState === 'loading') {
 } else {
     initApp();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const nav = document.querySelector(".navbar-glass");
+  const collapseEl = nav?.querySelector(".navbar-collapse");
+  if (!collapseEl || typeof bootstrap === "undefined") return;
+
+  collapseEl.addEventListener("shown.bs.collapse", () => {
+    document.body.classList.add("nav-open");
+  });
+
+  collapseEl.addEventListener("hidden.bs.collapse", () => {
+    document.body.classList.remove("nav-open");
+  });
+
+  // Cierra el menú al tocar un link (UX top)
+  collapseEl.addEventListener("click", (e) => {
+    const link = e.target.closest("a");
+    if (!link) return;
+    const instance = bootstrap.Collapse.getInstance(collapseEl);
+    if (instance) instance.hide();
+  });
+});

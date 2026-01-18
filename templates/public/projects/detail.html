@@ -1,118 +1,114 @@
 {% extends "layout/base.html" %}
 
-{# Título de la pestaña #}
 {% block title %}{{ get_loc_attr(project, 'title') }} – Carlos Sibrian{% endblock %}
 
 {% block content %}
-<div style="padding-top: 80px; padding-bottom: 100px; position: relative; z-index: 5;">
-
-  {# --- FONDO DE LECTURA SUTIL --- #}
-  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(5,5,10,0.8) 0%, rgba(5,5,10,0.95) 100%); z-index: -1;"></div>
+<section class="project-detail-shell">
+  <div class="detail-reading-bg" aria-hidden="true"></div>
 
   <div class="container">
-    
-    {# --- 1. NAVEGACIÓN SUPERIOR --- #}
-    <div class="d-flex justify-content-between align-items-center mb-5">
-      <a href="{{ url_for('projects_list') }}" class="text-decoration-none text-secondary" style="font-size: 0.9rem; letter-spacing: 1px; transition: color 0.3s;">
-        <span style="font-size: 1.2em; margin-right: 5px;">&larr;</span> {{ t('projects') }}
+
+    {# --- 1) TOP NAV --- #}
+    <div class="project-topnav">
+      <a href="{{ url_for('projects_list') }}" class="project-back">
+        <span aria-hidden="true">&larr;</span>
+        <span>{{ t('projects') }}</span>
       </a>
-      
-      <span class="text-muted" style="font-family: monospace; font-size: 0.8rem; opacity: 0.5;">
+
+      <span class="project-id-pill">
         ID: {{ project.slug | upper }}
       </span>
     </div>
 
-    {# --- 2. ENCABEZADO DEL PROYECTO --- #}
-    <div class="mb-5 text-center text-lg-start">
-      <div class="d-flex align-items-center justify-content-center justify-content-lg-start mb-2">
-        <h1 class="display-4 fw-bold text-light m-0" style="text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);">
+    {# --- 2) HERO --- #}
+    <header class="project-hero">
+      <div class="project-title-row">
+        <h1 class="display-4 fw-bold text-light project-title">
           {{ get_loc_attr(project, 'title') }}
         </h1>
+
         {% if project.is_featured %}
-          <span class="ms-3 text-warning fs-4" title="Featured Project">★</span>
+          <span class="featured-pill" title="Featured Project">★</span>
         {% endif %}
       </div>
-      
-      <p class="lead text-info" style="font-size: 1.3rem; opacity: 0.9; max-width: 800px; margin: 0 auto 0 0;">
+
+      <p class="project-lead">
         {{ get_loc_attr(project, 'summary') }}
       </p>
-    </div>
 
-    {# --- 3. ZONA DE MEDIA: CYBER BROWSER WINDOW --- #}
+      <div class="reading-divider" aria-hidden="true"></div>
+    </header>
+
+    {# --- 3) MEDIA: CYBER BROWSER WINDOW --- #}
     <div class="cyber-browser mb-5">
-      
+
       <div class="browser-header">
         <div class="window-controls">
           <span class="dot red"></span>
           <span class="dot yellow"></span>
           <span class="dot green"></span>
         </div>
-        
-        {# --- BARRA DE DIRECCIONES ACTUALIZADA (AHORA ES UN LINK) --- #}
+
         <div class="address-bar">
-          <span class="lock-icon">🔒</span>
-          
+          <span class="lock-icon" aria-hidden="true">🔒</span>
+
           {% if project.live_url %}
-            {# Si hay URL real, la hacemos clickeable #}
-            <a href="{{ project.live_url }}" target="_blank" class="url-text" 
-               style="text-decoration: none; color: inherit; cursor: pointer;"
+            <a href="{{ project.live_url }}" target="_blank" class="url-text"
                title="Open Live Site in new tab">
-              {# Limpiamos la URL para mostrar solo el dominio limpio (ej: misitio.com) #}
               https://{{ project.live_url.replace('https://', '').replace('http://', '').split('/')[0] }}
-              <span style="opacity: 0.5; font-size: 0.8em; margin-left: 5px;">↗</span>
+              <span style="opacity: 0.5; font-size: 0.85em; margin-left: 6px;" aria-hidden="true">↗</span>
             </a>
           {% else %}
-            {# Si es local o privado, solo texto #}
             <span class="url-text" style="cursor: default;">
               localhost:8080/projects/{{ project.slug }}
             </span>
           {% endif %}
         </div>
 
-        <div class="window-menu">
+        <div class="window-menu" aria-hidden="true">
           <span class="menu-lines"></span>
         </div>
       </div>
 
       <div class="browser-viewport">
-        
+
         {% if project.video_url %}
-            <div style="width: 100%; height: 100%; background: #000;">
-              <video autoplay muted loop playsinline controls 
-                     style="width: 100%; height: 100%; object-fit: contain;">
-                <source src="{{ project.video_url }}" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
+          <div style="width: 100%; height: 100%; background: #000;">
+            <video autoplay muted loop playsinline controls
+                   style="width: 100%; height: 100%; object-fit: contain;">
+              <source src="{{ project.video_url }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
 
         {% elif project.cover_image %}
-            <div style="width: 100%; height: 100%; position: relative; overflow: hidden;">
-               <div style="position: absolute; top:0; left:0; width:100%; height:100%; 
-                           background-image: url('{{ project.cover_image }}'); 
-                           background-size: cover; filter: blur(20px); opacity: 0.4;"></div>
-               
-               <img src="{{ project.cover_image }}" 
-                    style="position: relative; width: 100%; height: 100%; object-fit: contain; z-index: 2;" 
-                    alt="{{ project.title }}">
-            </div>
+          <div style="width: 100%; height: 100%; position: relative; overflow: hidden;">
+            <div style="position: absolute; top:0; left:0; width:100%; height:100%;
+                        background-image: url('{{ project.cover_image }}');
+                        background-size: cover; filter: blur(22px); opacity: 0.38;"></div>
+
+            <img src="{{ project.cover_image }}"
+                 style="position: relative; width: 100%; height: 100%; object-fit: contain; z-index: 2;"
+                 alt="{{ project.title }}">
+          </div>
 
         {% else %}
-            <div class="w-100 bg-dark d-flex align-items-center justify-content-center" style="height: 100%;">
-               <span class="text-secondary" style="font-family: monospace;">NO_VISUAL_DATA</span>
-            </div>
+          <div class="w-100 bg-dark d-flex align-items-center justify-content-center" style="height: 100%;">
+            <span class="text-secondary" style="font-family: monospace;">NO_VISUAL_DATA</span>
+          </div>
         {% endif %}
 
       </div>
     </div>
 
-    {# --- 4. CONTENIDO Y METADATOS --- #}
+    {# --- 4) CONTENT + SIDEBAR --- #}
     <div class="row gx-5">
-      
+
       <div class="col-lg-8 mb-5 mb-lg-0">
-        <h4 class="text-secondary text-uppercase mb-4 section-title">
+        <h4 class="text-secondary text-uppercase mb-4 section-title project-body-title">
           Project Details
         </h4>
-        
+
         <div class="description-content text-light">
           {% set desc = get_loc_attr(project, 'description') %}
           {% if desc %}
@@ -127,9 +123,10 @@
 
       <div class="col-lg-4">
         <div class="hud-panel p-4">
-          
-          <div class="mb-5">
-            <h5 class="text-secondary text-uppercase mb-3 small-title">Tech Stack</h5>
+
+          <div class="mb-5 position-relative">
+            <h5 class="small-title mb-3">Tech Stack</h5>
+
             {% if project.tech_stack %}
               <div class="d-flex flex-wrap gap-2">
                 {% for tech in project.tech_stack.split(',') %}
@@ -139,20 +136,21 @@
             {% endif %}
           </div>
 
-          <div>
-            <h5 class="text-secondary text-uppercase mb-3 small-title">Access</h5>
+          <div class="position-relative">
+            <h5 class="small-title mb-3">Access</h5>
+
             <div class="d-grid gap-3">
               {% if project.live_url %}
                 <a href="{{ project.live_url }}" target="_blank" class="btn-hud">
-                   <span><span class="text-info me-2">●</span> Live Demo</span>
-                   <span>&nearr;</span>
+                  <span><span class="text-info me-2">●</span> Live Demo</span>
+                  <span>&nearr;</span>
                 </a>
               {% endif %}
 
               {% if project.repo_url %}
                 <a href="{{ project.repo_url }}" target="_blank" class="btn-hud">
-                   <span><span class="text-warning me-2">●</span> Source Code</span>
-                   <span style="font-family: monospace;">&lt;/&gt;</span>
+                  <span><span class="text-warning me-2">●</span> Source Code</span>
+                  <span style="font-family: monospace;">&lt;/&gt;</span>
                 </a>
               {% endif %}
             </div>
@@ -161,15 +159,8 @@
         </div>
       </div>
 
-    </div> 
-  </div>
-</div>
+    </div>
 
-{# Estilos Inline para el hover del link de la URL #}
-<style>
-  .address-bar a:hover {
-    color: #fff !important;
-    text-shadow: 0 0 8px #00aaff;
-  }
-</style>
+  </div>
+</section>
 {% endblock %}
