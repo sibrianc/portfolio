@@ -22,11 +22,11 @@
 </div>
 
 {# --- 3. ESPACIADOR --- #}
-<div style="height: 100vh; width: 100%;"></div>
+<div style="height: 100vh; width: 100%; pointer-events: none;"></div>
 
 {# --- 4. SECCIÓN CARRUSEL (FULL WIDTH) --- #}
 <div id="featured-section" class="container-fluid position-relative d-flex flex-column justify-content-center" 
-     style="z-index: 10; min-height: 100vh; padding: 0 !important; overflow-x: hidden; width: 100%;">
+     style="z-index: 10; min-height: 100vh; padding: 0 !important; overflow-x: hidden; width: 100%; pointer-events: auto !important;">
   
   <div class="text-center mb-5 hero-header">
     <h2 class="text-light fw-bold display-5 text-uppercase" style="font-family: 'Space Grotesk'; letter-spacing: 3px; text-shadow: 0 0 20px rgba(255, 102, 0, 0.5);">
@@ -48,7 +48,7 @@
               
               <div class="d-flex justify-content-center align-items-center card-wrapper-height">
                   
-                  {# Tarjeta (Usamos clase featured-card en lugar de style inline) #}
+                  {# Tarjeta #}
                   <a href="{{ url_for('project_detail', slug=project.slug) }}" class="cyber-card featured-card">
                     
                     <div class="cyber-img-container">

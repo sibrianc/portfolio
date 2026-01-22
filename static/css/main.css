@@ -70,6 +70,18 @@
     #8a4a17 62%,
     #3a1a08 100%
   );
+
+
+  /* Radius system */
+  --radius-card: 18px;
+  --radius-panel: 22px;
+  --radius-soft: 14px;
+  --radius-pill: 999px;
+
+  /* Project cards (unified sizing) */
+  --proj-card-min-h: 520px;
+  --proj-img-h: 220px;
+  --proj-body-min-h: 240px;
 }
 
 /* ==========================================================================
@@ -175,26 +187,35 @@ canvas { display: block; }
    4. MENÚ CUBO (HOME)
    ========================================================================== */
 #menu-container {
-  position: absolute;
+  /* CORRECCIÓN: 'fixed' para alineación perfecta con el Canvas 3D */
+  position: fixed; 
   top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(0.88);
   text-align: center;
   opacity: 0;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   pointer-events: none;
-  z-index: 20;
+  
+  /* CORRECCIÓN: Z-index alto para flotar sobre capas móviles */
+  z-index: 200; 
 
   background: rgba(0, 0, 0, 0.82);
   padding: 28px;
   border: 1px solid rgba(255, 100, 0, 0.18);
   box-shadow: var(--sh-1);
   clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+  
+  /* CORRECCIÓN: Seguridad para pantallas pequeñas */
+  width: max-content;
+  max-width: 90vw;
 }
+
 .menu-active {
   opacity: 1 !important;
   transform: translate(-50%, -50%) scale(1) !important;
   pointer-events: auto !important;
 }
+
 .menu-item {
   display: block;
   margin: 12px 0;
@@ -251,7 +272,7 @@ canvas { display: block; }
 .featured-card {
   background: rgba(15, 20, 25, 0.85);
   border: 1px solid rgba(0,229,255,0.25);
-  border-radius: 15px;
+  border-radius: var(--radius-card);
   padding: 20px;
   text-align: center;
   transition: all 0.35s ease;
@@ -348,7 +369,7 @@ canvas { display: block; }
 .btn-lang {
   display: inline-block;
   border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 6px 14px;
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.75rem;
@@ -367,28 +388,90 @@ canvas { display: block; }
 }
 
 /* Footer fijo */
+/* ==========================================================================
+   FOOTER (REDES SOCIALES INTEGRADOS)
+   ========================================================================== */
 .main-footer {
-  position: fixed;
-  bottom: 0; left: 0;
-  width: 100%;
-  height: var(--footer-height);
-  z-index: 1000;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0 5%;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
-  font-family: 'Space Grotesk', sans-serif;
-
-  background: rgba(5, 5, 10, 0.95);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    z-index: 100; /* Nivel correcto para estar sobre el canvas */
+    
+    height: 60px; /* Un poco más alto para dar aire a los iconos */
+    
+    /* Fondo oscuro semitransparente consistente con tu diseño */
+    background: rgba(5, 5, 10, 0.95); 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
-.main-footer p { margin: 0; }
+
+.copyright-text {
+    color: #888;
+    font-size: 0.85rem;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 1px;
+}
+
+/* Estilos de los Iconos del Footer (alineado al sistema "tech") */
+.footer-socials{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  margin-top:18px;
+}
+
+.footer-socials a{
+  width: 44px;
+  height: 44px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: var(--radius-pill);
+  background: rgba(10, 15, 20, 0.55);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.35), 0 18px 38px rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.78);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease, color .22s ease;
+  text-decoration:none;
+}
+
+.footer-socials a svg{
+  width: 18px;
+  height: 18px;
+}
+
+.footer-socials a:hover{
+  transform: translateY(-2px);
+  border-color: rgba(76, 243, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(76, 243, 255, 0.15), 0 0 22px rgba(76, 243, 255, 0.35);
+  color: #fff;
+}
+
+.footer-socials a:focus-visible{
+  outline: none;
+  border-color: rgba(76, 243, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(76, 243, 255, 0.22), 0 0 22px rgba(76, 243, 255, 0.35);
+}
+/* Ajuste Responsivo para Móviles */
+@media (max-width: 768px) {
+    .main-footer {
+        height: auto;
+        padding: 15px 0;
+    }
+    
+    /* En móvil, apilamos: iconos arriba, texto abajo */
+    .main-footer .container {
+        flex-direction: column-reverse; 
+        gap: 10px;
+    }
+    
+    .footer-socials {
+        gap: 2rem !important; /* Más separación en móvil para los dedos */
+    }
+}
 
 /* ==========================================================================
    6. BOTONES GLOBALES (CONSISTENTES)
@@ -440,7 +523,7 @@ canvas { display: block; }
   background: rgba(10, 15, 20, 0.8);
   border: 1px solid rgba(0, 229, 255, 0.55);
   padding: 14px 16px;
-  border-radius: 14px;
+  border-radius: var(--radius-soft);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -469,8 +552,9 @@ canvas { display: block; }
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
+  min-height: var(--proj-card-min-h);
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: var(--radius-card);
   box-shadow: var(--sh-1);
   transform: translateZ(0);
   transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease, background 0.28s ease;
@@ -487,7 +571,7 @@ canvas { display: block; }
 
 .cyber-img-container {
   width: 100%;
-  height: 200px;
+  height: var(--proj-img-h);
   overflow: hidden;
   position: relative;
   border-bottom: 1px solid rgba(0, 229, 255, 0.18);
@@ -511,6 +595,7 @@ canvas { display: block; }
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  min-height: var(--proj-body-min-h);
 }
 .cyber-title {
   color: #fff;
@@ -560,7 +645,7 @@ canvas { display: block; }
 .tech-tag {
   font-size: 0.72rem;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid rgba(0, 229, 255, 0.28);
   background: rgba(0, 229, 255, 0.06);
   color: rgba(0, 229, 255, 0.9);
@@ -659,7 +744,7 @@ canvas { display: block; }
   border: 1px solid rgba(0, 170, 255, 0.18);
   color: rgba(0, 229, 255, 0.9);
   font-size: 0.82rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   text-transform: uppercase;
   display: inline-block;
   margin: 0 6px 8px 0;
@@ -826,7 +911,7 @@ canvas { display: block; }
 .social-btn-glass {
   width: 44px;
   height: 44px;
-  border-radius: 14px;
+  border-radius: var(--radius-soft);
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.10);
   display: flex;
@@ -893,7 +978,7 @@ canvas { display: block; }
 .border-cyber {
   border: 1px solid rgba(0, 229, 255, 0.20);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 229, 255, 0.05);
-  border-radius: 18px;
+  border-radius: var(--radius-card);
 }
 
 .ui-corner {
@@ -952,7 +1037,7 @@ canvas { display: block; }
   padding: 10px 18px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: rgba(255,255,255,0.78);
   text-decoration: none;
   font-size: 0.8rem;
@@ -1061,7 +1146,7 @@ canvas { display: block; }
   position: relative;
   transform: scale(0.88);
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  border-radius: 18px;
+  border-radius: var(--radius-card);
 }
 .cyber-modal-overlay.active .cyber-modal-box { transform: scale(1); }
 
@@ -1320,7 +1405,7 @@ a.cyber-card.featured-card{
   /* Toggler estilo “control” */
   .navbar-glass .navbar-toggler{
     border: 1px solid rgba(0,229,255,0.28);
-    border-radius: 14px;
+    border-radius: var(--radius-soft);
     padding: 10px 12px;
     background: rgba(0,0,0,0.18);
     backdrop-filter: blur(10px);
@@ -1368,7 +1453,7 @@ a.cyber-card.featured-card{
       rgba(10, 15, 20, 0.92);
 
     border: 1px solid rgba(255,255,255,0.14);
-    border-radius: 18px;
+    border-radius: var(--radius-card);
     box-shadow: 0 22px 70px rgba(0,0,0,0.65);
 
     backdrop-filter: blur(16px);
@@ -1414,7 +1499,7 @@ a.cyber-card.featured-card{
     content:"";
     position:absolute;
     inset:0;
-    border-radius: 18px;
+    border-radius: var(--radius-card);
     padding: 1px;
     background: linear-gradient(90deg,
       rgba(255,102,0,0.55),
@@ -1447,7 +1532,7 @@ a.cyber-card.featured-card{
     justify-content: space-between;
 
     padding: 12px 14px;
-    border-radius: 14px;
+    border-radius: var(--radius-soft);
 
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.10);
@@ -1571,7 +1656,7 @@ a.cyber-card.featured-card{
   font-weight: 800;
   font-size: 0.78rem;
   padding: 10px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid rgba(255,255,255,0.10);
   background: rgba(255,255,255,0.03);
   backdrop-filter: blur(10px);
@@ -1591,7 +1676,7 @@ a.cyber-card.featured-card{
   letter-spacing: 0.08em;
   color: rgba(255,255,255,0.55);
   padding: 8px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid rgba(255,255,255,0.10);
   background: rgba(0,0,0,0.22);
   backdrop-filter: blur(10px);
@@ -1601,7 +1686,7 @@ a.cyber-card.featured-card{
 .project-hero{
   position: relative;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: var(--radius-panel);
   border: 1px solid rgba(255,255,255,0.12);
   background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(15,20,25,0.72) 35%, rgba(10,15,20,0.78) 100%);
   box-shadow: var(--sh-2);
@@ -1650,7 +1735,7 @@ a.cyber-card.featured-card{
   align-items:center;
   gap: 8px;
   padding: 8px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 0.74rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1811,7 +1896,7 @@ a.cyber-card.featured-card{
 /* Sidebar HUD: más “sistema” */
 .hud-panel{
   position: relative;
-  border-radius: 18px;
+  border-radius: var(--radius-card);
   background: rgba(10, 15, 20, 0.78);
 }
 
@@ -1819,7 +1904,7 @@ a.cyber-card.featured-card{
   content:"";
   position:absolute;
   inset:0;
-  border-radius: 18px;
+  border-radius: var(--radius-card);
   pointer-events:none;
   background:
     radial-gradient(380px 220px at 20% 10%, rgba(0,229,255,0.10), transparent 60%),

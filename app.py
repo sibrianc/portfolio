@@ -1,7 +1,6 @@
-# app.py
 import os
 from datetime import timedelta
-from flask import Flask, session, request, g
+from flask import Flask, session, request, g, flash, redirect, url_for
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,7 +8,8 @@ load_dotenv()
 from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect, CSRFError
+from flask_mail import Mail  # <--- NUEVO: Importar Mail
 from models import db, User
 import routes_public, routes_admin
 
@@ -28,22 +28,34 @@ def create_app() -> Flask:
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URI", f"sqlite:///{db_path}")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+    # --- CONFIGURACIÓN EMAIL (SOLUCIÓN APLICADA) ---
+    app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+    app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+    
+    # FIX: Aceptar '1', 'true', 'True' como verdadero para activar TLS correctamente
+    tls_val = os.getenv('MAIL_USE_TLS', 'True').lower()
+    app.config['MAIL_USE_TLS'] = tls_val in ['true', '1', 'yes', 'on']
+    
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', '').replace(' ', '')
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', app.config['MAIL_USERNAME'])
+    app.config['CONTACT_RECIPIENT'] = os.getenv('CONTACT_RECIPIENT', app.config['MAIL_USERNAME'])
+
     # --- SEGURIDAD DE SESIÓN ---
-    # 1. La sesión muere al cerrar el navegador
     app.config["SESSION_PERMANENT"] = False 
-    # 2. La sesión expira tras 30 minutos de inactividad
     app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=30)
-    # 3. Cookie segura (solo se envía si es HTTPS, desactívalo si pruebas en local sin SSL)
-    app.config["SESSION_COOKIE_SECURE"] = False # Pon True en producción con HTTPS
-    app.config["SESSION_COOKIE_HTTPONLY"] = True # Evita robo por JavaScript
+    app.config["SESSION_COOKIE_SECURE"] = False 
+    app.config["SESSION_COOKIE_HTTPONLY"] = True 
 
     print("DB URI ->", app.config["SQLALCHEMY_DATABASE_URI"])
+    print(f"📧 Mail Config: TLS={app.config['MAIL_USE_TLS']}, User={app.config['MAIL_USERNAME']}") # Debug print
 
     # --- Extensions ---
     Bootstrap5(app)
     CSRFProtect(app)
     db.init_app(app)
     Migrate(app, db)
+    Mail(app) # <--- NUEVO: Inicializar Mail
     
     # Rate Limiter
     limiter = Limiter(
@@ -62,8 +74,16 @@ def create_app() -> Flask:
     def load_user(user_id):
         return db.session.get(User, int(user_id))
 
+    # --- MANEJO DE ERROR CSRF (NUEVO) ---
+    # Si el token expira, redirige suavemente al contacto con un aviso
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        flash("La sesión del formulario ha expirado. Por favor intenta de nuevo.", "error")
+        return redirect(url_for('contact'))
+
     # --- Register routes ---
-    routes_public.register(app)
+    # IMPORTANTE: Pasamos 'limiter' a routes_public para usar @limiter.limit
+    routes_public.register(app, limiter) 
     routes_admin.register(app)
     
     # --- Internationalization ---
@@ -128,22 +148,18 @@ def create_app() -> Flask:
         db.session.commit()
         print(f"Admin ready: {email}")
 
-    # --- ANTI-CACHÉ PARA ADMIN (La solución a tu problema visual) ---
+    # --- ANTI-CACHÉ Y SEGURIDAD ---
     @app.after_request
     def add_security_headers(response):
-        # 1. Protección Anti-Caché para Admin (Ya la tenías)
+        # 1. Protección Anti-Caché para Admin
         if request.path.startswith("/admin"):
             response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
             response.headers["Pragma"] = "no-cache"
             response.headers["Expires"] = "0"
         
-        # 2. Protección Global (NUEVO)
-        # X-Content-Type-Options: Evita que el navegador adivine el tipo MIME (seguridad básica)
+        # 2. Protección Global
         response.headers['X-Content-Type-Options'] = 'nosniff'
-        # X-Frame-Options: Evita que tu web sea incrustada en iframes (anti-clickjacking)
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-        # Strict-Transport-Security: Fuerza HTTPS (Solo activar si usas HTTPS/SSL)
-        # response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
         
         return response
 
