@@ -6,16 +6,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from flask_bootstrap import Bootstrap5
-from flask_login import LoginManager
-from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect, CSRFError
-from flask_mail import Mail  # <--- NUEVO: Importar Mail
-from .models import db, User
+from flask_wtf.csrf import CSRFError
+# from flask_mail import Mail # Removed
+from .extensions import db, migrate, login_manager, csrf, mail, limiter
+from .models import User
 from .public import routes as routes_public
 from .admin import routes as routes_admin
 
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+# from flask_limiter import Limiter # Removed
+# from flask_limiter.util import get_remote_address # Removed
 
 def create_app() -> Flask:
     # --- Base config ---
@@ -53,21 +52,15 @@ def create_app() -> Flask:
 
     # --- Extensions ---
     Bootstrap5(app)
-    CSRFProtect(app)
+    csrf.init_app(app)
     db.init_app(app)
-    Migrate(app, db)
-    Mail(app) # <--- NUEVO: Inicializar Mail
+    migrate.init_app(app, db)
+    mail.init_app(app)
     
     # Rate Limiter
-    limiter = Limiter(
-        key_func=get_remote_address,
-        app=app,
-        storage_uri="memory://",
-        default_limits=["200 per day", "50 per hour"]
-    )
+    limiter.init_app(app)
 
     # --- Login manager ---
-    login_manager = LoginManager()
     login_manager.login_view = "admin_login"
     login_manager.init_app(app)
 

@@ -7,11 +7,8 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 #
-class Base(DeclarativeBase):
-    pass
+from .extensions import db
 
-# Global DB object
-db = SQLAlchemy(model_class=Base)
 
 # Mixin for timestamp fields
 class TimestampMixin:
