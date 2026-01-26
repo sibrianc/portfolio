@@ -140,14 +140,14 @@
             <div class="d-grid gap-3">
               {% if project.live_url %}
               <a href="{{ project.live_url }}" target="_blank" class="btn-hud">
-                <span><span class="text-info me-2">●</span> Live Demo</span>
+                <span><span class="text-info me-2">●</span> {{ t('live_demo') }}</span>
                 <span>&nearr;</span>
               </a>
               {% endif %}
 
               {% if project.repo_url %}
               <a href="{{ project.repo_url }}" target="_blank" class="btn-hud">
-                <span><span class="text-warning me-2">●</span> Source Code</span>
+                <span><span class="text-warning me-2">●</span> {{ t('source_code') }}</span>
                 <span style="font-family: monospace;">&lt;/&gt;</span>
               </a>
               {% endif %}
