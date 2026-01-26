@@ -1,0 +1,14 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+Flask-WTF
+Flask-Mail
+Bootstrap-Flask
+Flask-Limiter
+python-dotenv
+email-validator
+gunicorn
+psycopg2-binary
+pytest
+pip-tools

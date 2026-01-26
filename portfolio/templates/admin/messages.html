@@ -4,7 +4,13 @@
 <h1>Contact Messages</h1>
 <table class="table table-sm">
   <thead>
-    <tr><th>Name</th><th>Email</th><th>Message</th><th>Status</th><th>Actions</th></tr>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Message</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
   </thead>
   <tbody>
     {% for m in messages %}
@@ -15,18 +21,18 @@
       <td>{{ '✅ Processed' if m.processed else '🔴 New' }}</td>
       <td>
         <!-- Toggle processed/unprocessed -->
-        <form method="post" action="{{ url_for('admin_message_toggle', mid=m.id) }}" class="d-inline">
-          {{ csrf_token() }}
+        <form method="post" action="{{ url_for('admin.admin_message_toggle', mid=m.id) }}" class="d-inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           {% if not m.processed %}
-            <button class="btn btn-success btn-sm">Mark as processed</button>
+          <button class="btn btn-success btn-sm">Mark as processed</button>
           {% else %}
-            <button class="btn btn-warning btn-sm">Mark as unprocessed</button>
+          <button class="btn btn-warning btn-sm">Mark as unprocessed</button>
           {% endif %}
         </form>
         <!-- Delete message -->
-        <form method="post" action="{{ url_for('admin_message_delete', mid=m.id) }}" class="d-inline" 
-              onsubmit="return confirm('Delete this message?');">
-          {{ csrf_token() }}
+        <form method="post" action="{{ url_for('admin.admin_message_delete', mid=m.id) }}" class="d-inline"
+          onsubmit="return confirm('Delete this message?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="btn btn-danger btn-sm">Delete</button>
         </form>
       </td>

@@ -1,0 +1,114 @@
+{% extends "layout/base.html" %}
+{% block title %}{{ t('projects') }} – Carlos Sibrian{% endblock %}
+
+{% block content %}
+
+{# --- CADEJO NEGRO (ESPÍRITU DE PROYECTOS) --- #}
+{# Este bloque activa la lógica del JS en main.js #}
+<div id="cadejo-ghost" class="cadejo-integration cadejo-black">
+  <img src="{{ url_for('static', filename='img/cadejo_negro.png') }}" alt="Cadejo Negro" class="cadejo-bg-img">
+
+  {# Ojos (El CSS .cadejo-black se encarga de ponerlos rojos) #}
+  <div class="eye-socket" style="top: 35%; left: 38%; transform: translate(-50%, -50%);">
+    <div class="pupil"></div>
+  </div>
+  <div class="eye-socket" style="top: 35%; left: 62%; transform: translate(-50%, -50%);">
+    <div class="pupil"></div>
+  </div>
+</div>
+
+{# --- CONTENIDO PRINCIPAL --- #}
+<div class="container position-relative" style="padding-top: 120px; padding-bottom: 80px; z-index: 10;">
+
+  {# CABECERA #}
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold"
+      style="text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 30px rgba(0,0,0,0.5);">
+      {{ t('projects') }}
+    </h1>
+    <p class="text-muted" style="letter-spacing: 3px;">ARCHIVE_V.2025</p>
+  </div>
+
+  {# BUSCADOR CYBER #}
+  <div class="row justify-content-center mb-5">
+    <div class="col-lg-6">
+      <form method="get" class="cyber-search-box"
+        style="background: rgba(10,15,20,0.8); border: 1px solid var(--accent-tech); padding: 15px; border-radius: 8px; display: flex; align-items: center;">
+
+        <i data-feather="search" style="color: var(--accent-tech); margin-right: 10px;"></i>
+
+        <input type="text" name="tech" class="cyber-input" placeholder="Search protocol (e.g. Python, React)..."
+          value="{{ tech or '' }}" autocomplete="off"
+          style="background: transparent; border: none; color: #fff; width: 100%; font-family: 'Space Grotesk'; outline: none;">
+
+        {% if tech %}
+        <a href="{{ url_for('public.projects_list') }}" class="text-decoration-none text-muted">
+          <i data-feather="x"></i>
+        </a>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  {# GRID DE PROYECTOS #}
+  <div class="cyber-grid">
+
+    {% for project in projects %}
+    <a href="{{ url_for('public.project_detail', slug=project.slug) }}" class="cyber-card"
+      style="text-decoration: none;">
+
+      <div class="cyber-img-container">
+        {% if project.cover_image %}
+        <img src="{{ project.cover_image }}" alt="{{ project.title }}" class="cyber-img">
+        {% else %}
+        <div class="w-100 h-100 bg-dark d-flex align-items-center justify-content-center text-muted">
+          NO_IMAGE
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="cyber-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <h3 class="cyber-title" style="font-size: 1.1rem; border: none;">{{ get_loc_attr(project, 'title') }}</h3>
+          {% if project.is_featured %}
+          <span class="text-warning">★</span>
+          {% endif %}
+        </div>
+
+        <p class="cyber-summary">
+          {{ get_loc_attr(project, 'summary') | truncate(80) }}
+        </p>
+
+        <div class="tech-cloud">
+          {% for tech in project.tech_stack.split(',')[:3] %}
+          <span class="tech-tag">{{ tech.strip() }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="cyber-footer mt-auto pt-3">
+          <span class="btn-cyber-link" style="font-size: 0.75rem;">INITIALIZE >></span>
+        </div>
+      </div>
+
+    </a>
+    {% else %}
+
+    {# ESTADO VACÍO #}
+    <div class="col-12 text-center py-5">
+      <h4 class="text-muted mb-3">DATA NOT FOUND</h4>
+      <a href="{{ url_for('public.projects_list') }}" class="btn-cyber">RESET FILTERS</a>
+    </div>
+
+    {% endfor %}
+  </div>
+
+</div>
+
+{# Script para renderizar los iconos de Feather (Search, X) #}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof feather !== 'undefined') feather.replace();
+  });
+</script>
+
+{% endblock %}

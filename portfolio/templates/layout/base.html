@@ -19,7 +19,7 @@
 {% block navbar %}
   <div class="navbar-floating-container">
     <nav class="navbar navbar-expand-lg navbar-glass">
-        <a class="brand-logo" href="{{ url_for('index') }}">
+        <a class="brand-logo" href="{{ url_for('public.index') }}">
           CS<span style="color: var(--accent);">.</span>DEV
         </a>
 
@@ -30,16 +30,16 @@
         <div class="collapse navbar-collapse" id="navMenu">
           <ul class="navbar-nav w-100 justify-content-evenly align-items-center">
             <li class="nav-item">
-              <a class="nav-link-custom" href="{{ url_for('about') }}">{{ t('about') }}</a>
+              <a class="nav-link-custom" href="{{ url_for('public.about') }}">{{ t('about') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link-custom" href="{{ url_for('projects_list') }}">{{ t('projects') }}</a>
+              <a class="nav-link-custom" href="{{ url_for('public.projects_list') }}">{{ t('projects') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link-custom" href="{{ url_for('contact') }}">{{ t('contact') }}</a>
+              <a class="nav-link-custom" href="{{ url_for('public.contact') }}">{{ t('contact') }}</a>
             </li>
             <li class="nav-item mt-2 mt-lg-0">
-               <a class="btn-lang" href="{{ url_for('switch_lang', code='en' if current_lang()=='es' else 'es') }}">
+               <a class="btn-lang" href="{{ url_for('public.switch_lang', code='en' if current_lang()=='es' else 'es') }}">
                  {{ current_lang()|upper }}
                </a>
             </li>
