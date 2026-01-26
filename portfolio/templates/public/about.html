@@ -6,12 +6,12 @@
 
 {# Nota: position-relative es vital para que el fantasma se posicione respecto a este contenedor #}
 <div class="container position-relative d-flex align-items-center min-vh-100 py-5 about-container">
-    
+
     {# --- 1. EL CADEJO (ESPÍRITU INVOCADO) --- #}
     {# ID "cadejo-ghost" fuera de la tarjeta para flotar libremente #}
     <div id="cadejo-ghost" class="cadejo-integration">
         <img src="{{ url_for('static', filename='img/cadejo_face.png') }}" alt="Cadejo Guardian" class="cadejo-bg-img">
-        
+
         {# Ojos #}
         <div class="eye-socket" style="top: 35%; left: 38%; transform: translate(-50%, -50%);">
             <div class="pupil"></div>
@@ -25,25 +25,30 @@
 
         {# --- COLUMNA IZQUIERDA (IDENTIDAD) --- #}
         <div class="col-lg-4 d-flex flex-column">
-            
-            <div class="glass-card p-0 h-100 d-flex flex-column align-items-center text-center position-relative overflow-hidden" id="profileCard">
-                
+
+            <div class="glass-card p-0 h-100 d-flex flex-column align-items-center text-center position-relative overflow-hidden"
+                id="profileCard">
+
                 {# BLOQUE DE FOTO (Trigger) #}
                 <div class="w-100 pt-5 px-4 mb-4">
-                    
+
                     {# TRIGGER con ID="profile-trigger" #}
-                    <div class="mb-4 position-relative profile-wrapper mx-auto" id="profile-trigger" style="cursor: pointer;">
+                    <div class="mb-4 position-relative profile-wrapper mx-auto" id="profile-trigger"
+                        style="cursor: pointer;">
                         <div class="glow-ring"></div>
-                        <img src="{{ url_for('static', filename='img/branding.png') }}" alt="Carlos Sibrian" class="profile-img">
+                        <img src="{{ url_for('static', filename='img/branding.png') }}" alt="Carlos Sibrian"
+                            class="profile-img">
                     </div>
-                    
+
                     <h2 class="fw-bold text-white mb-1">Carlos Sibrian</h2>
-                    <p class="text-white-50 fw-light text-uppercase spacing-2 mb-0 role-text">Full Stack Developer</p>
+                    <p class="text-white-50 fw-light text-uppercase spacing-2 mb-0 role-text">{{
+                        t('full_stack_developer') }}</p>
                 </div>
 
                 {# BLOQUE SOCIAL (Bottom) #}
                 <div class="social-overlay w-100 mt-auto pb-4 d-flex justify-content-center gap-3">
-                    <a href="https://www.instagram.com/sibrianc/" target="_blank" class="social-btn-glass" aria-label="Instagram">
+                    <a href="https://www.instagram.com/sibrianc/" target="_blank" class="social-btn-glass"
+                        aria-label="Instagram">
                         <i data-feather="instagram"></i>
                     </a>
                     <a href="https://github.com/sibrianc" target="_blank" class="social-btn-glass" aria-label="Github">
@@ -63,31 +68,32 @@
                 <div class="mb-4">
                     <h6 class="text-accent text-uppercase fw-bold mb-2 spacing-2">// {{ t('about') }}</h6>
                     <h1 class="text-white fw-light display-6 mb-0">
-                        Architecting digital <br> <span class="fw-bold text-glow">experiences</span>.
+                        {{ t('about_tagline') }} <br> <span class="fw-bold text-glow">{{ t('about_tagline_bold')
+                            }}</span>.
                     </h1>
                 </div>
                 <div class="mb-5 text-light opacity-75 fw-light lh-lg bio-content">
-                    <p>Hola, soy Carlos. Desde <strong class="text-white">El Salvador</strong>, construyo puentes entre la lógica compleja y el diseño visual.</p>
-                    <p>Mi enfoque combina la robustez de la ingeniería de software con la fluidez de las interfaces modernas.</p>
+                    <p>{{ t('about_description_1') }}</p>
+                    <p>{{ t('about_description_2') }}</p>
                 </div>
-                
+
                 {# --- NUEVO TECH ARSENAL (Estilo Tarjetas) --- #}
                 <div>
-                    <h6 class="text-white-50 text-uppercase spacing-2 mb-3 xsmall" 
+                    <h6 class="text-white-50 text-uppercase spacing-2 mb-3 xsmall"
                         style="border-bottom: 1px solid rgba(255,255,255,0.1); display:inline-block; padding-bottom:5px;">
-                        Tech Arsenal
+                        {{ t('tech_arsenal') }}
                     </h6>
-                    
+
                     <div class="tech-grid">
                         {% set tech_stack = [
-                            'Python', 'Flask', 'JavaScript', 'React', 
-                            'Three.js', 'PostgreSQL', 'Docker', 'Git', 'AWS'
+                        'Python', 'Flask', 'JavaScript', 'React',
+                        'Three.js', 'PostgreSQL', 'Docker', 'Git', 'AWS'
                         ] %}
-                        
+
                         {% for tech in tech_stack %}
-                            <div class="tech-card">
-                                {{ tech }}
-                            </div>
+                        <div class="tech-card">
+                            {{ tech }}
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -100,7 +106,7 @@
 
 {# Inicialización de Iconos #}
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         if (typeof feather !== 'undefined') feather.replace();
     });
 </script>

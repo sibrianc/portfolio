@@ -7,7 +7,7 @@
   <a class="btn btn-sm btn-outline-light rounded-pill px-3"
     href="{{ url_for('public.switch_lang', code='en' if current_lang()=='es' else 'es') }}"
     style="backdrop-filter: blur(5px); background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2);">
-    {{ current_lang()|upper }}
+    {{ 'EN' if current_lang()=='es' else 'ES' }}
   </a>
 </div>
 {% endblock %}
@@ -31,7 +31,7 @@
   <div class="text-center mb-5 hero-header">
     <h2 class="text-light fw-bold display-5 text-uppercase"
       style="font-family: 'Space Grotesk'; letter-spacing: 3px; text-shadow: 0 0 20px rgba(255, 102, 0, 0.5);">
-      Featured Projects
+      {{ t('featured_projects') }}
     </h2>
     <div style="width: 50px; height: 3px; background: var(--accent); margin: 20px auto;"></div>
   </div>
@@ -79,7 +79,7 @@
                 </p>
 
                 <div class="cyber-footer mt-auto">
-                  <span class="btn-cyber-link">EXPLORE >></span>
+                  <span class="btn-cyber-link">{{ t('explore') }}</span>
                 </div>
               </div>
 
