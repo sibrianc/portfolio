@@ -51,7 +51,7 @@ def create_app() -> Flask:
     Bootstrap5(app)
     csrf.init_app(app)
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(app, db, directory=os.path.join(app.root_path, 'migrations'))
     mail.init_app(app)
     
     # Rate Limiter
