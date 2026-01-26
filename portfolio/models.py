@@ -45,14 +45,24 @@ class User(UserMixin, db.Model, TimestampMixin):
 class Project(db.Model, TimestampMixin):
     __tablename__ = "projects"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    
+    # English fields (default)
     title: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     slug: Mapped[str] = mapped_column(String(140), unique=True, nullable=False)
     summary: Mapped[str] = mapped_column(String(280), default="")
     description: Mapped[str] = mapped_column(Text, default="")
+    
+    # Spanish fields
+    title_es: Mapped[str] = mapped_column(String(120), default="")
+    summary_es: Mapped[str] = mapped_column(String(280), default="")
+    description_es: Mapped[str] = mapped_column(Text, default="")
+    
+    # Language-agnostic fields
     tech_stack: Mapped[str] = mapped_column(String(240), default="")
     repo_url: Mapped[str] = mapped_column(String(240), default="")
     live_url: Mapped[str] = mapped_column(String(240), default="")
     cover_image: Mapped[str] = mapped_column(String(240), default="")
+    video_url: Mapped[str] = mapped_column(String(240), default="")
     is_featured: Mapped[bool] = mapped_column(Boolean, default=False)
 
 # Contact message model for storing messages from the contact form

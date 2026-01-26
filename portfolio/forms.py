@@ -35,14 +35,23 @@ class AdminLoginForm(FlaskForm):
 
 # Admin project form for creating/editing projects
 class ProjectForm(FlaskForm):
-    # NOTE: Admin project CRUD form
-    title = StringField("Title", validators=[DataRequired(), Length(max=120)])
+    # NOTE: Admin project CRUD form with bilingual support
+    # English fields
+    title = StringField("Title (English)", validators=[DataRequired(), Length(max=120)])
     slug = StringField("Slug", validators=[DataRequired(), Length(max=140)])
-    summary = StringField("Summary", validators=[Length(max=280)])
-    description = TextAreaField("Description")
+    summary = StringField("Summary (English)", validators=[Length(max=280)])
+    description = TextAreaField("Description (English)")
+    
+    # Spanish fields
+    title_es = StringField("Título (Español)", validators=[Length(max=120)])
+    summary_es = StringField("Resumen (Español)", validators=[Length(max=280)])
+    description_es = TextAreaField("Descripción (Español)")
+    
+    # Language-agnostic fields
     tech_stack = StringField("Tech stack (CSV)", validators=[Length(max=240)])
     repo_url = StringField("Repo URL")
     live_url = StringField("Live URL")
     cover_image = StringField("Cover image URL", validators=[Length(max=240)])
+    video_url = StringField("Video URL", validators=[Length(max=240)])
     is_featured = BooleanField("Featured")
     submit = SubmitField("Save")

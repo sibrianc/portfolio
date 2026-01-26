@@ -77,44 +77,15 @@ def create_app() -> Flask:
     app.register_blueprint(admin_bp)
     
     # --- Internationalization ---
-    translations = {
-        'en': {
-            'brand_left': 'CARLOS',
-            'brand_right': '_SIBRIAN',
-            'home': 'Home',
-            'about': 'About',
-            'projects': 'Projects',
-            'contact': 'Contact',
-            'cta': 'Contact Me',
-            'hero_tagline': 'Developer building modern web experiences with Flask, Bootstrap and JS.',
-            'form_name' : 'Name',
-            'form_email': 'Email',
-            'form_message': 'Message',
-            'form_send': 'Send',
-            },
-        'es': {
-            'brand_left': 'CARLOS',
-            'brand_right': '_SIBRIAN',
-            'home': 'Inicio',
-            'about': 'Sobre mí',
-            'projects': 'Proyectos',
-            'contact': 'Contacto',
-            'cta': 'Contáctame',
-            'hero_tagline': 'Desarrollador creando experiencias web modernas con Flask, Bootstrap y JS.',
-            'form_name': 'Nombre',
-            'form_email': 'Correo',
-            'form_message': 'Mensaje',
-            'form_send': 'Enviar',
-        }
-    }
-
+    from .translations import TRANSLATIONS
+    
     @app.context_processor
     def inject_lang():
         def current_lang():
             return session.get('lang', 'en')
         def t(key):
             lang = session.get('lang', 'en')
-            return translations.get(lang, {}).get(key, key)
+            return TRANSLATIONS.get(lang, {}).get(key, key)
         return {'current_lang': current_lang, 't': t}
 
     # --- CLI: create admin ---
