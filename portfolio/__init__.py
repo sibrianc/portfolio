@@ -10,11 +10,8 @@ from flask_wtf.csrf import CSRFError
 # from flask_mail import Mail # Removed
 from .extensions import db, migrate, login_manager, csrf, mail, limiter
 from .models import User
-from .public import routes as routes_public
-from .admin import routes as routes_admin
-
-# from flask_limiter import Limiter # Removed
-# from flask_limiter.util import get_remote_address # Removed
+from .public import bp as public_bp
+from .admin import bp as admin_bp
 
 def create_app() -> Flask:
     # --- Base config ---
@@ -61,7 +58,7 @@ def create_app() -> Flask:
     limiter.init_app(app)
 
     # --- Login manager ---
-    login_manager.login_view = "admin_login"
+    login_manager.login_view = "admin.admin_login"
     login_manager.init_app(app)
 
     @login_manager.user_loader
@@ -73,12 +70,11 @@ def create_app() -> Flask:
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
         flash("La sesión del formulario ha expirado. Por favor intenta de nuevo.", "error")
-        return redirect(url_for('contact'))
+        return redirect(url_for('public.contact'))
 
     # --- Register routes ---
-    # IMPORTANTE: Pasamos 'limiter' a routes_public para usar @limiter.limit
-    routes_public.register(app, limiter) 
-    routes_admin.register(app)
+    app.register_blueprint(public_bp)
+    app.register_blueprint(admin_bp)
     
     # --- Internationalization ---
     translations = {
