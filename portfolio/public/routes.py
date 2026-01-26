@@ -2,8 +2,8 @@ import threading
 import logging
 from datetime import datetime, timedelta
 from flask import render_template, request, abort, redirect, url_for, session, flash, current_app
-from models import db, Project, ContactMessage
-from forms import ContactForm
+from portfolio.models import db, Project, ContactMessage
+from portfolio.forms import ContactForm
 from flask_mail import Message
 from urllib.parse import urlparse
 

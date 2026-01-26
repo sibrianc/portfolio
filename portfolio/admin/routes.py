@@ -3,8 +3,8 @@ import os
 from flask import render_template, redirect, url_for, request, abort, flash, current_app, make_response
 from flask_login import login_user, current_user, login_required, logout_user
 from functools import wraps
-from models import db, User, Project, ContactMessage
-from forms import AdminLoginForm, ProjectForm
+from portfolio.models import db, User, Project, ContactMessage
+from portfolio.forms import AdminLoginForm, ProjectForm
 # 1. IMPORTACIÓN NUEVA PARA MANEJAR EL ERROR
 from sqlalchemy.exc import IntegrityError
 

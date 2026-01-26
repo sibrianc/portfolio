@@ -10,8 +10,9 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_mail import Mail  # <--- NUEVO: Importar Mail
-from models import db, User
-import routes_public, routes_admin
+from .models import db, User
+from .public import routes as routes_public
+from .admin import routes as routes_admin
 
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -164,7 +165,3 @@ def create_app() -> Flask:
         return response
 
     return app
-
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True, port=5002)
